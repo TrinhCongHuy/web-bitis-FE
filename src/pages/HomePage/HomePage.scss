@@ -1,0 +1,27 @@
+.page__home {
+    margin-top: 3em;
+    padding-top: 3em;
+    border-top: 1px solid #c7c4c4;
+
+    .wrapper {
+        .products {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.9em;
+        }
+
+        .btn-more {
+            text-align: center;
+            margin-top: 30px;
+            Button {
+                border: 1px solid #000;
+                color: #000;
+
+                &:hover {
+                    border: 1px solid #439ecb;
+                    color: #439ecb;
+                }
+            }
+        }
+    }
+}

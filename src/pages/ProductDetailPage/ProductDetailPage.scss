@@ -1,0 +1,124 @@
+.page__product--detail {
+    margin-top: 20px;
+
+    .slider-products {
+        display: flex;
+        margin-top: 20px;
+    }
+
+    .product__content {
+        padding: 10px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 1em;
+        &--title {
+            margin-top: unset;
+            margin-bottom: 10px;
+            a {
+                color: #000;
+                font-size: 2em;
+                font-weight: 600;
+                line-height: 1.5;
+            }
+            
+        }
+        &--rating {
+            .normal {
+                margin-left: 20px;
+                color: #7c899a;
+                font-size: 1.3em;
+            }
+
+            .ant-rate .ant-rate-star:not(:last-child) {
+                margin-inline-end: 4px;
+            }
+            .anticon-star {
+                font-size: 1.2em; 
+            }
+        }
+        &--price {
+            display: flex;
+            align-items: center;
+            gap: 1em;
+            margin: 5px 0;
+
+            .current {
+                font-size: 2em;
+                color: rgb(241, 70, 101);
+                font-weight: 500;
+            }
+            .normal {
+                text-decoration: line-through;
+                color: #7c899a;
+                font-size: 1.3em;
+                font-weight: 400;
+            }
+        }
+        &--stock {
+
+            span {
+                font-size: 1.2em;
+                color: #7c899a;
+            }
+        }
+        &--qty {
+            width: fit-content;
+            padding: 0.5em 1em;
+            border: 1px solid #666;
+            margin: 0 2em 2em 0;
+
+            .custom-input-number {
+                width: 60px;
+                outline: none;
+                border: none;
+                .ant-input-number-handler-wrap {
+                    display: none;
+                }
+                .ant-input-number-input {
+                    border: none;
+                    box-shadow: none;
+                    outline: none;
+                    text-align: center;
+                }
+            }
+            button {
+                font-size: 1.25em;
+                outline: 0;
+                border: 0;
+
+                &::before {
+                    background-color: transparent;
+                }
+            }
+            .circle {
+                display: block;
+                position: static;
+                top: 0;
+                margin: 0;
+                width: 30px;
+                height: 30px;
+                background-color: #d6d3d3;
+                border-radius: 50%;
+                -webkit-border-radius: 50%;
+                -moz-border-radius: 50%;
+                -ms-border-radius: 50%;
+                -o-border-radius: 50%;
+                cursor: pointer;
+                z-index: 1;
+            }
+        }
+
+        .btn-buy {
+            .ant-btn {
+                width: 150px;
+                background-color: #f17e7e;
+                color: #ffffff;
+
+                &:hover {
+                    border: none;
+                }
+            }
+            
+        }
+    }
+}

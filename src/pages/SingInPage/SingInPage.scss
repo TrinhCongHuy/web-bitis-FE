@@ -1,0 +1,28 @@
+.form-login {
+    margin-top: 25px;
+    padding: 10px 30px 20px;
+    border: 1px solid #999;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -o-border-radius: 10px;
+
+    h2{
+        text-align: center;
+    }
+    .login-form-forgot {
+        margin: auto;
+        float: right;
+    }
+    .login-form-button {
+        width: 120px;
+        background: linear-gradient(to right, #98757d, #9b5889);
+        border: none;
+        color: white;
+
+        &:hover {
+            background: linear-gradient(to right, #9b5889, #98757d) !important;
+        }
+    }
+}

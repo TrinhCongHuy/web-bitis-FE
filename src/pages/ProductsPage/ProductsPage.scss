@@ -1,0 +1,15 @@
+.page__products {
+
+    .wrapper {
+
+        .products {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6em;
+        }
+        .btn-more {
+            margin-top: 20px;
+            text-align: center;
+        }
+    }
+}
