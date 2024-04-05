@@ -12,7 +12,7 @@ const ProductsPage = () => {
       <Sliders />
       <div className="container page__products">
         <div className="wrapper">
-          <Row className='huy'>
+          <Row>
             <Col span={5}>
               <NavBarComponent />
             </Col>

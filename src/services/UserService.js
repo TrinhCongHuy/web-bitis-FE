@@ -33,3 +33,8 @@ export const refreshToken = async () => {
     })
     return res.data 
 }
+
+export const updateUser = async (id, data) => {
+    const res = await axios.patch(`${process.env.REACT_APP_API_URL}/users/update-user/${id}`, data)
+    return res.data
+}

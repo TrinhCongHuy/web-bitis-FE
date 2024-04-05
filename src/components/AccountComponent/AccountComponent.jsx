@@ -1,9 +1,10 @@
 import { UserOutlined } from "@ant-design/icons";
-import { Dropdown, Menu } from "antd";
+import { Dropdown, Menu, Popover} from "antd";
 import { Link } from "react-router-dom";
 import * as UserService from '../../services/UserService'
 import { useDispatch } from 'react-redux';
 import { resetUser } from '../../redux/slides/userSlide';
+
 
 
 
@@ -29,22 +30,22 @@ const AccountComponent = (props) => {
   );
 
   const userMenu = (
-    <Menu>
-      <Menu.Item key="1">
-        <Link to="/">{user.name}</Link>
-      </Menu.Item>
-      <Menu.Item key="2">
-        <Link onClick={handleLogout}>Đăng xuất</Link>
-      </Menu.Item>
-    </Menu>
+    <div>
+      <div>
+        <Link style={{color: '#333'}} to="/profile">{user.name}</Link>
+      </div>
+      <div>
+        <Link style={{color: '#333'}} onClick={handleLogout}>Đăng xuất</Link>
+      </div>
+    </div>
   );
 
   return (
     <>
         {(user.name !== '') ? <>
-          <Dropdown overlay={userMenu} placement="bottom" column>
+          <Popover placement="bottom" content={userMenu}>
             <UserOutlined style={{fontSize: '1.3em'}}/>
-          </Dropdown>
+          </Popover>
         </> : <>
           <Dropdown overlay={authMenu} placement="bottom" arrow>
             <UserOutlined style={{fontSize: '1.3em'}}/>

@@ -3,6 +3,7 @@ import HomePage from "../pages/HomePage/HomePage";
 import OrderPage from "../pages/OrderPage/OrderPage";
 import ProductDetailPage from "../pages/ProductDetailPage/ProductDetailPage";
 import ProductsPage from "../pages/ProductsPage/ProductsPage";
+import ProfilePage from "../pages/ProfilePage/ProfilePage";
 import SingInPage from "../pages/SingInPage/SingInPage";
 import SingUpPage from "../pages/SingUpPage/SingUpPage";
 
@@ -35,6 +36,10 @@ export const Routes = [
             {
                 path: '/product-detail',
                 element: <ProductDetailPage />
+            },
+            {
+                path: '/profile',
+                element: <ProfilePage />
             }
         ]
     }
