@@ -1,19 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Col, Form, Input, Row } from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
+import { Button, Col, Form, Input, Row } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import './SingInPage.scss'
-import * as UserService from '../../services/UserService'
-import { UseMutationHook } from '../../hooks/useMutationHook';
-import * as message from '../../components/Message/message'
+import * as UserService from '../../../services/UserService'
+import { UseMutationHook } from '../../../hooks/useMutationHook';
+import * as message from '../../../components/Message/message'
 import { jwtDecode } from "jwt-decode";
 import { useDispatch } from 'react-redux';
-import { updateUser } from '../../redux/slides/userSlide';
+import { updateUser } from '../../../redux/slides/userSlide';
 
 
 
-const SingInPage = () => {
+const SingInPageAdmin = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const navigate = useNavigate()
@@ -29,12 +29,17 @@ const SingInPage = () => {
 
   useEffect(() => {
     if (data?.status === 'OK') {
-      navigate('/')
-      localStorage.setItem('access_token', JSON.stringify(data?.access_token))
       if (data?.access_token) {
         const decoded = jwtDecode(data?.access_token);
-        if (decoded?.id) {
-          handleGetDetailUser(decoded?.id, data?.access_token)
+        if (decoded.isAdmin) {
+          navigate('/system/admin/dashboard')
+          localStorage.setItem('access_token', JSON.stringify(data?.access_token))
+
+          if (decoded?.id) {
+            handleGetDetailUser(decoded?.id, data?.access_token)
+          }
+        }else {
+          message.error("Đây không phải là tài khoản Admin!")
         }
       }
     }else if (data?.status === 'ERR'){
@@ -61,11 +66,11 @@ const SingInPage = () => {
     })
   };
   return (
-    <div className="container">
+    <div className="container page__admin--login">
       <Row justify="center">
         <Col span={8}>
           <div className="form-login">
-            <h2>Đăng nhập</h2>
+            <h2>Wellcome to Admin</h2>
             <Form
               name="normal_login"
               className="login-form"
@@ -101,27 +106,12 @@ const SingInPage = () => {
               >
                 <Input.Password placeholder="Password" prefix={<LockOutlined className="site-form-item-icon" />} value={password} onChange={handleChangePassword}/>
               </Form.Item>
-              <Form.Item style={{ }}>
-                <Form.Item name="remember" valuePropName="checked" noStyle>
-                  <Checkbox>Remember me</Checkbox>
-                </Form.Item>
-
-                <Link className="login-form-forgot" href="">
-                  Forgot password
-                </Link>
-              </Form.Item>
 
               <Form.Item style={{textAlign: 'center'}}>
                 <Button type="primary" htmlType="submit" className="login-form-button">
                   Đăng nhập
                 </Button>
               </Form.Item>
-
-              <Form.Item >
-                <span>Chưa có tài khoản?</span>
-                <Link to="/sing-up">Tạo tài khoản</Link>
-              </Form.Item>
-
             </Form>
           </div>
         </Col>
@@ -130,4 +120,4 @@ const SingInPage = () => {
   )
 }
 
-export default SingInPage
+export default SingInPageAdmin

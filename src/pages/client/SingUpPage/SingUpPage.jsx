@@ -1,11 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from 'react'
 import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, Row } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
-import { UseMutationHook } from '../../hooks/useMutationHook';
-import * as UserService from '../../services/UserService'
-import Loading from '../../components/LoadingComponent/loading';
-import * as message from '../../components/Message/message'
+import { UseMutationHook } from '../../../hooks/useMutationHook';
+import * as UserService from '../../../services/UserService'
+import Loading from '../../../components/LoadingComponent/loading';
+import * as message from '../../../components/Message/message'
 
 
 const SingUpPage = () => {
@@ -22,7 +23,6 @@ const SingUpPage = () => {
   )
 
   const { isSuccess, isError } = mutation
-  // console.log(mutation)
 
   useEffect(() => {
     if (isSuccess) {
@@ -31,7 +31,6 @@ const SingUpPage = () => {
     }else if (isError) {
       message.error()
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess, isError])
 
 
@@ -56,7 +55,6 @@ const SingUpPage = () => {
       confirmPassword
     })
     setIsLoading(true)
-    console.log('singUp', name, email, password, confirmPassword)
     
   };
 

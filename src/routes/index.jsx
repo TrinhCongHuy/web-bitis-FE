@@ -1,11 +1,14 @@
+
 import LayoutDefault from "../components/LayoutDefault/LayoutDefault";
-import HomePage from "../pages/HomePage/HomePage";
-import OrderPage from "../pages/OrderPage/OrderPage";
-import ProductDetailPage from "../pages/ProductDetailPage/ProductDetailPage";
-import ProductsPage from "../pages/ProductsPage/ProductsPage";
-import ProfilePage from "../pages/ProfilePage/ProfilePage";
-import SingInPage from "../pages/SingInPage/SingInPage";
-import SingUpPage from "../pages/SingUpPage/SingUpPage";
+import HomePage from "../pages/client/HomePage/HomePage";
+import OrderPage from "../pages/client/OrderPage/OrderPage";
+import ProductDetailPage from "../pages/client/ProductDetailPage/ProductDetailPage";
+import ProductsPage from "../pages/client/ProductsPage/ProductsPage";
+import ProfilePage from "../pages/client/ProfilePage/ProfilePage";
+import SingInPageClient from "../pages/client/SingInPage/SingInPage";
+import SingUpPage from "../pages/client/SingUpPage/SingUpPage";
+import SingInPageAdmin from "../pages/admin/SingInPage/SingInPage";
+import LayoutAdminDefault from "../components/LayoutAdminDefault/LayoutAdminDefault";
 
 
 export const Routes = [
@@ -27,7 +30,7 @@ export const Routes = [
             },
             {
                 path: '/sing-in',
-                element: <SingInPage />
+                element: <SingInPageClient />
             },
             {
                 path: '/Sing-up',
@@ -40,7 +43,16 @@ export const Routes = [
             {
                 path: '/profile',
                 element: <ProfilePage />
-            }
+            },
         ]
+    },
+    {
+        path: '/system/admin',
+        element: <SingInPageAdmin />
+    },
+    {
+        path: '/system/admin/dashboard',
+        element: <LayoutAdminDefault />
     }
+    
 ]

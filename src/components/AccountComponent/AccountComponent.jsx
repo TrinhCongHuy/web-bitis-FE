@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import * as UserService from '../../services/UserService'
 import { useDispatch } from 'react-redux';
 import { resetUser } from '../../redux/slides/userSlide';
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -11,11 +12,13 @@ import { resetUser } from '../../redux/slides/userSlide';
 const AccountComponent = (props) => {
   const {user} = props
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   
   const handleLogout = async () => {
     await UserService.logoutUser()
     dispatch(resetUser())
+    navigate('/')
   }
 
   const authMenu = (

@@ -1,10 +1,10 @@
 import React from 'react'
-import CardComponent from '../../components/CardComponent/CardComponent'
+import CardComponent from '../../../components/CardComponent/CardComponent'
 import { Button, Col, Row } from 'antd'
 import './ProductsPage.scss'
-import NavBarComponent from '../../components/NavBarComponent/NavBarComponent'
-import FilterProduct from '../../components/FilterProduct/FilterProduct'
-import Sliders from '../../components/Sliders/Sliders'
+import NavBarComponent from '../../../components/NavBarComponent/NavBarComponent'
+import FilterProduct from '../../../components/FilterProduct/FilterProduct'
+import Sliders from '../../../components/Sliders/Sliders'
 
 const ProductsPage = () => {
   return (

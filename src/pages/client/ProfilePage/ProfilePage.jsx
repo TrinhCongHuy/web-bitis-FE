@@ -2,14 +2,15 @@
 import React, { useEffect, useState } from "react";
 import { Col, Row } from "antd";
 import { useSelector } from "react-redux";
-import { Image, Button, Modal, Input, Space } from "antd";
-import { EditOutlined } from "@ant-design/icons"
+import { Image, Button, Modal, Input, Space, Upload } from "antd";
+import { EditOutlined, UploadOutlined } from "@ant-design/icons"
 import './ProfilePage.scss'
-import * as UserService from '../../services/UserService'
-import { UseMutationHook } from "../../hooks/useMutationHook";
+import * as UserService from '../../../services/UserService'
+import { UseMutationHook } from "../../../hooks/useMutationHook";
 import { useDispatch } from "react-redux";
-import * as message from '../../components/Message/message'
-import { updateUser } from "../../redux/slides/userSlide";
+import * as message from '../../../components/Message/message'
+import { updateUser } from "../../../redux/slides/userSlide";
+import { getBase64 } from "../../../utils";
 
 
 const ProfilePage = () => {
@@ -24,6 +25,7 @@ const ProfilePage = () => {
         address: '',
         avatar: ''
     });
+    
     const [filteredUser, setFilteredUser] = useState({});
 
     const mutation = UseMutationHook(
@@ -76,15 +78,37 @@ const ProfilePage = () => {
         setOpen(false);
     };
 
+    // const handleChange = (e, key) => {
+    //     if (key === 'avatar') {
+    //         setUser({ ...user, [key]: e.target.files[0].name });
+    //         setFilteredUser({ ...filteredUser, [key]: e.target.files[0].name });
+    //     } else {
+    //         setUser(prevUser => ({ ...prevUser, [key]: e.target.value }));
+    //         setFilteredUser(prevUser => ({ ...prevUser, [key]: e.target.value }));
+    //     }
+    // };
+
     const handleChange = (e, key) => {
-        if (key === 'avatar') {
-            setUser({ ...user, [key]: e.target.files[0].name });
-            setFilteredUser({ ...filteredUser, [key]: e.target.files[0].name });
-        } else {
-            setUser(prevUser => ({ ...prevUser, [key]: e.target.value }));
-            setFilteredUser(prevUser => ({ ...prevUser, [key]: e.target.value }));
-        }
+        setUser(prevUser => ({ ...prevUser, [key]: e.target.value }));
+        setFilteredUser(prevUser => ({ ...prevUser, [key]: e.target.value }));
     };
+
+    const handleChangeAvatar = async ({fileList}) => {
+        const file = fileList[0]
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj);
+        }
+
+        setUser(()=> ({
+            avatar: file.preview
+        }));
+
+        setFilteredUser(() => ({
+            avatar: file.preview
+        }))
+
+    }
+
 
     return (
         <>
@@ -93,7 +117,7 @@ const ProfilePage = () => {
             <Row>
                 <Col span={8} style={{textAlign: "center"}}>
                     <div className="profile__avatar">
-                        <Image src={user.avatar}/>
+                        <Image className="profile__avatar--img" src={user.avatar} alt="avatar"/>
                     </div>
                     <div className="profile__edit">
                         <Button onClick={showModal}>
@@ -112,7 +136,24 @@ const ProfilePage = () => {
                                 <Input value={initialUser.email} onChange={(e) => handleChange(e, 'email')} />
                                 <Input value={initialUser.phone} onChange={(e) => handleChange(e, 'phone')} />
                                 <Input value={initialUser.address} onChange={(e) => handleChange(e, 'address')} />
-                                <Input type="file" onChange={(e) => handleChange(e, 'avatar')} />
+                                <Upload onChange={handleChangeAvatar}>
+                                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                                </Upload>
+                                {user.avatar && (
+                                    <img src={user.avatar} style={{
+                                        height: '60px',
+                                        width: '60px',
+                                        borderRadius: '50%',
+                                        objectFit: 'cover'
+                                    }} alt="avatar"/>
+                                )}
+                                {/* <Input type="file" name="avatar" onChange={(e) => handleChange(e, 'avatar')} /> */}
+                                {/* <form encType="multipart/form-data">
+                                    <div>
+                                        <label htmlFor="fileInput">Chọn ảnh:</label>
+                                        <input type="file" name="avatar" onChange={(e) => handleChange(e, 'avatar')} />
+                                    </div>
+                                </form> */}
                             </Space>
                             
                         </Modal>

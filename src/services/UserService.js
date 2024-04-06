@@ -4,22 +4,22 @@ import axios from "axios"
 export const axiosJWT = axios.create()
 
 export const loginUser = async (data) => {
-    const res = await axios.post(`${process.env.REACT_APP_API_URL}/users/sing-in`, data)
+    const res = await axios.post(`${process.env.REACT_APP_API_URL}/sing-in`, data)
     return res.data
 }
 
 export const logoutUser = async () => {
-    const res = await axios.post(`${process.env.REACT_APP_API_URL}/users/log-out`)
+    const res = await axios.post(`${process.env.REACT_APP_API_URL}/log-out`)
     return res.data
 }
 
 export const singUpUser = async (data) => {
-    const res = await axios.post(`${process.env.REACT_APP_API_URL}/users/sing-up`, data)
+    const res = await axios.post(`${process.env.REACT_APP_API_URL}/sing-up`, data)
     return res.data
 }
 
 export const getDetailUser = async (id, access_token) => {
-    const res = await axiosJWT.get(`${process.env.REACT_APP_API_URL}/users/detail-user/${id}`, {
+    const res = await axiosJWT.get(`${process.env.REACT_APP_API_URL}/detail-user/${id}`, {
         headers: {
             token: `Bearer ${access_token}`
         }
@@ -28,13 +28,13 @@ export const getDetailUser = async (id, access_token) => {
 }
 
 export const refreshToken = async () => {
-    const res = await axios.post(`${process.env.REACT_APP_API_URL}/users/refresh-token`, {
+    const res = await axios.post(`${process.env.REACT_APP_API_URL}/refresh-token`, {
         withCredentials: true
     })
     return res.data 
 }
 
 export const updateUser = async (id, data) => {
-    const res = await axios.patch(`${process.env.REACT_APP_API_URL}/users/update-user/${id}`, data)
+    const res = await axios.patch(`${process.env.REACT_APP_API_URL}/update-user/${id}`, data)
     return res.data
 }

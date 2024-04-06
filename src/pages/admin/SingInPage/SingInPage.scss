@@ -1,0 +1,18 @@
+body {
+    height: 100vh;
+    background: linear-gradient(to right, #ee10b0, #0e9eef);
+}
+.page__admin--login {
+    padding-top: 100px;
+
+    .form-login {
+        background-color: rgba(0,0,0,0.2);
+
+        h2 {
+            color: #ffffff;
+            font-size: 1.5em;
+            font-weight: 400;
+        }
+    }
+    
+}
