@@ -16,6 +16,7 @@ const AccountComponent = (props) => {
 
   
   const handleLogout = async () => {
+    // localStorage.removeItem('access_token');
     await UserService.logoutUser()
     dispatch(resetUser())
     navigate('/')

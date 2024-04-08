@@ -7,8 +7,14 @@ import ProductsPage from "../pages/client/ProductsPage/ProductsPage";
 import ProfilePage from "../pages/client/ProfilePage/ProfilePage";
 import SingInPageClient from "../pages/client/SingInPage/SingInPage";
 import SingUpPage from "../pages/client/SingUpPage/SingUpPage";
+
 import SingInPageAdmin from "../pages/admin/SingInPage/SingInPage";
 import LayoutAdminDefault from "../components/LayoutAdminDefault/LayoutAdminDefault";
+import DashBoardPage from "../pages/admin/DashBoardPage/DashBoardPage";
+import PrivateRoutes from "../components/PrivateRoutes";
+import PostPageMN from "../pages/admin/PostPageMN/PostPageMN";
+import ProductPageMN from "../pages/admin/ProductPageMN/ProductPageMN";
+import UserPageMN from "../pages/admin/UserPageMN/UsersPageMN";
 
 
 export const Routes = [
@@ -47,12 +53,39 @@ export const Routes = [
         ]
     },
     {
-        path: '/system/admin',
+        path: '/admin',
         element: <SingInPageAdmin />
     },
     {
-        path: '/system/admin/dashboard',
-        element: <LayoutAdminDefault />
+        element: <PrivateRoutes />, 
+        children: [
+            {
+                path: '/system/admin',
+                element: <LayoutAdminDefault />,
+                children: [
+                    {
+                        path: '',
+                        element: <DashBoardPage />
+                    },
+                    {
+                        path: 'posts', 
+                        element: <PostPageMN />
+                    },
+                    {
+                        path: 'products', 
+                        element: <ProductPageMN />
+                    },
+                    {
+                        path: 'users', 
+                        element: <UserPageMN />
+                    },
+                    {
+                        path: 'admin', 
+                        element: <UserPageMN />
+                    }
+                ]
+            }
+        ]
     }
     
 ]

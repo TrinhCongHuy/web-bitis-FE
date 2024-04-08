@@ -147,13 +147,6 @@ const ProfilePage = () => {
                                         objectFit: 'cover'
                                     }} alt="avatar"/>
                                 )}
-                                {/* <Input type="file" name="avatar" onChange={(e) => handleChange(e, 'avatar')} /> */}
-                                {/* <form encType="multipart/form-data">
-                                    <div>
-                                        <label htmlFor="fileInput">Chọn ảnh:</label>
-                                        <input type="file" name="avatar" onChange={(e) => handleChange(e, 'avatar')} />
-                                    </div>
-                                </form> */}
                             </Space>
                             
                         </Modal>

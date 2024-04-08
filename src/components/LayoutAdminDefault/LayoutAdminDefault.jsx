@@ -25,9 +25,10 @@ const LayoutAdminDefault = () => {
       } = theme.useToken();
 
     const handleLogout = async () => {
+        localStorage.removeItem('access_token');
         await UserService.logoutUser()
         dispatch(resetUser())
-        navigate('/system/admin')
+        navigate('/admin')
     }
 
     return (
@@ -37,36 +38,27 @@ const LayoutAdminDefault = () => {
                     <span>Admin</span>
                 </div>
                 <Menu
-                    theme="dark"
-                    mode="inline"
-                    defaultSelectedKeys={['1']}
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column'
-                    }}
-                    items={[
-                        {
-                            key: '1',
-                            icon: <WindowsOutlined />,
-                            label: 'Tổng quan',
-                        },
-                        {
-                            key: '2',
-                            icon: <FormOutlined />,
-                            label: 'Bài viết',
-                        },
-                        {
-                            key: '3',
-                            icon: <UserOutlined />,
-                            label: 'Người dùng',
-                        },
-                        {
-                            key: '4',
-                            icon: <MergeOutlined />,
-                            label: 'Sản phẩm',
-                        },
-                    ]}
-                />
+                theme="dark"
+                mode="inline"
+                defaultSelectedKeys={['1']}
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column'
+                }}
+                >
+                    <Menu.Item key="1" icon={<WindowsOutlined />}>
+                        <Link to="/system/admin">Tổng quan</Link>
+                    </Menu.Item>
+                    <Menu.Item key="2" icon={<FormOutlined />}>
+                        <Link to="/system/admin/posts">Bài viết</Link>
+                    </Menu.Item>
+                    <Menu.Item key="4" icon={<MergeOutlined />}>
+                        <Link to="/system/admin/products">Sản phẩm</Link>
+                    </Menu.Item>
+                    <Menu.Item key="3" icon={<UserOutlined />}>
+                        <Link to="/system/admin/users">Khách hàng</Link>
+                    </Menu.Item>
+                </Menu>
             </Sider>
             <Layout>
                 <Header
