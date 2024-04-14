@@ -1,16 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 import './NavBarComponent.scss'
 import { Checkbox } from "antd";
 import { Link } from "react-router-dom";
+import * as ProductService from '../../services/ProductService'
+import { useQuery } from '@tanstack/react-query'
 
 
-const NavBarComponent = () => {
+
+
+const NavBarComponent = (props) => {
+    const { onTypeClick } = props
+    const [activeLink, setActiveLink] = useState(null);
+
+    // fetch types product
+    const fetchTypesProduct = async () => {
+        const res = await ProductService.listTypes()
+        return res.data
+    }
+
+    const { data: typesProduct } = useQuery({
+        queryKey: ['products'], 
+        queryFn: fetchTypesProduct, 
+        config: {
+        retry: 3,
+        retryDelay: 1000,
+        keePreviousData: true
+        }
+    });
+
+    const handleTypeProduct = (type) => {
+        onTypeClick(type)
+        setActiveLink(type)
+    }
+    
     const renderContent = (type, options) => {
         switch (type) {
             case 'text':
                 return options.map((option, index) => {
-                    return <div  key={index} style={{padding: '10px 0', borderBottom: '1px solid #999'}}>
-                        <Link style={{color: '#000'}}>{option}</Link>
+                    return <div key={index} style={{padding: '10px 0'}}>
+                        <Link className={`text-link ${activeLink === option ? 'active' : ''}`} onClick={() => handleTypeProduct(option)}>{option}</Link>
                     </div>
                 })
             case 'checkbox':
@@ -29,16 +57,17 @@ const NavBarComponent = () => {
         <>
             <div className="navbar">
                 <div className="navbar-title">
-                    Danh mục sản phẩm
+                    Các danh mục
                 </div>
                 <div className="navbar-content">
-                    {renderContent('text', ['Nam', 'Nữ', 'Bé trai', 'Bé gái', 'Phụ kiện'])}
-                    {renderContent('checkbox', [
+                    {typesProduct && renderContent('text', [...typesProduct])}
+                    
+                    {/* {renderContent('checkbox', [
                         {value: 'A', lable: 'A'},
                         {value: 'B', lable: 'B'},
                         {value: 'C', lable: 'C'},
 
-                    ])}
+                    ])} */}
 
                 </div>
             </div>

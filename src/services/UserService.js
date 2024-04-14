@@ -3,10 +3,26 @@ import axios from "axios"
 
 export const axiosJWT = axios.create()
 
+export const listUser = async () => {
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/list-user`, )
+    return res.data
+}
+
+export const listAccounts = async () => {
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/list-account`, )
+    return res.data
+}
+
 export const loginUser = async (data) => {
     const res = await axios.post(`${process.env.REACT_APP_API_URL}/sing-in`, data)
     return res.data
 }
+
+export const createAccount = async (data) => {
+    const res = await axios.post(`${process.env.REACT_APP_API_URL}/create-account`, data)
+    return res.data
+}
+
 
 export const logoutUser = async () => {
     const res = await axios.post(`${process.env.REACT_APP_API_URL}/log-out`)
@@ -34,7 +50,45 @@ export const refreshToken = async () => {
     return res.data 
 }
 
-export const updateUser = async (id, data) => {
-    const res = await axios.patch(`${process.env.REACT_APP_API_URL}/update-user/${id}`, data)
+// export const updateUser = async (id, data) => {
+//     const res = await axios.patch(`${process.env.REACT_APP_API_URL}/update-user/${id}`, data)
+//     return res.data
+// }
+
+export const updateUser = async ({id, access_token, rests}) => {
+    try {
+        const res = await axiosJWT.patch(
+            `${process.env.REACT_APP_API_URL}/update-user/${id}`,
+            rests,
+            {
+                headers: {
+                    token: `Bearer ${access_token}`
+                }
+            }
+        );
+        return res.data;
+    } catch (error) {
+        console.error("Error updating product:", error);
+        throw error;
+    }
+};
+
+export const deleteUser = async ({id, access_token}) => {
+    const res = await axiosJWT.delete(`${process.env.REACT_APP_API_URL}/delete-user/${id}`, 
+        {
+            headers: {
+                token: `Bearer ${access_token}`
+            }
+        })
+    return res.data
+}
+
+export const deleteManyUser = async ({access_token, data}) => {
+    const res = await axiosJWT.post(`${process.env.REACT_APP_API_URL}/delete-many`, data, 
+        {
+            headers: {
+                token: `Bearer ${access_token}`
+            }
+        })
     return res.data
 }

@@ -1,21 +1,21 @@
-/* eslint-disable no-use-before-define */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from "react";
-import { Divider, Button, Modal, Form, Input, Upload, Space, Popconfirm, Select } from "antd";
+import { Divider, Button, Modal, Form, Input, Upload, Space, Popconfirm } from "antd";
 import { PlusSquareOutlined, UploadOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import TableComponent from "../../../components/TableComponent/TableComponent";
 import { getBase64 } from "../../../utils";
-import * as ProductService from "../../../services/ProductService";
+import * as UserService from '../../../services/UserService'
 import { UseMutationHook } from "../../../hooks/useMutationHook";
 import * as message from '../../../components/Message/message'
 import { useQuery } from '@tanstack/react-query'
-import "./ProductPageMN.scss";
 import DrawerComponent from "../../../components/DrawerComponent/DrawerComponent";
 import { useSelector } from 'react-redux';
 import Loading from "../../../components/LoadingComponent/loading";
+import './QTVPageMN.scss'
 const { TextArea } = Input;
 
-const ProductPageMN = () => {
+
+const QTVPageMN = () => {
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
   const user = useSelector(state => state.user)
@@ -29,7 +29,8 @@ const ProductPageMN = () => {
   const renderAction = (record) => {
     return (
       <Space>
-        <EditOutlined style={{color: 'orange', cursor: 'pointer', fontSize: '18px'}} onClick={handleDetailProduct}/>
+        <EditOutlined style={{color: 'orange', cursor: 'pointer', fontSize: '18px'}} onClick={handleDetailUser}/>
+        {/* <DeleteOutlined style={{color: 'red', cursor: 'pointer', fontSize: '18px'}}/> */}
         {columns.length >= 1 && (
           <Popconfirm title="Bạn có chắc chắn muốn xóa?" onConfirm={() => handleDelete(record.key)}>
             <DeleteOutlined style={{color: 'red', cursor: 'pointer', fontSize: '18px'}}/>
@@ -107,7 +108,6 @@ const ProductPageMN = () => {
       }
     },
   });
-  
 
   const columns = [
     {
@@ -118,78 +118,9 @@ const ProductPageMN = () => {
       ...getColumnSearchProps('name')
     },
     {
-      title: 'Price',
-      dataIndex: 'price',
-      sorter: (a, b) => a.price - b.price,
-      filters: [
-        {
-          text: '>=500000',
-          value: '>=500000',
-        },
-        {
-          text: '<=500000',
-          value: '<=500000',
-        },
-        {
-          text: '>=1000000',
-          value: '>=1000000',
-        },
-        {
-          text: '<=1000000',
-          value: '<=1000000',
-        },
-      ],
-      onFilter: (value, record) => {
-        if (value === '>=500000') { 
-          return record.price >= 500000;
-        }
-        if (value === '<=500000') {
-          return record.price <= 500000;
-        }
-        if (value === '>=1000000') {
-          return record.price >= 1000000;
-        }
-        if (value === '<=1000000') {
-          return record.price <= 1000000;
-        }
-        return true;
-      },      
-      filterMode: 'tree',
-    },
-    {
-      title: 'Rating',
-      dataIndex: 'rating',
-      sorter: (a, b) => a.rating - b.rating,
-      filters: [
-        {
-          text: '>=3',
-          value: '>=',
-        },
-        {
-          text: '<=3',
-          value: '<=',
-        },
-      ],
-      onFilter: (value, record) => {
-        if (value === '>=') {
-          return Number(record.rating) >= 3
-        }
-        return Number(record.rating) <= 3
-      },
-      filterMode: 'tree',
-    },
-    {
-      title: 'Discount',
-      dataIndex: 'discount'
-    },
-    {
-      title: 'Type',
-      dataIndex: 'type',
-      ...getColumnSearchProps('type')
-    },
-    {
-      title: 'CountInStock',
-      dataIndex: 'countInStock',
+      title: 'Email',
+      dataIndex: 'email',
+      sorter: (a, b) => a.email - b.email,
     },
     {
       title: 'Action',
@@ -198,44 +129,41 @@ const ProductPageMN = () => {
     },
   ];
 
-  //=============== Display products ==================//
 
-  const [ stateProduct, setStateProduct ] = useState({
+  const [ stateUser, setStateUser ] = useState({
     name: "",
-    price: "",
-    description: "",
-    rating: "",
-    discount: "",
-    image: "",
-    type: "",
-    countInStock: "",
+    email: "",
+    password: "",
+    avatar: "",
   });
 
   const mutation = UseMutationHook((data) => {
-    const { name, price, description, rating, discount, image, type, countInStock } = data;
-    const res = ProductService.createProduct({ name, price, description, rating, discount, image, type, countInStock });
+    const { name, email, avatar, password } = data;
+    const res = UserService.createAccount({ name, email, avatar, password });
     return res
   });
 
 
-  const fetchProductAll = async () => {
-    const res = await ProductService.listProduct()
+
+  const fetchAccountAll = async () => {
+    const res = await UserService.listAccounts()
     return res
   }
+
 
   const { data, isLoading, isSuccess, isError } = mutation
 
   // Lấy ra ds sản phẩm
-  const queryProducts = useQuery({
-    queryKey: ['products'], 
-    queryFn: fetchProductAll
+  const queryUsers = useQuery({
+    queryKey: ['users'], 
+    queryFn: fetchAccountAll
   });
 
-  const { isLoading: isLoadingProducts, data: products } = queryProducts
+  const { isLoading: isLoadingUsers, data: users } = queryUsers
 
 
-  const dataTable = products?.data.length && products?.data.map((product) => {
-    return {...product, key: product._id}
+  const dataTable = users?.data.length && users?.data.map((user) => {
+    return {...user, key: user._id }
   })
 
   useEffect(() => {
@@ -254,31 +182,27 @@ const ProductPageMN = () => {
   
   const handleCancel = () => {
     setOpen(false);
-    setStateProduct({
+    setStateUser({
       name: "",
-      price: "",
-      description: "",
-      rating: "",
-      discount: "",
-      image: "",
-      type: "",
-      countInStock: "",
+      email: "",
+      password: "",
+      avatar: "",
     })
     form.resetFields()
   };
 
   //   form
   const onFinish = () => {
-    mutation.mutate(stateProduct, {
+    mutation.mutate(stateUser, {
       onSettled: () => {
-        queryProducts.refetch()
+        queryUsers.refetch()
       }
     })
   };
 
   const handleOnChange = (e) => {
-    setStateProduct({
-      ...stateProduct,
+    setStateUser({
+      ...stateUser,
       [e.target.name]: e.target.value,
     });
   };
@@ -289,28 +213,26 @@ const ProductPageMN = () => {
       file.preview = await getBase64(file.originFileObj);
     }
 
-    setStateProduct({
-      ...stateProduct,
-      image: file.preview,
+    setStateUser({
+      ...stateUser,
+      avatar: file.preview,
     });
   };
 
-  //================= EDIT PRODUCT ==================//
+  //===================================================
 
-  const [ stateProductDetail, setStateProductDetail ] = useState({
-    name: "",
-    price: "",
-    description: "",
-    rating: "",
-    discount: "",
-    image: "",
-    type: "",
-    countInStock: "",
+
+  //================= EDIT USER ==================//
+
+  const [ stateUserDetail, setStateUserDetail ] = useState({
+      name: "",
+      email: "",
+      avatar: "",
   });
 
   const mutationUpdate = UseMutationHook((data) => {
     const { id, token, ...rests } = data;
-    const res = ProductService.updateProduct({ id, token, rests });
+    const res = UserService.updateUser({ id, token, rests });
     return res
   });
 
@@ -327,38 +249,29 @@ const ProductPageMN = () => {
 
   const handleCancelUpdate = () => {
     setIsOpenDraw(false);
-    setStateProductDetail({
+    setStateUserDetail({
       name: "",
-      price: "",
-      description: "",
-      rating: "",
-      discount: "",
-      image: "",
-      type: "",
-      countInStock: "",
+      email: "",
+      avatar: "",
     })
     form.resetFields()
   };
 
 
-  const fetchGetDetailProduct = async (id) => {
+  const fetchGetDetailUser = async (id) => {
     try {
-      const res = await ProductService.getDetailProduct(id);
+      const res = await UserService.getDetailUser(id);
+      console.log('res', res)
       if (res?.data) {
-        setStateProductDetail({
+        setStateUserDetail({
           name: res.data.name,
-          price: res.data.price,
-          description: res.data.description,
-          rating: res.data.rating,
-          discount: res.data.discount,
-          image: res.data.image,
-          type: res.data.type,
-          countInStock: res.data.countInStock,
+          email: res.data.email,
+          avatar: res.data.avatar,
         });
         form.setFieldsValue(res.data);
       }
     } catch (error) {
-      console.error("Error fetching product details:", error);
+      console.error("Error fetching user details:", error);
     }
     setIsLoadingUpdate(false)
   };
@@ -366,11 +279,11 @@ const ProductPageMN = () => {
   useEffect(() => {
     if (rowSelected && isOpenDraw) {
       setIsLoadingUpdate(true)
-      fetchGetDetailProduct(rowSelected)
+      fetchGetDetailUser(rowSelected)
     }
   }, [rowSelected, isOpenDraw])
 
-  const handleDetailProduct = () => {
+  const handleDetailUser = () => {
     setIsOpenDraw(true)
   }
 
@@ -380,32 +293,34 @@ const ProductPageMN = () => {
       file.preview = await getBase64(file.originFileObj);
     }
 
-    setStateProductDetail({
-      ...stateProductDetail,
-      image: file.preview,
+    setStateUserDetail({
+      ...stateUserDetail,
+      avatar: file.preview,
     });
   };
 
   const handleOnChangeDetail = (e) => {
-    setStateProductDetail({
-      ...stateProductDetail,
+    setStateUserDetail({
+      ...stateUserDetail,
       [e.target.name]: e.target.value,
     });
   };
 
-  const onUpdateProduct = () => {
-    mutationUpdate.mutate({id: rowSelected, token: user?.access_token, ...stateProductDetail}, {
+  const onUpdateUser = () => {
+    mutationUpdate.mutate({id: rowSelected, token: user?.access_token, ...stateUserDetail}, {
       onSettled: () => {
-        queryProducts.refetch()
+        queryUsers.refetch()
       }
     })
   }
+
+  //====================================
 
   // ============== DELETE ============= //
 
   const mutationDeleted = UseMutationHook((data) => {
     const { id, token } = data;
-    const res = ProductService.deleteProduct({ id, token });
+    const res = UserService.deleteUser({ id, token });
     return res
   });
 
@@ -424,83 +339,21 @@ const ProductPageMN = () => {
   const handleDelete = (key) => {
     mutationDeleted.mutate({ id: key, token: user?.access_token }, {
       onSettled: () => {
-        queryProducts.refetch()
-      }
-    })
-  };
-  
-
-  // ============== DELETE-MANY============= //
-
-  const mutationDeletedMany = UseMutationHook((data) => {
-    const { token, ...ids } = data;
-    console.log('data', data);
-    const res = ProductService.deleteManyProduct({ access_token: token, data: ids });
-    return res;
-});
-
-  const { data: dataDeletedMany, isSuccess: isSuccessDeletedMany, isError: isErrorDeletedMany } = mutationDeletedMany
-
-  useEffect(() => {
-    if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
-      message.success()
-    }else if (isErrorDeletedMany) {
-      message.error()
-    }
-  }, [isSuccessDeletedMany, isErrorDeletedMany])
-
-  const handleDeletedManyProduct = (ids) => {
-    mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {
-      onSettled: () => {
-        queryProducts.refetch()
+        queryUsers.refetch()
       }
     })
   };
 
-
-  // fetch types product
-  const fetchTypesProduct = async () => {
-    const res = await ProductService.listTypes()
-    return res.data
-  }
-
-  const { data: typesProduct } = useQuery({
-    queryKey: ['type-product'], 
-    queryFn: fetchTypesProduct, 
-    config: {
-      retry: 3,
-      retryDelay: 1000,
-      keePreviousData: true
-    }
-  });
-
-  let options = [];
-
-  if (typesProduct && Array.isArray(typesProduct)) {
-    options = typesProduct.map((item) => ({
-      value: item, 
-      label: item, 
-      name: 'type',
-    }));
-  }
-
-  const handleOnChangeSelect = (value) => {
-    setStateProduct({
-      ...stateProduct,
-      type: value,
-    });
-  };
-  
 
   return (
     <>
-      <Divider>Quản lý sản phẩm</Divider>
+      <Divider>Quản lý quản trị viên</Divider>
 
-      <Button className="btn-add" onClick={showModal}>
-        <PlusSquareOutlined className="icon-add" />
+      <Button className='btn-add' onClick={showModal}>
+        <PlusSquareOutlined className='icon-add'/>
       </Button>
 
-      <TableComponent handleDeletedMany={handleDeletedManyProduct} columns={columns} isLoading={isLoadingProducts} data={dataTable} 
+      <TableComponent columns={columns} isLoading={isLoadingUsers} data={dataTable} 
         onRow={(record, rowIndex) => {
           return {
             onClick: event => {
@@ -511,7 +364,7 @@ const ProductPageMN = () => {
       />
 
       <Modal
-        title="Tạo mới sản phẩm"
+        title="Tạo mới thành viên"
         forceRender
         open={open}
         onCancel={handleCancel}
@@ -547,119 +400,68 @@ const ProductPageMN = () => {
               ]}
             >
               <Input
-                value={stateProduct.name}
+                value={stateUser.name}
                 name="name"
                 onChange={handleOnChange}
               />
             </Form.Item>
             <Form.Item
-              label="Type"
-              name="type"
+              label="Email"
+              name="email"
               rules={[
                 {
                   required: true,
-                  message: "Please input your type product!",
+                  message: "Please input your email user!",
                 },
               ]}
             >
-              <Select
-                placeholder="Type product"
-                onChange={handleOnChangeSelect}
-                allowClear
-                name='type'
-                options={options}
+              {/* <Select
+                    placeholder="Select a option and change input text above"
+                    onChange={handleOnChange}
+                    allowClear
+                    name='type'
+                  >
+                    <Option value="male">male</Option>
+                    <Option value="female">female</Option>
+                    <Option value="other">other</Option>
+                  </Select> */}
+              <Input
+                value={stateUser.email}
+                name="email"
+                onChange={handleOnChange}
               />
             </Form.Item>
             <Form.Item
-              label="CountInStock"
-              name="countInStock"
+              label="Password"
+              name="password"
               rules={[
                 {
                   required: true,
-                  message: "Please input your countInStock!",
+                  message: "Please input your password account!",
                 },
               ]}
             >
               <Input
-                value={stateProduct.countInStock}
-                name="countInStock"
+                value={stateUser.password}
+                name="password"
                 onChange={handleOnChange}
               />
             </Form.Item>
             <Form.Item
-              label="Price"
-              name="price"
+              label="Avatar"
+              name="avatar"
               rules={[
                 {
                   required: true,
-                  message: "Please input your price product!",
-                },
-              ]}
-            >
-              <Input
-                value={stateProduct.price}
-                name="price"
-                onChange={handleOnChange}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Description"
-              name="description"
-            >
-              <TextArea
-                rows={4}
-                value={stateProduct.description}
-                name="description"
-                onChange={handleOnChange}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Rating"
-              name="rating"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your rating product!",
-                },
-              ]}
-            >
-              <Input
-                value={stateProduct.rating}
-                name="rating"
-                onChange={handleOnChange}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Discount"
-              name="discount"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your discount product!",
-                },
-              ]}
-            >
-              <Input
-                value={stateProduct.discount}
-                name="discount"
-                onChange={handleOnChange}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Image"
-              name="image"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your image product!",
+                  message: "Please input your avatar user!",
                 },
               ]}
             >
               <Upload onChange={handleChangeAvatar} maxCount={1}>
                 <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                {stateProduct?.image && (
+                {stateUser?.avatar && (
                 <img
-                  src={stateProduct?.image}
+                  src={stateUser?.avatar}
                   style={{
                     height: "60px",
                     width: "60px",
@@ -687,7 +489,7 @@ const ProductPageMN = () => {
         </Loading>
       </Modal>
 
-      <DrawerComponent title="Chi tiết sản phẩm" isOpen={isOpenDraw} onClose={() => setIsOpenDraw(false)} width='50%'>
+      <DrawerComponent title="Chi tiết thành viên" isOpen={isOpenDraw} onClose={() => setIsOpenDraw(false)} width='50%'>
         <Loading isLoading={isLoadingUpdate || isLoadingUpdated}>
           <Form
             name="basic"
@@ -700,7 +502,7 @@ const ProductPageMN = () => {
             style={{
               maxWidth: 600,
             }}
-            onFinish={onUpdateProduct}
+            onFinish={onUpdateUser}
             autoComplete="on"
             form={form}
           >
@@ -715,18 +517,18 @@ const ProductPageMN = () => {
               ]}
             >
               <Input
-                value={stateProductDetail['name']}
+                value={setStateUserDetail['name']}
                 name="name"
                 onChange={handleOnChangeDetail}
               />
             </Form.Item>
             <Form.Item
-              label="Type"
-              name="type"
+              label="Email"
+              name="email"
               rules={[
                 {
                   required: true,
-                  message: "Please input your type product!",
+                  message: "Please input your email user!",
                 },
               ]}
             >
@@ -734,47 +536,15 @@ const ProductPageMN = () => {
                     placeholder="Select a option and change input text above"
                     onChange={handleOnChangeDetail}
                     allowClear
-                    name='type'
+                    name='email'
                   >
                     <Option value="male">male</Option>
                     <Option value="female">female</Option>
                     <Option value="other">other</Option>
                   </Select> */}
               <Input
-                value={stateProductDetail.type}
-                name="type"
-                onChange={handleOnChangeDetail}
-              />
-            </Form.Item>
-            <Form.Item
-              label="CountInStock"
-              name="countInStock"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your countInStock!",
-                },
-              ]}
-            >
-              <Input
-                value={stateProductDetail.countInStock}
-                name="countInStock"
-                onChange={handleOnChangeDetail}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Price"
-              name="price"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your price product!",
-                },
-              ]}
-            >
-              <Input
-                value={stateProductDetail.price}
-                name="price"
+                value={setStateUserDetail.email}
+                name="email"
                 onChange={handleOnChangeDetail}
               />
             </Form.Item>
@@ -784,58 +554,26 @@ const ProductPageMN = () => {
             >
               <TextArea
                 rows={4}
-                value={stateProductDetail.description}
+                value={setStateUserDetail.description}
                 name="description"
                 onChange={handleOnChangeDetail}
               />
             </Form.Item>
             <Form.Item
-              label="Rating"
-              name="rating"
+              label="Avatar"
+              name="avatar"
               rules={[
                 {
                   required: true,
-                  message: "Please input your rating product!",
+                  message: "Please input your avatar account!",
                 },
               ]}
             >
-              <Input
-                value={stateProductDetail.rating}
-                name="rating"
-                onChange={handleOnChangeDetail}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Discount"
-              name="discount"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your discount product!",
-                },
-              ]}
-            >
-              <Input
-                value={stateProductDetail.discount}
-                name="discount"
-                onChange={handleOnChangeDetail}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Image"
-              name="image"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your image product!",
-                },
-              ]}
-            >
-              <Upload fileList={stateProduct?.image ? [{uid: '-1', url: stateProduct.image}] : []} onChange={handleChangeAvatarDetail} maxCount={1}>
+              <Upload fileList={stateUser?.avatar ? [{uid: '-1', url: stateUser.avatar}] : []} onChange={handleChangeAvatarDetail} maxCount={1}>
                 <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                {stateProductDetail?.image && (
+                {stateUserDetail?.avatar && (
                   <img
-                    src={stateProductDetail?.image}
+                    src={stateUserDetail?.avatar}
                     style={{
                       height: "60px",
                       width: "60px",
@@ -862,9 +600,8 @@ const ProductPageMN = () => {
           </Form>
         </Loading>
       </DrawerComponent>
-
     </>
-  );
-};
+  )
+}
 
-export default ProductPageMN;
+export default QTVPageMN

@@ -1,5 +1,5 @@
 .page__products {
-
+    margin-top: 35px;
     .wrapper {
 
         .products {
@@ -11,5 +11,10 @@
             margin-top: 20px;
             text-align: center;
         }
+    }
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 50px;
     }
 }

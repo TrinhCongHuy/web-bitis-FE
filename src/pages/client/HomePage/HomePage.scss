@@ -1,7 +1,6 @@
 .page__home {
     margin-top: 3em;
     padding-top: 3em;
-    border-top: 1px solid #c7c4c4;
 
     .wrapper {
         .products {
@@ -11,16 +10,33 @@
         }
 
         .btn-more {
-            text-align: center;
-            margin-top: 30px;
+            text-align: end;
+            margin-bottom: 10px;
+            overflow: hidden;
             Button {
-                border: 1px solid #000;
                 color: #000;
 
                 &:hover {
-                    border: 1px solid #439ecb;
                     color: #439ecb;
                 }
+                transform: translateX(250%);
+                -webkit-transform: translateX(250%);
+                -moz-transform: translateX(250%);
+                -ms-transform: translateX(250%);
+                -o-transform: translateX(250%);
+                transition: all 0.5s ease-in;
+                -webkit-transition: all 0.5s ease-in;
+                -moz-transition: all 0.5s ease-in;
+                -ms-transition: all 0.5s ease-in;
+                -o-transition: all 0.5s ease-in;
+}
+
+            &:hover Button {
+                transform: translateX(0);
+                -webkit-transform: translateX(0);
+                -moz-transform: translateX(0);
+                -ms-transform: translateX(0);
+                -o-transform: translateX(0);
             }
         }
     }

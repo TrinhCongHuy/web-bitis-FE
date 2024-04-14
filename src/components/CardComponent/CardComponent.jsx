@@ -2,10 +2,16 @@ import { Card, Rate } from "antd"
 import { Link } from "react-router-dom"
 import { EyeOutlined, HeartOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import './CardComponent.scss'
+import { useNavigate } from 'react-router-dom'
 
 
 const CardComponent = (props) => {
-    const { product } = props
+    const { product, id } = props
+    const navigate = useNavigate()
+
+    const handleDetailProduct = (id) => {
+        navigate(`/product-detail/${id}`)
+    }
 
     return (
         <div className="product__item">
@@ -15,6 +21,7 @@ const CardComponent = (props) => {
                 width: 240,
                 }}
                 cover={<img alt="example" src={product.image} />}
+                onClick={() => handleDetailProduct(id)}
             >
                 <div className="hoverable">
                     <ul>

@@ -7,12 +7,11 @@ import './LayoutDefault.scss'
 const { Content } = Layout;
 
 function LayoutDefault () {
-
     return (
         <>
             <Layout className="layout__default">
-                <HeaderDefault />
-                <Content>
+                <HeaderDefault/>
+                <Content className='main'>
                     <Outlet />
                 </Content>
                 <FooterDefault />

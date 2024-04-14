@@ -15,6 +15,7 @@ import PrivateRoutes from "../components/PrivateRoutes";
 import PostPageMN from "../pages/admin/PostPageMN/PostPageMN";
 import ProductPageMN from "../pages/admin/ProductPageMN/ProductPageMN";
 import UserPageMN from "../pages/admin/UserPageMN/UsersPageMN";
+import QTVPageMN from "../pages/admin/QTVPageMN/QTVPageMN";
 
 
 export const Routes = [
@@ -43,7 +44,7 @@ export const Routes = [
                 element: <SingUpPage />
             },
             {
-                path: '/product-detail',
+                path: '/product-detail/:id',
                 element: <ProductDetailPage />
             },
             {
@@ -80,8 +81,8 @@ export const Routes = [
                         element: <UserPageMN />
                     },
                     {
-                        path: 'admin', 
-                        element: <UserPageMN />
+                        path: 'accounts', 
+                        element: <QTVPageMN />
                     }
                 ]
             }
