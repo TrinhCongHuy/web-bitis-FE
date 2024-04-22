@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import { EyeOutlined, HeartOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import './CardComponent.scss'
 import { useNavigate } from 'react-router-dom'
+import { priceNew } from "../../utils";
 
 
 const CardComponent = (props) => {
@@ -56,8 +57,8 @@ const CardComponent = (props) => {
                     </div>
                     
                     <div className="product__content--price">
-                        <span className="current">{product.price} VNĐ</span>
-                        <span className="normal">1200 VNĐ</span>
+                        <span className="current">{priceNew(product.price, product.discount)} đ</span>
+                        <span className="normal">{product.price} đ</span>
                     </div>
                     <div className="product__content--stock">
                         <span>Sold: <strong className="qty-sold">{product.countInStock}</strong></span>

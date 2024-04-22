@@ -15,6 +15,7 @@ const { Search } = Input;
 
 const HeaderDefault = () => {
     const user = useSelector((state) => state.user)
+    const order = useSelector((state) => state.order)
     const [search, setSearch] = useState('')
     const dispatch = useDispatch()
     const [isSticky, setIsSticky] = useState(false);
@@ -116,11 +117,11 @@ const HeaderDefault = () => {
                                             <AccountComponent user={user}/>
                                         </div>
                                         <div className="action__item action__item--card">
-                                            <Link>
+                                            <Link to='/carts'>
                                                 <ShoppingCartOutlined />
                                             </Link>
                                             <span className='fly-item flexcenter'>
-                                                1
+                                                {order?.orderItems?.length || 0}
                                             </span>
                                         </div>
                                     </Space>

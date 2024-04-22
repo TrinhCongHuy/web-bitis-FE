@@ -1,7 +1,6 @@
 
 import LayoutDefault from "../components/LayoutDefault/LayoutDefault";
 import HomePage from "../pages/client/HomePage/HomePage";
-import OrderPage from "../pages/client/OrderPage/OrderPage";
 import ProductDetailPage from "../pages/client/ProductDetailPage/ProductDetailPage";
 import ProductsPage from "../pages/client/ProductsPage/ProductsPage";
 import ProfilePage from "../pages/client/ProfilePage/ProfilePage";
@@ -16,6 +15,8 @@ import PostPageMN from "../pages/admin/PostPageMN/PostPageMN";
 import ProductPageMN from "../pages/admin/ProductPageMN/ProductPageMN";
 import UserPageMN from "../pages/admin/UserPageMN/UsersPageMN";
 import QTVPageMN from "../pages/admin/QTVPageMN/QTVPageMN";
+import CheckOutPage from "../pages/client/CheckOutPage/CheckOutPage";
+import CartPage from "../pages/client/CartPage/CartPage";
 
 
 export const Routes = [
@@ -32,8 +33,12 @@ export const Routes = [
                 element: <ProductsPage />
             },
             {
-                path: '/order',
-                element: <OrderPage />
+                path: '/carts',
+                element: <CartPage />
+            },
+            {
+                path: '/checkout',
+                element: <CheckOutPage />
             },
             {
                 path: '/sing-in',

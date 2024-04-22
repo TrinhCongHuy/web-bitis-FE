@@ -2,19 +2,24 @@ import React, { useState } from 'react'
 import './ProductDetailPage.scss'
 import { Button, Col, Image, InputNumber, Rate, Row } from 'antd'
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import * as ProductService from "../../../services/ProductService";
+import * as CartService from "../../../services/CartService";
 import { useQuery } from '@tanstack/react-query'
 
 
 // Import Swiper styles
 import 'swiper/css';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { priceNew } from '../../../utils';
 
 const ProductDetailPage = () => {
     const {id} = useParams()
     const [numberProduct, setNumberProduct] = useState(1)
+    const user = useSelector((state) => state.user)
     const navigate = useNavigate()
+    const location = useLocation()
 
     const fetchGetDetailProduct = async (context) => {
         const id = context?.queryKey && context?.queryKey[1]
@@ -41,7 +46,24 @@ const ProductDetailPage = () => {
             setNumberProduct((prev) => prev - 1);
         }
     };
-    console.log('productDetails', productDetails)
+
+    const handleAddCartProduct = async () => {
+        if (!user?.id) {
+            navigate('/sing-in', {state: location?.pathname})
+        }else {
+            const data = {
+                user_id: user.id,
+                product_id: productDetails?._id,
+                quantity: numberProduct
+            };
+
+            try {
+                await CartService.createProductCart(data);
+            } catch (error) {
+                console.error('Error create product in cart:', error);
+            }
+        }
+    }
 
     return (
         <div className="container page__product--detail">
@@ -85,11 +107,10 @@ const ProductDetailPage = () => {
                                 <Rate allowHalf defaultValue={(productDetails?.rating)} />
                                 <span className="normal">(2,548)</span>
                             </div>
-
                             
                             <div className="product__content--price">
-                                <span className="current">${productDetails?.price}</span>
-                                <span className="normal">$189.98</span>
+                                <span className="current">{priceNew(productDetails?.price, productDetails?.discount)} đ</span>
+                                <span className="normal">{productDetails?.price} đ</span>
                             </div>
                             <div className="product__content--stock">
                                 <span>Sold: <strong className="qty-sold">3,459</strong></span>
@@ -100,7 +121,7 @@ const ProductDetailPage = () => {
                                 <button className="plus circle" onClick={() => handleClickNumber('increase')}>+</button>
                             </div>
                             <div className="btn-buy">
-                                <Button>Chọn mua</Button>
+                                <Button onClick={handleAddCartProduct}>Thêm vào giỏ hàng</Button>
                             </div>
 
                             {/* ////////// */}

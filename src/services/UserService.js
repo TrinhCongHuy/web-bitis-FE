@@ -8,6 +8,11 @@ export const listUser = async () => {
     return res.data
 }
 
+export const getUser = async (id) => {
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/user/${id}`, )
+    return res.data
+}
+
 export const listAccounts = async () => {
     const res = await axios.get(`${process.env.REACT_APP_API_URL}/list-account`, )
     return res.data
@@ -49,11 +54,6 @@ export const refreshToken = async () => {
     })
     return res.data 
 }
-
-// export const updateUser = async (id, data) => {
-//     const res = await axios.patch(`${process.env.REACT_APP_API_URL}/update-user/${id}`, data)
-//     return res.data
-// }
 
 export const updateUser = async ({id, access_token, rests}) => {
     try {

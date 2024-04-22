@@ -1,0 +1,97 @@
+.footer {
+    margin-top: 100px;
+    background-color: rgb(236, 228, 216);
+    padding-bottom: 20px;
+    &__main {
+        padding: 50px;
+
+        &--logo {
+            position: relative;
+            display: inline-block;
+            align-items: center;
+
+            .bitis-line {
+                position: absolute;
+                top: 0;
+                left: -25px;
+                height: 100%;
+                width: 5px;
+                background: linear-gradient(to bottom, #ff3366, #33ccff, #66ff33); /* Màu sắc gradient */
+            }
+            
+            span {
+                font-family: Arial, sans-serif;
+                font-size: 2em;
+                color: #ff3366;
+                font-weight: bold;
+                letter-spacing: 1px;
+                text-shadow: 1px 1px 1px #ccc;
+            }
+        }
+        &--info {
+
+            p {
+                cursor: pointer;
+
+                &:hover {
+                    color: #575656;
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+
+
+    &__bottom {
+
+        &--socials {
+            margin: 0 50px;
+            padding: 10px 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            -ms-border-radius: 10px;
+            -o-border-radius: 10px;   
+            text-align: center;   
+            
+            h3 {
+                font-size: 1.2em;
+            }
+
+            .social__list {
+                display: flex;
+                justify-content: center;
+
+                li {
+                    margin: 0 25px;
+
+                    .icon {
+                        font-size: 1.2em;
+                        cursor: pointer;
+                        transition: all 0.2s ease-in;
+                        -webkit-transition: all 0.2s ease-in;
+                        -moz-transition: all 0.2s ease-in;
+                        -ms-transition: all 0.2s ease-in;
+                        -o-transition: all 0.2s ease-in;
+                        
+                        &:hover{
+                           transform: scale(1.2);
+                           -webkit-transform: scale(1.2);
+                           -moz-transform: scale(1.2);
+                           -ms-transform: scale(1.2);
+                           -o-transform: scale(1.2);
+                        }
+                    }
+                }
+            }
+        }
+        &--copyright {
+            text-align: center;
+            margin-top: 20px;
+            span {
+                
+            }
+        }
+    }
+}

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import CardComponent from '../../../components/CardComponent/CardComponent'
-import { Button, Col, Row, Pagination } from 'antd'
+import { Col, Row, Pagination } from 'antd'
 import './ProductsPage.scss'
 import NavBarComponent from '../../../components/NavBarComponent/NavBarComponent'
 import FilterProduct from '../../../components/FilterProduct/FilterProduct'
@@ -9,7 +9,6 @@ import * as ProductService from '../../../services/ProductService'
 import { useQuery } from '@tanstack/react-query'
 import { useSelector } from 'react-redux'
 import { useDebounce } from '../../../hooks/useDebounce'
-import slugify from 'slugify';
 
 
 
@@ -26,7 +25,6 @@ const ProductsPage = () => {
   })
 
   // fetch product type
-
   const fetchProductAll = async (context) => {
     const limit = context?.queryKey && context?.queryKey[1]
     const search = context?.queryKey && context?.queryKey[2]
@@ -99,7 +97,7 @@ const ProductsPage = () => {
           </Row>          
         </div>
         <div className='pagination'>
-          <Pagination defaultCurrent={pagination.page + 1} total={pagination?.total} onChange={onChange}/>
+          <Pagination defaultCurrent={pagination.page + 1} total={pagination?.total * 10} onChange={onChange}/>
         </div>
         
       </div>

@@ -434,7 +434,6 @@ const ProductPageMN = () => {
 
   const mutationDeletedMany = UseMutationHook((data) => {
     const { token, ...ids } = data;
-    console.log('data', data);
     const res = ProductService.deleteManyProduct({ access_token: token, data: ids });
     return res;
 });

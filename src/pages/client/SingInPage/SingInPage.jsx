@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Col, Form, Input, Row } from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './SingInPage.scss'
 import * as UserService from '../../../services/UserService'
 import { UseMutationHook } from '../../../hooks/useMutationHook';
@@ -18,6 +18,7 @@ const SingInPageClient = () => {
   const [password, setPassword] = useState("")
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const location = useLocation()
 
 
   const mutation = UseMutationHook(
@@ -26,10 +27,13 @@ const SingInPageClient = () => {
   
   const { data, isSuccess, isError } = mutation
 
-
   useEffect(() => {
     if (data?.status === 'OK') {
-      navigate('/')
+      if (location?.state) {
+        navigate(location?.state)
+      }else {
+        navigate('/')
+      }
       localStorage.setItem('access_token', JSON.stringify(data?.access_token))
       if (data?.access_token) {
         const decoded = jwtDecode(data?.access_token);

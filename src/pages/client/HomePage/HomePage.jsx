@@ -14,7 +14,7 @@ const HomePage = () => {
   const searchProduct = useSelector((state) => state.product.search)
   const refSearch = useRef()
   const [isLoading, setIsLoading] = useState(false)
-  const [limit, setLimit] = useState(6)
+  const [limit, setLimit] = useState(12)
   const searchDebounce = useDebounce(searchProduct)
 
   const fetchProductAll = async (context) => {
@@ -73,6 +73,44 @@ const HomePage = () => {
             </div>
             <div className="wrapper" style={{marginTop: '50px'}}>
               <SuggestiveComponent title={'SẢN PHẨM ĐẶC TRƯNG'} description={'Bạn sẽ không thất vọng khi lựa chọn'}/>
+              <div className='btn-more'>
+                <Button type="text" onClick={() => setLimit((prev) => prev + 6)} disabled={products?.total === products?.data?.length || products.totalPage === 1}>Xem thêm {'\u00BB'}</Button>
+              </div>
+              <div className='products'>
+                {products?.data.length > 0 ? 
+                  <>
+                      {products?.data?.map((product, index) => (
+                          <CardComponent key={index} product={product} id={product._id}/>
+                      ))}
+                  </> 
+                  : 
+                  <> 
+                      {refSearch.current && <span></span>}
+                  </>
+                }
+              </div>
+            </div>
+            <div className="wrapper" style={{marginTop: '50px'}}>
+              <SuggestiveComponent title={'SẢN PHẨM MỚI'} description={'Những sản phẩm vừa ra mắt mới lạ cuốn hút người xem'}/>
+              <div className='btn-more'>
+                <Button type="text" onClick={() => setLimit((prev) => prev + 6)} disabled={products?.total === products?.data?.length || products.totalPage === 1}>Xem thêm {'\u00BB'}</Button>
+              </div>
+              <div className='products'>
+                {products?.data.length > 0 ? 
+                  <>
+                      {products?.data?.map((product, index) => (
+                          <CardComponent key={index} product={product} id={product._id}/>
+                      ))}
+                  </> 
+                  : 
+                  <> 
+                      {refSearch.current && <span></span>}
+                  </>
+                }
+              </div>
+            </div>
+            <div className="wrapper" style={{marginTop: '50px'}}>
+              <SuggestiveComponent title={'BLOG MỚI ĐĂNG'} description={'Những bài blog về thời trang mới nhất'}/>
               <div className='btn-more'>
                 <Button type="text" onClick={() => setLimit((prev) => prev + 6)} disabled={products?.total === products?.data?.length || products.totalPage === 1}>Xem thêm {'\u00BB'}</Button>
               </div>
