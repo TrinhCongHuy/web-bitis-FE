@@ -64,12 +64,14 @@ const ModalAddressComponent = (props) => {
   const onFinish = async (values) => {
     try {
       const userId = user?.id;
+      const existingDefaultAddress = user.address.find(address => address.isDefault);
+      
       const newAddress = {
           recipientName: values?.recipientName,
           overallAddress: values?.overallAddress,
           specificLocation: values?.specificLocation,
           phoneNumber: values?.phoneNumber,
-          isDefault: true
+          isDefault: !existingDefaultAddress
       };
 
       await UserService.updateUser({
@@ -81,9 +83,9 @@ const ModalAddressComponent = (props) => {
       });
 
       onCancel()
-  } catch (error) {
-      console.error('Lỗi khi lưu địa chỉ mới:', error);
-  }
+    } catch (error) {
+        console.error('Lỗi khi lưu địa chỉ mới:', error);
+    }
     
   }
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './ProductDetailPage.scss'
 import { Button, Col, Image, InputNumber, Rate, Row } from 'antd'
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -12,7 +12,9 @@ import { useQuery } from '@tanstack/react-query'
 import 'swiper/css';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { priceNew } from '../../../utils';
+import { initFacebookSDK, priceNew } from '../../../utils';
+import LikeBtnComponent from '../../../components/LikeBtnComponent/LikeBtnComponent';
+import CommentComponent from '../../../components/CommentComponent/CommentComponent';
 
 const ProductDetailPage = () => {
     const {id} = useParams()
@@ -26,6 +28,10 @@ const ProductDetailPage = () => {
         const res = await ProductService.getDetailProduct(id);
         return res?.data
     };
+
+    useEffect(() => {
+        initFacebookSDK()
+    }, [])
 
     const { data: productDetails } = useQuery({
         queryKey: ['product-details', id], 
@@ -41,11 +47,12 @@ const ProductDetailPage = () => {
     
     const handleClickNumber = (type) => {
         if (type === 'increase') {
-            setNumberProduct((prev) => prev + 1);
+            setNumberProduct((prev) => prev < productDetails?.countInStock ? prev + 1 : prev);
         } else if (type === 'decrease' && numberProduct > 1) {
             setNumberProduct((prev) => prev - 1);
         }
     };
+    
 
     const handleAddCartProduct = async () => {
         if (!user?.id) {
@@ -112,8 +119,12 @@ const ProductDetailPage = () => {
                                 <span className="current">{priceNew(productDetails?.price, productDetails?.discount)} đ</span>
                                 <span className="normal">{productDetails?.price} đ</span>
                             </div>
+                            <LikeBtnComponent dataHref={"https://developers.facebook.com/docs/plugins/"}/>
                             <div className="product__content--stock">
-                                <span>Sold: <strong className="qty-sold">3,459</strong></span>
+                                <span>Stock: <strong className="qty-stock">{productDetails?.countInStock}</strong></span>
+                            </div>
+                            <div className="product__content--sold">
+                                <span>Sold: <strong className="qty-sold">{productDetails?.sold}</strong></span>
                             </div>
                             <div className="product__content--qty flexitem">
                                 <button className="minus circle" onClick={() => handleClickNumber('decrease')}>-</button>
@@ -121,7 +132,7 @@ const ProductDetailPage = () => {
                                 <button className="plus circle" onClick={() => handleClickNumber('increase')}>+</button>
                             </div>
                             <div className="btn-buy">
-                                <Button onClick={handleAddCartProduct}>Thêm vào giỏ hàng</Button>
+                                <Button onClick={handleAddCartProduct} disabled={productDetails?.countInStock === 0}>Thêm vào giỏ hàng</Button>
                             </div>
 
                             {/* ////////// */}
@@ -195,6 +206,7 @@ const ProductDetailPage = () => {
                             </div> */}
                         </div> 
                     </Col>
+                    <CommentComponent dataHref={"https://developers.facebook.com/docs/plugins/comments#configurator"} width='1100'/>
                 </Row>
             }   
         </div>

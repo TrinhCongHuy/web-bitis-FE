@@ -9,13 +9,15 @@ import { Space } from 'antd';
 import AccountComponent from '../AccountComponent/AccountComponent'
 import { useSelector, useDispatch } from 'react-redux'
 import { searchProduct } from '../../redux/slides/productSlide'
+import * as CartService from '../../services/CartService'
+import { useQuery } from '@tanstack/react-query'
+
 
 
 const { Search } = Input;
 
 const HeaderDefault = () => {
     const user = useSelector((state) => state.user)
-    const order = useSelector((state) => state.order)
     const [search, setSearch] = useState('')
     const dispatch = useDispatch()
     const [isSticky, setIsSticky] = useState(false);
@@ -42,6 +44,30 @@ const HeaderDefault = () => {
         dispatch(searchProduct(e.target.value))
     }
 
+    const fetchProductsCart = async () => {
+        if (!user?.id) {
+            return [];
+        }else {
+            try {
+                const res = await CartService.listProductCart(user?.id);
+                return res.data || [];
+            } catch (error) {
+                console.error('Error fetching cart products:', error);
+                throw error;
+            }
+        }
+    };
+
+    const { data: carts } = useQuery({
+        queryKey: ['carts', user?.id], 
+        queryFn: fetchProductsCart, 
+        config: {
+          retry: 3,
+          retryDelay: 1000,
+          keePreviousData: true
+        }
+    });
+
     return (
         <>
             <div className="header__top">
@@ -49,7 +75,7 @@ const HeaderDefault = () => {
                     <Row>
                         <Col span={12} className='flexitem'>
                             <div className="header__top--contact flexcenter">
-                                <ul className='flexcenter'>
+                                <ul className='flexcenter' style={{display: 'flex', listStyle: 'none'}}>
                                     <li>
                                         <span>Hotline:</span>
                                         <span className='phone'>0966158666</span>
@@ -63,7 +89,7 @@ const HeaderDefault = () => {
                         </Col>
                         <Col span={6} offset={6}>
                             <div className="header__top--info">
-                                <ul>
+                                <ul style={{display: 'flex', listStyle: 'none'}}>
                                     <li>
                                         <Link to='#'>Tìm cửa hàng</Link>
                                     </li>
@@ -88,7 +114,7 @@ const HeaderDefault = () => {
                             </Col>
                             <Col span={12} className='flexcenter'>
                                 <div className="header__nav--menu">
-                                    <ul>
+                                    <ul style={{display: 'flex', listStyle: 'none'}}>
                                         <li>
                                             <Link to='/'>Trang chủ</Link>
                                         </li>
@@ -121,7 +147,7 @@ const HeaderDefault = () => {
                                                 <ShoppingCartOutlined />
                                             </Link>
                                             <span className='fly-item flexcenter'>
-                                                {order?.orderItems?.length || 0}
+                                                {carts?.length || 0}
                                             </span>
                                         </div>
                                     </Space>

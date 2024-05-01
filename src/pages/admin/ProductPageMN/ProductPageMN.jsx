@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { Divider, Button, Modal, Form, Input, Upload, Space, Popconfirm, Select } from "antd";
 import { PlusSquareOutlined, UploadOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import TableComponent from "../../../components/TableComponent/TableComponent";
-import { getBase64 } from "../../../utils";
 import * as ProductService from "../../../services/ProductService";
 import { UseMutationHook } from "../../../hooks/useMutationHook";
 import * as message from '../../../components/Message/message'
@@ -25,6 +24,7 @@ const ProductPageMN = () => {
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef(null);
+
 
   const renderAction = (record) => {
     return (
@@ -192,6 +192,10 @@ const ProductPageMN = () => {
       dataIndex: 'countInStock',
     },
     {
+      title: 'Sold',
+      dataIndex: 'sold',
+    },
+    {
       title: 'Action',
       dataIndex: 'action',
       render: (_, record) => renderAction(record)
@@ -209,11 +213,12 @@ const ProductPageMN = () => {
     image: "",
     type: "",
     countInStock: "",
+    sold: ""
   });
 
   const mutation = UseMutationHook((data) => {
-    const { name, price, description, rating, discount, image, type, countInStock } = data;
-    const res = ProductService.createProduct({ name, price, description, rating, discount, image, type, countInStock });
+    const { name, price, description, rating, discount, image, type, countInStock, sold } = data;
+    const res = ProductService.createProduct({ name, price, description, rating, discount, image, type, countInStock, sold });
     return res
   });
 
@@ -263,6 +268,7 @@ const ProductPageMN = () => {
       image: "",
       type: "",
       countInStock: "",
+      sold: ""
     })
     form.resetFields()
   };
@@ -283,17 +289,25 @@ const ProductPageMN = () => {
     });
   };
 
-  const handleChangeAvatar = async ({ fileList }) => {
-    const file = fileList[0];
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
-    }
-
+  const handleImageChange = (e) => {
     setStateProduct({
-      ...stateProduct,
-      image: file.preview,
+        ...stateProduct,
+        image: e.target.files[0],
     });
   };
+
+  // const handleChangeAvatar = ({ fileList }) => {
+  //   if (fileList.length > 0) {
+  //     const file = fileList[0];
+  //     if (!file.url && !file.preview) {
+  //       file.preview = URL.createObjectURL(file.originFileObj);
+  //     }
+  //     setStateProduct({
+  //       ...stateProduct,
+  //       image: file.preview,
+  //     });
+  //   }
+  // };
 
   //================= EDIT PRODUCT ==================//
 
@@ -306,6 +320,7 @@ const ProductPageMN = () => {
     image: "",
     type: "",
     countInStock: "",
+    sold: ""
   });
 
   const mutationUpdate = UseMutationHook((data) => {
@@ -336,6 +351,7 @@ const ProductPageMN = () => {
       image: "",
       type: "",
       countInStock: "",
+      sold: ""
     })
     form.resetFields()
   };
@@ -354,6 +370,7 @@ const ProductPageMN = () => {
           image: res.data.image,
           type: res.data.type,
           countInStock: res.data.countInStock,
+          sold: res.data.sold
         });
         form.setFieldsValue(res.data);
       }
@@ -374,15 +391,10 @@ const ProductPageMN = () => {
     setIsOpenDraw(true)
   }
 
-  const handleChangeAvatarDetail = async ({ fileList }) => {
-    const file = fileList[0];
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
-    }
-
+  const handleChangeImageDetail = (e) => {
     setStateProductDetail({
       ...stateProductDetail,
-      image: file.preview,
+      image: e.target.files[0],
     });
   };
 
@@ -493,7 +505,7 @@ const ProductPageMN = () => {
 
   return (
     <>
-      <Divider>Quản lý sản phẩm</Divider>
+      <Divider>QUẢN LÝ SẢN PHẨM</Divider>
 
       <Button className="btn-add" onClick={showModal}>
         <PlusSquareOutlined className="icon-add" />
@@ -644,7 +656,7 @@ const ProductPageMN = () => {
                 onChange={handleOnChange}
               />
             </Form.Item>
-            <Form.Item
+            {/* <Form.Item
               label="Image"
               name="image"
               rules={[
@@ -669,8 +681,10 @@ const ProductPageMN = () => {
                 />
               )}
               </Upload>
-            </Form.Item>
+            </Form.Item> */}
 
+            <label>Chọn ảnh</label>
+            <input type="file" id='file' multiple accept='image/*' onChange={handleImageChange} />
             <Form.Item
               wrapperCol={{
                 offset: 6,
@@ -820,7 +834,7 @@ const ProductPageMN = () => {
                 onChange={handleOnChangeDetail}
               />
             </Form.Item>
-            <Form.Item
+            {/* <Form.Item
               label="Image"
               name="image"
               rules={[
@@ -845,8 +859,10 @@ const ProductPageMN = () => {
                   />
                 )}
               </Upload>
-            </Form.Item>
+            </Form.Item> */}
 
+            <label>Chọn ảnh</label>
+            <input type="file" id='file' multiple accept='image/*' onChange={handleChangeImageDetail} />
             <Form.Item
               wrapperCol={{
                 offset: 6,

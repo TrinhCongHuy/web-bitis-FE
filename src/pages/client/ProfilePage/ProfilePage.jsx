@@ -22,16 +22,15 @@ const ProfilePage = () => {
         name: '',
         email: '',
         phone: '',
-        address: '',
         avatar: ''
     });
     
-    const [filteredUser, setFilteredUser] = useState({});
+    const [filteredUser, setFilteredUser] = useState([]);
 
     const mutation = UseMutationHook(
         (data) => {
-            const {id, ...rests} = data
-            UserService.updateUser(id, rests)
+            const {id, token, ...rests} = data
+            UserService.updateUser({id: id, token: token, rests: rests})
         }
     )
 
@@ -42,7 +41,6 @@ const ProfilePage = () => {
             name: initialUser?.name || '', 
             email: initialUser?.email || '', 
             phone: initialUser?.phone || '', 
-            address: initialUser?.address || '',
             avatar: initialUser?.avatar || ''
         }));
     }, [initialUser])
@@ -71,7 +69,9 @@ const ProfilePage = () => {
             setOpen(false);
             setConfirmLoading(false);
         }, 2000);
-        mutation.mutate({id: initialUser?.id, ...filteredUser})
+        console.log('filteredUser', filteredUser)
+        mutation.mutate({id: initialUser?.id, token: initialUser?.access_token, ...filteredUser})
+
     };
     
     const handleCancel = () => {
@@ -103,10 +103,11 @@ const ProfilePage = () => {
             avatar: file.preview
         }));
 
-        setFilteredUser(() => ({
-            avatar: file.preview
-        }))
+        // setFilteredUser(() => ({
+        //     avatar: file.preview
+        // }))
 
+        setFilteredUser(prevUser => ({ ...prevUser, avatar: file.preview }))
     }
 
 
@@ -135,7 +136,6 @@ const ProfilePage = () => {
                                 <Input value={initialUser.name} onChange={(e) => handleChange(e, 'name')} />
                                 <Input value={initialUser.email} onChange={(e) => handleChange(e, 'email')} />
                                 <Input value={initialUser.phone} onChange={(e) => handleChange(e, 'phone')} />
-                                <Input value={initialUser.address} onChange={(e) => handleChange(e, 'address')} />
                                 <Upload onChange={handleChangeAvatar}>
                                     <Button icon={<UploadOutlined />}>Click to Upload</Button>
                                 </Upload>
@@ -165,10 +165,6 @@ const ProfilePage = () => {
                         <div className="profile__info--item">
                             <span className="profile__info--title">Số điện thoại:</span>
                             <span className="profile__info--content">{initialUser.phone}</span>
-                        </div>
-                        <div className="profile__info--item">
-                            <span className="profile__info--title">Địa chỉ:</span>
-                            <span className="profile__info--content">{initialUser.address}</span>
                         </div>
                     </div>
                 </Col>

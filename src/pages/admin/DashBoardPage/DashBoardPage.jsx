@@ -1,9 +1,13 @@
 import React from 'react'
 
+
 const DashBoardPage = () => {
   return (
-    <div>DashBoardPage</div>
+    <div>
+      DashBoardPage
+    </div>
   )
 }
 
 export default DashBoardPage
+

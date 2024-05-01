@@ -23,7 +23,7 @@ const AccountComponent = (props) => {
   }
 
   const authMenu = (
-    <Menu>
+    <Menu style={{display: 'flex', listStyle: 'none'}}>
       <Menu.Item key="1">
         <Link to="/sing-in">Đăng nhập</Link>
       </Menu.Item>
@@ -37,6 +37,9 @@ const AccountComponent = (props) => {
     <div>
       <div>
         <Link style={{color: '#333'}} to="/profile">{user.name}</Link>
+      </div>
+      <div>
+        <Link style={{color: '#333'}} to="/my-order">Đơn mua</Link>
       </div>
       <div>
         <Link style={{color: '#333'}} onClick={handleLogout}>Đăng xuất</Link>

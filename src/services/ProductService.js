@@ -24,10 +24,23 @@ export const listProductType = async ( search, limit, type, page ) => {
     
 }
 
-export const createProduct = async (data) => {
-    const res = await axios.post(`${process.env.REACT_APP_API_URL}/products/create`,data )
-    return res.data
-}
+// export const createProduct = async (data) => {
+//     const res = await axios.post(`${process.env.REACT_APP_API_URL}/products/create`,data )
+//     return res.data
+// }
+
+export const createProduct = async (formData) => {
+    try {
+        const res = await axios.post(`${process.env.REACT_APP_API_URL}/products/create`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        return res.data;
+    } catch (error) {
+        throw error;
+    }
+};
 
 export const getDetailProduct = async (id) => {
     const res = await axios.get(`${process.env.REACT_APP_API_URL}/products/detail/${id}`)
@@ -41,6 +54,7 @@ export const updateProduct = async ({id, access_token, rests}) => {
             rests,
             {
                 headers: {
+                    'Content-Type': 'multipart/form-data',
                     token: `Bearer ${access_token}`
                 }
             }

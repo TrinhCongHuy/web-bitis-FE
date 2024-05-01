@@ -1,10 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Col, Form, Input, Row } from 'antd';
+import { Button, Checkbox, Col, Form, Input, Row, Space } from 'antd';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './SingInPage.scss'
 import * as UserService from '../../../services/UserService'
+import * as AuthService from '../../../services/AuthService'
 import { UseMutationHook } from '../../../hooks/useMutationHook';
 import * as message from '../../../components/Message/message'
 import { jwtDecode } from "jwt-decode";
@@ -64,6 +65,17 @@ const SingInPageClient = () => {
       password
     })
   };
+
+  // login by Google
+  // const handleGoogleLogin = async () => {
+  //   try {
+  //     const response = await AuthService.loginGG(); // Gọi hàm loginGG từ UserService
+  //     console.log(response); // Xử lý kết quả nếu cần
+  //   } catch (error) {
+  //     console.error('Error during Google login:', error); // Xử lý lỗi nếu cần
+  //   }
+  // };
+
   return (
     <div className="container">
       <Row justify="center">
@@ -120,6 +132,17 @@ const SingInPageClient = () => {
                   Đăng nhập
                 </Button>
               </Form.Item>
+
+              {/* <Form.Item style={{textAlign: 'center'}}>
+                <Space size='middle'>
+                  <Button type="primary" className="login-form-button" onClick={handleGoogleLogin}>
+                    Google
+                  </Button>
+                  <Button type="primary" className="login-form-button">
+                    FaceBook
+                  </Button>
+                </Space>
+              </Form.Item> */}
 
               <Form.Item >
                 <span>Chưa có tài khoản?</span>

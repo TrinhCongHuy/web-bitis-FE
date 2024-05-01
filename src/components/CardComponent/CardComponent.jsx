@@ -61,7 +61,7 @@ const CardComponent = (props) => {
                         <span className="normal">{product.price} đ</span>
                     </div>
                     <div className="product__content--stock">
-                        <span>Sold: <strong className="qty-sold">{product.countInStock}</strong></span>
+                        <span>Sold: <strong className="qty-sold">{product.sold}</strong></span>
                     </div>
                 </div> 
             </Card>

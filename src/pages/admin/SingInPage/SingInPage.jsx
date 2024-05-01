@@ -4,12 +4,12 @@ import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, Row } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import './SingInPage.scss'
-import * as UserService from '../../../services/UserService'
+import * as AccountService from '../../../services/AccountService'
 import { UseMutationHook } from '../../../hooks/useMutationHook';
 import * as message from '../../../components/Message/message'
 import { jwtDecode } from "jwt-decode";
 import { useDispatch } from 'react-redux';
-import { updateUser } from '../../../redux/slides/userSlide';
+import { updateAccount } from '../../../redux/slides/accountSlide';
 
 
 
@@ -21,35 +21,36 @@ const SingInPageAdmin = () => {
 
 
   const mutation = UseMutationHook(
-    data => UserService.loginUser(data)
+    data => AccountService.loginAccount(data)
   )
   
   const { data, isSuccess, isError } = mutation
 
+  
+
 
   useEffect(() => {
     if (data?.status === 'OK') {
+      navigate('/system/admin');
+      localStorage.setItem('access_token', JSON.stringify(data?.access_token));
       if (data?.access_token) {
         const decoded = jwtDecode(data?.access_token);
-        if (decoded.isAdmin) {
-          navigate('/system/admin')
-          localStorage.setItem('access_token', JSON.stringify(data?.access_token))
-
-          if (decoded?.id) {
-            handleGetDetailUser(decoded?.id, data?.access_token)
-          }
-        }else {
-          message.error("Đây không phải là tài khoản Admin!")
+        if (decoded?.id) {
+          handleGetDetailAccount(decoded?.id, data?.access_token);
+        } else {
+          message.error('Đây không phải là tài khoản Admin!');
         }
       }
-    }else if (data?.status === 'ERR'){
+    } else if (isError) {
       message.error(data.message);
     }
-  }, [isSuccess, isError])
+  }, [isSuccess, isError]);
 
-  const handleGetDetailUser = async (id, token) => {
-    const res = await UserService.getDetailUser(id, token)
-    dispatch(updateUser({...res?.data, access_token: token}))
+  
+
+  const handleGetDetailAccount = async (id, token) => {
+    const res = await AccountService.getDetailAccount(id, token)
+    dispatch(updateAccount({...res?.data, access_token: token}))
   }
 
   const handleChangeEmail = (e) => {

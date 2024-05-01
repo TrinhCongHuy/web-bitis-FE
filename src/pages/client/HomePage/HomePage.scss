@@ -39,5 +39,12 @@
                 -o-transform: translateX(0);
             }
         }
+
+        .posts {
+
+            .ant-card .ant-card-body {
+                padding: 8px;
+            }
+        }
     }
 }

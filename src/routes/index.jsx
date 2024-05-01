@@ -17,6 +17,16 @@ import UserPageMN from "../pages/admin/UserPageMN/UsersPageMN";
 import QTVPageMN from "../pages/admin/QTVPageMN/QTVPageMN";
 import CheckOutPage from "../pages/client/CheckOutPage/CheckOutPage";
 import CartPage from "../pages/client/CartPage/CartPage";
+import MyOrder from "../pages/client/MyOrder/MyOrder";
+import MyOrderDetail from "../pages/client/MyOrderDetail/MyOrderDetail";
+import OrderPageMN from "../pages/admin/OrderPageMN/OrderPageMN";
+import TopicPageMN from "../pages/admin/TopicPageMN/TopicPageMN";
+import AddPost from "../pages/admin/AddPost/AddPost";
+import BlogPage from "../pages/client/BlogPage/BlogPage";
+import BlogDetailPage from "../pages/client/BlogDetailPage/BlogDetailPage";
+import EditBlog from "../pages/admin/EditBlog/EditBlog";
+import RolePermission from "../pages/admin/RolePermissionPageMN/RolePermission";
+import Roles from "../pages/admin/RolesPage/Roles";
 
 
 export const Routes = [
@@ -31,6 +41,22 @@ export const Routes = [
             {
                 path: '/products',
                 element: <ProductsPage />
+            },
+            {
+                path: '/blogs',
+                element: <BlogPage />
+            },
+            {
+                path: '/blog-detail/:id',
+                element: <BlogDetailPage />
+            },
+            {
+                path: '/my-order',
+                element: <MyOrder />
+            },
+            {
+                path: '/my-order-detail/:id',
+                element: <MyOrderDetail />
             },
             {
                 path: '/carts',
@@ -62,7 +88,7 @@ export const Routes = [
         path: '/admin',
         element: <SingInPageAdmin />
     },
-    {
+    {   
         element: <PrivateRoutes />, 
         children: [
             {
@@ -74,12 +100,28 @@ export const Routes = [
                         element: <DashBoardPage />
                     },
                     {
+                        path: 'topics', 
+                        element: <TopicPageMN />
+                    },
+                    {
                         path: 'posts', 
                         element: <PostPageMN />
                     },
                     {
+                        path: 'addPost', 
+                        element: <AddPost />
+                    },
+                    {
+                        path: 'edit-blog/:id',
+                        element: <EditBlog />
+                    },
+                    {
                         path: 'products', 
                         element: <ProductPageMN />
+                    },
+                    {
+                        path: 'orders', 
+                        element: <OrderPageMN />
                     },
                     {
                         path: 'users', 
@@ -88,6 +130,14 @@ export const Routes = [
                     {
                         path: 'accounts', 
                         element: <QTVPageMN />
+                    },
+                    {
+                        path: 'roles', 
+                        element: <Roles />
+                    },
+                    {
+                        path: 'roles/permission', 
+                        element: <RolePermission />
                     }
                 ]
             }

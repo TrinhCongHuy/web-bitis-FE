@@ -15,10 +15,10 @@ html {
   font-family: 'Rubik', sans-serif;
 }
 
-ul {
+/* ul {
   list-style: none;
   display: flex;
-}
+} */
 
 .container {
   width: 1280px;

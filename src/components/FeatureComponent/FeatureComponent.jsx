@@ -15,7 +15,7 @@ const FeatureComponent = () => {
                             <MoneyCollectOutlined className="icon"/>
                             <h3>MUA NHIỀU GIẢM NHIỀU</h3>
                         </div>
-                        <p>Giảm gía lên tận 50%</p>
+                        <p>Giảm giá lên tận 50%</p>
                     </div>
                 </Col>
                 <Col span={5}>

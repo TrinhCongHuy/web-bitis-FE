@@ -6,17 +6,17 @@ import {
   MergeOutlined,
   UserOutlined,
   WindowsOutlined,
-  FormOutlined
+  FormOutlined,
+  ShoppingCartOutlined,
+  UsergroupAddOutlined
 } from '@ant-design/icons';
-import { Layout, Menu, Button, theme } from 'antd';
+import { Layout, Button, theme, Menu } from 'antd';
 import './LayoutAdminDefault.scss'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
-import { useQuery } from '@tanstack/react-query'
-import { resetUser } from '../../redux/slides/userSlide';
+import { resetAccount } from '../../redux/slides/accountSlide';
 import * as UserService from '../../services/UserService'
-import { calc } from 'antd/es/theme/internal';
-import logoAdmin from '../../assets/images/logo-web/logo-admin.png'
+
 const { Header, Sider, Content } = Layout;
 
 const LayoutAdminDefault = () => {
@@ -30,78 +30,69 @@ const LayoutAdminDefault = () => {
     const handleLogout = async () => {
         localStorage.removeItem('access_token');
         await UserService.logoutUser()
-        dispatch(resetUser())
+        dispatch(resetAccount())
         navigate('/admin')
     }
 
-    const account = useSelector((state) => state.user)
+    const account = useSelector((state) => state.account)
 
+    function getItem(label, key, icon, children, path) {
+        return {
+          key,
+          icon,
+          children,
+          label,
+          path,
+        };
+    }
 
-    // fetch detail account
-    // const fetchDetailAccount = async () => {
-    //     const res = await UserService.loginUser()
-    //     return res.data
-    // }
-
-    // const { data: detailAccount } = useQuery({
-    //     queryKey: ['account'], 
-    //     queryFn: fetchDetailAccount, 
-    //     config: {
-    //     retry: 3,
-    //     retryDelay: 1000,
-    //     keePreviousData: true
-    //     }
-    // });
-
-    // console.log('detailAccount', detailAccount)
+    const items = [
+        getItem('Tổng quan', '1', <WindowsOutlined />, null, '/system/admin'),
+        getItem('Quản lý chủ đề', '2', <FormOutlined />, null, '/system/admin/topics'),
+        getItem('Quản lý bài viết', 'sub1', <UserOutlined />, [
+            getItem('Danh sách bài viết', '3', null, null, '/system/admin/posts'),
+            getItem('Thêm mới bài viết', '4', null, null, '/system/admin/addPost'),
+        ], null),
+        getItem('Quản lý sản phẩm', 'sub2', <MergeOutlined />, null, '/system/admin/products'),
+        getItem('Quản lý đơn hàng', '9', <ShoppingCartOutlined />, null, '/system/admin/orders'),
+        getItem('Khách hàng', '10', <UsergroupAddOutlined />, null, '/system/admin/users'),
+        getItem('Admin', '11', <UserOutlined />, null, '/system/admin/accounts'),
+        getItem('Nhóm quyền', '12', <UserOutlined />, null, '/system/admin/roles'),
+        getItem('Phân quyền', '13', <UserOutlined />, null, '/system/admin/roles/permission')
+    ];
 
     return (
         <Layout>
-            <Sider 
-            trigger={null} collapsible collapsed={collapsed}
-            style={{
-                overflow: 'auto',
-                height: '100vh',
-                position: 'fixed',
-                left: 0,
-                top: 0,
-                bottom: 0,
-                zIndex: 1200
-                }} 
-            >
+            <Sider collapsible collapsed={collapsed} className={collapsed ? 'collapsed-sider' : 'expanded-sider'} onCollapse={(value) => setCollapsed(value)}>
                 <div className="demo-logo-vertical">
                     <span>
                         {collapsed ? 'AD' : 'ADMIN'} 
-                        {/* <img src={logoAdmin} alt='logo-admin'/> */}
                     </span>
                 </div>
-                <Menu
-                theme="dark"
-                mode="inline"
-                defaultSelectedKeys={['1']}
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column'
-                }}
-                >
-                    <Menu.Item key="1" icon={<WindowsOutlined />}>
-                        <Link to="/system/admin">Tổng quan</Link>
-                    </Menu.Item>
-                    <Menu.Item key="2" icon={<FormOutlined />}>
-                        <Link to="/system/admin/posts">Bài viết</Link>
-                    </Menu.Item>
-                    <Menu.Item key="3" icon={<MergeOutlined />}>
-                        <Link to="/system/admin/products">Sản phẩm</Link>
-                    </Menu.Item>
-                    <Menu.Item key="4" icon={<UserOutlined />}>
-                        <Link to="/system/admin/users">Khách hàng</Link>
-                    </Menu.Item>
-                    <Menu.Item key="5" icon={<UserOutlined />}>
-                        <Link to="/system/admin/accounts">Quản trị viên</Link>
-                    </Menu.Item>
+                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
+                    {items.map(item => {
+                        if (item.children) {
+                            return (
+                                <Menu.SubMenu key={item.key} icon={item.icon} title={item.label}>
+                                    {item.children.map(child => (
+                                        <Menu.Item key={child.key}>
+                                            <Link to={child.path}>{child.label}</Link>
+                                        </Menu.Item>
+                                    ))}
+                                </Menu.SubMenu>
+                            );
+                        } else {
+                            return (
+                                <Menu.Item key={item.key} icon={item.icon}>
+                                    <Link to={item.path}>{item.label}</Link>
+                                </Menu.Item>
+                            );
+                        }
+                    })}
                 </Menu>
             </Sider>
-            <Layout className="site-layout" style={{ marginLeft: collapsed ? 80 : 200 }}>
+
+            <Layout className="site-layout" >
                 <Header
                     style={{
                         padding: 0,
@@ -127,13 +118,11 @@ const LayoutAdminDefault = () => {
                     />
                     <div style={{flex: 1, display: 'flex', justifyContent: 'flex-end', gap: '2em'}}>
                         <span>
-                            {/* <Link style={{color: '#000', padding: '5px 10px', borderRadius: '5px', border: '1px solid #666'}}>{account.name}</Link> */}
                             <Button type="primary" ghost>
                                 {account.name}
                             </Button>
                         </span>
                         <span>
-                            {/* <Link style={{color: '#333', padding: '5px 10px', borderRadius: '5px', border: '1px solid #666'}} onClick={handleLogout}>Đăng xuất</Link> */}
                             <Button type="primary" danger  onClick={handleLogout}>
                                 Đăng xuất
                             </Button>
@@ -156,4 +145,4 @@ const LayoutAdminDefault = () => {
     )
 }
 
-export default LayoutAdminDefault
+export default LayoutAdminDefault;

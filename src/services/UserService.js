@@ -13,21 +13,10 @@ export const getUser = async (id) => {
     return res.data
 }
 
-export const listAccounts = async () => {
-    const res = await axios.get(`${process.env.REACT_APP_API_URL}/list-account`, )
-    return res.data
-}
-
 export const loginUser = async (data) => {
     const res = await axios.post(`${process.env.REACT_APP_API_URL}/sing-in`, data)
     return res.data
 }
-
-export const createAccount = async (data) => {
-    const res = await axios.post(`${process.env.REACT_APP_API_URL}/create-account`, data)
-    return res.data
-}
-
 
 export const logoutUser = async () => {
     const res = await axios.post(`${process.env.REACT_APP_API_URL}/log-out`)

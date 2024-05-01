@@ -4,7 +4,7 @@ import { Divider, Button, Modal, Form, Input, Upload, Space, Popconfirm } from "
 import { PlusSquareOutlined, UploadOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import TableComponent from "../../../components/TableComponent/TableComponent";
 import { getBase64 } from "../../../utils";
-import * as UserService from '../../../services/UserService'
+import * as AccountService from '../../../services/AccountService';
 import { UseMutationHook } from "../../../hooks/useMutationHook";
 import * as message from '../../../components/Message/message'
 import { useQuery } from '@tanstack/react-query'
@@ -12,7 +12,6 @@ import DrawerComponent from "../../../components/DrawerComponent/DrawerComponent
 import { useSelector } from 'react-redux';
 import Loading from "../../../components/LoadingComponent/loading";
 import './QTVPageMN.scss'
-const { TextArea } = Input;
 
 
 const QTVPageMN = () => {
@@ -25,6 +24,8 @@ const QTVPageMN = () => {
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef(null);
+  const [uploadImage, setUploadImage] = useState();
+
 
   const renderAction = (record) => {
     return (
@@ -123,6 +124,21 @@ const QTVPageMN = () => {
       sorter: (a, b) => a.email - b.email,
     },
     {
+      title: 'Phone',
+      dataIndex: 'phone',
+    },
+    {
+      title: 'Avatar',
+      dataIndex: 'avatar',
+      render: (avatar) => (
+        <img src={avatar} alt="Hình ảnh" style={{ width: 60, height: 60 }} />
+      )
+    },
+    {
+      title: 'Vai trò',
+      dataIndex: 'role_id',
+    },
+    {
       title: 'Action',
       dataIndex: 'action',
       render: (_, record) => renderAction(record)
@@ -130,40 +146,38 @@ const QTVPageMN = () => {
   ];
 
 
-  const [ stateUser, setStateUser ] = useState({
+  const [ stateAccount, setStateAccount ] = useState({
     name: "",
     email: "",
     password: "",
     avatar: "",
+    phone: "",
+    role_id: "",
   });
 
   const mutation = UseMutationHook((data) => {
-    const { name, email, avatar, password } = data;
-    const res = UserService.createAccount({ name, email, avatar, password });
+    const { name, email, avatar, password, phone, role_id } = data;
+    const res = AccountService.createAccount({ name, email, avatar, password, phone, role_id });
     return res
   });
 
-
-
   const fetchAccountAll = async () => {
-    const res = await UserService.listAccounts()
+    const res = await AccountService.listAccount()
     return res
   }
-
 
   const { data, isLoading, isSuccess, isError } = mutation
 
   // Lấy ra ds sản phẩm
-  const queryUsers = useQuery({
-    queryKey: ['users'], 
+  const queryAccounts = useQuery({
+    queryKey: ['accounts'], 
     queryFn: fetchAccountAll
   });
 
-  const { isLoading: isLoadingUsers, data: users } = queryUsers
+  const { isLoading: isLoadingAccount, data: accounts } = queryAccounts
 
-
-  const dataTable = users?.data.length && users?.data.map((user) => {
-    return {...user, key: user._id }
+  const dataTable = accounts?.data.length && accounts?.data.map((account) => {
+    return {...account, key: account._id }
   })
 
   useEffect(() => {
@@ -182,57 +196,55 @@ const QTVPageMN = () => {
   
   const handleCancel = () => {
     setOpen(false);
-    setStateUser({
+    setStateAccount({
       name: "",
       email: "",
       password: "",
       avatar: "",
+      phone: "",
+      role_id: ""
     })
     form.resetFields()
   };
 
-  //   form
-  const onFinish = () => {
-    mutation.mutate(stateUser, {
-      onSettled: () => {
-        queryUsers.refetch()
-      }
-    })
-  };
-
   const handleOnChange = (e) => {
-    setStateUser({
-      ...stateUser,
+    setStateAccount({
+      ...stateAccount,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleChangeAvatar = async ({ fileList }) => {
-    const file = fileList[0];
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
-    }
+  const handleChangeAvatar = async (e) => {
+    setUploadImage(e.target.files[0]);
 
-    setStateUser({
-      ...stateUser,
-      avatar: file.preview,
+    setStateAccount({
+      ...stateAccount,
+      avatar: e.target.files[0],
     });
   };
 
-  //===================================================
-
+  //   form
+  const onFinish = () => {
+    mutation.mutate(stateAccount, {
+      onSettled: () => {
+        queryAccounts.refetch()
+      }
+    })
+  };
 
   //================= EDIT USER ==================//
 
-  const [ stateUserDetail, setStateUserDetail ] = useState({
+  const [ stateAccountDetail, setStateAccountDetail ] = useState({
       name: "",
       email: "",
       avatar: "",
+      phone: "",
+      role_id: ""
   });
 
   const mutationUpdate = UseMutationHook((data) => {
     const { id, token, ...rests } = data;
-    const res = UserService.updateUser({ id, token, rests });
+    const res = AccountService.updateAccount({ id, token, rests });
     return res
   });
 
@@ -249,10 +261,12 @@ const QTVPageMN = () => {
 
   const handleCancelUpdate = () => {
     setIsOpenDraw(false);
-    setStateUserDetail({
+    setStateAccountDetail({
       name: "",
       email: "",
       avatar: "",
+      phone: "",
+      role_id: ""
     })
     form.resetFields()
   };
@@ -260,13 +274,14 @@ const QTVPageMN = () => {
 
   const fetchGetDetailUser = async (id) => {
     try {
-      const res = await UserService.getDetailUser(id);
-      console.log('res', res)
+      const res = await AccountService.getDetailAccount(id);
       if (res?.data) {
-        setStateUserDetail({
+        setStateAccountDetail({
           name: res.data.name,
           email: res.data.email,
           avatar: res.data.avatar,
+          phone: res.data.phone,
+          role_id: res.data.role_id,
         });
         form.setFieldsValue(res.data);
       }
@@ -293,34 +308,32 @@ const QTVPageMN = () => {
       file.preview = await getBase64(file.originFileObj);
     }
 
-    setStateUserDetail({
-      ...stateUserDetail,
+    setStateAccountDetail({
+      ...stateAccountDetail,
       avatar: file.preview,
     });
   };
 
   const handleOnChangeDetail = (e) => {
-    setStateUserDetail({
-      ...stateUserDetail,
+    setStateAccountDetail({
+      ...stateAccountDetail,
       [e.target.name]: e.target.value,
     });
   };
 
   const onUpdateUser = () => {
-    mutationUpdate.mutate({id: rowSelected, token: user?.access_token, ...stateUserDetail}, {
+    mutationUpdate.mutate({id: rowSelected, token: user?.access_token, ...stateAccountDetail}, {
       onSettled: () => {
-        queryUsers.refetch()
+        queryAccounts.refetch()
       }
     })
   }
-
-  //====================================
 
   // ============== DELETE ============= //
 
   const mutationDeleted = UseMutationHook((data) => {
     const { id, token } = data;
-    const res = UserService.deleteUser({ id, token });
+    const res = AccountService.deleteAccount({ id, token });
     return res
   });
 
@@ -339,7 +352,7 @@ const QTVPageMN = () => {
   const handleDelete = (key) => {
     mutationDeleted.mutate({ id: key, token: user?.access_token }, {
       onSettled: () => {
-        queryUsers.refetch()
+        queryAccounts.refetch()
       }
     })
   };
@@ -353,7 +366,7 @@ const QTVPageMN = () => {
         <PlusSquareOutlined className='icon-add'/>
       </Button>
 
-      <TableComponent columns={columns} isLoading={isLoadingUsers} data={dataTable} 
+      <TableComponent columns={columns} isLoading={isLoadingAccount} data={dataTable} 
         onRow={(record, rowIndex) => {
           return {
             onClick: event => {
@@ -400,7 +413,7 @@ const QTVPageMN = () => {
               ]}
             >
               <Input
-                value={stateUser.name}
+                value={stateAccount.name}
                 name="name"
                 onChange={handleOnChange}
               />
@@ -415,19 +428,41 @@ const QTVPageMN = () => {
                 },
               ]}
             >
-              {/* <Select
-                    placeholder="Select a option and change input text above"
-                    onChange={handleOnChange}
-                    allowClear
-                    name='type'
-                  >
-                    <Option value="male">male</Option>
-                    <Option value="female">female</Option>
-                    <Option value="other">other</Option>
-                  </Select> */}
               <Input
-                value={stateUser.email}
+                value={stateAccount.email}
                 name="email"
+                onChange={handleOnChange}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Phone"
+              name="phone"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your phone user!",
+                },
+              ]}
+            >
+              <Input
+                value={stateAccount.phone}
+                name="phone"
+                onChange={handleOnChange}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Vai trò"
+              name="role_id"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your vai trò user!",
+                },
+              ]}
+            >
+              <Input
+                value={stateAccount.role_id}
+                name="role_id"
                 onChange={handleOnChange}
               />
             </Form.Item>
@@ -442,36 +477,27 @@ const QTVPageMN = () => {
               ]}
             >
               <Input
-                value={stateUser.password}
+                value={stateAccount.password}
                 name="password"
                 onChange={handleOnChange}
               />
             </Form.Item>
+
             <Form.Item
-              label="Avatar"
-              name="avatar"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your avatar user!",
-                },
-              ]}
+            name="avatar"
+            label="Hình ảnh"
             >
-              <Upload onChange={handleChangeAvatar} maxCount={1}>
-                <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                {stateUser?.avatar && (
-                <img
-                  src={stateUser?.avatar}
-                  style={{
-                    height: "60px",
-                    width: "60px",
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                  }}
-                  alt="avatar"
-                />
-              )}
-              </Upload>
+              <div className="upload-image">
+                <input type="file" accept="image/*" icon={<UploadOutlined />} onChange={handleChangeAvatar} />
+              
+                {uploadImage && (
+                  <div style={{ marginTop: '10px'}}>
+                    <label style={{ display: 'block', marginBottom: '5px' }}>Ảnh mới:</label>
+                    <img src={URL.createObjectURL(uploadImage)} alt="upload" style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '10px' }} />
+                  </div>
+                )}
+              </div>
+
             </Form.Item>
 
             <Form.Item
@@ -517,7 +543,7 @@ const QTVPageMN = () => {
               ]}
             >
               <Input
-                value={setStateUserDetail['name']}
+                value={setStateAccountDetail['name']}
                 name="name"
                 onChange={handleOnChangeDetail}
               />
@@ -532,30 +558,41 @@ const QTVPageMN = () => {
                 },
               ]}
             >
-              {/* <Select
-                    placeholder="Select a option and change input text above"
-                    onChange={handleOnChangeDetail}
-                    allowClear
-                    name='email'
-                  >
-                    <Option value="male">male</Option>
-                    <Option value="female">female</Option>
-                    <Option value="other">other</Option>
-                  </Select> */}
               <Input
-                value={setStateUserDetail.email}
+                value={setStateAccountDetail.email}
                 name="email"
                 onChange={handleOnChangeDetail}
               />
             </Form.Item>
             <Form.Item
-              label="Description"
-              name="description"
+              label="Phone"
+              name="phone"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your phone user!",
+                },
+              ]}
             >
-              <TextArea
-                rows={4}
-                value={setStateUserDetail.description}
-                name="description"
+              <Input
+                value={setStateAccountDetail.phone}
+                name="phone"
+                onChange={handleOnChangeDetail}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Vai trò"
+              name="role_id"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your role_id user!",
+                },
+              ]}
+            >
+              <Input
+                value={setStateAccountDetail.role_id}
+                name="role_id"
                 onChange={handleOnChangeDetail}
               />
             </Form.Item>
@@ -569,11 +606,11 @@ const QTVPageMN = () => {
                 },
               ]}
             >
-              <Upload fileList={stateUser?.avatar ? [{uid: '-1', url: stateUser.avatar}] : []} onChange={handleChangeAvatarDetail} maxCount={1}>
+              <Upload fileList={stateAccount?.avatar ? [{uid: '-1', url: stateAccount.avatar}] : []} onChange={handleChangeAvatarDetail} maxCount={1}>
                 <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                {stateUserDetail?.avatar && (
+                {stateAccountDetail?.avatar && (
                   <img
-                    src={stateUserDetail?.avatar}
+                    src={stateAccountDetail?.avatar}
                     style={{
                       height: "60px",
                       width: "60px",

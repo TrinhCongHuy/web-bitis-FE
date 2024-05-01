@@ -8,7 +8,6 @@ import { UseMutationHook } from "../../../hooks/useMutationHook";
 import * as message from '../../../components/Message/message'
 import { useQuery } from '@tanstack/react-query'
 import { useSelector } from 'react-redux';
-const { TextArea } = Input;
 
 
 const UsersPageMN = () => {
@@ -120,6 +119,17 @@ const UsersPageMN = () => {
     {
       title: 'Address',
       dataIndex: 'address',
+      render: (addresses) => {
+        if (!addresses || addresses.length === 0) return null;
+        return addresses.map((address, index) => (
+          <div key={index}>
+            <span>{address.specificLocation}, </span>
+            {address.overallAddress && (
+              <span>{address.overallAddress.split(', ').reverse().join(', ')}</span>
+            )}
+          </div>
+        ));
+      }
     },
     {
       title: 'Action',
@@ -146,9 +156,6 @@ const UsersPageMN = () => {
   const dataTable = users?.data.length && users?.data.map((user) => {
     return {...user, key: user._id }
   })
-
-  
-  //=======================================
 
   // ============== DELETE ============= //
 

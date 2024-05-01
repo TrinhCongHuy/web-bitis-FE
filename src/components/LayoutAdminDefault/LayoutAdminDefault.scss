@@ -1,5 +1,18 @@
 .ant-layout {
     min-height: 100vh;
+
+    .ant-menu {
+        flex-direction: column;
+    }
+}
+
+.ant-layout-sider-children {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+}
+.collapsed-sider .ant-layout-sider-children {
+    width: 80px;
 }
 
 .demo-logo-vertical {

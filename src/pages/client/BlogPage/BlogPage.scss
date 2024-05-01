@@ -1,0 +1,29 @@
+.page__blog {
+    margin-top: 50px;
+    padding: 0 120px;
+
+    .blog-post {
+
+        .post__content {
+
+            .create__at {
+                position: absolute;
+                width: 100px;
+                height: 80px;
+                top: 234px;
+                background-color: rgb(97, 186, 97);
+                border-radius: 10px;
+                -webkit-border-radius: 10px;
+                -moz-border-radius: 10px;
+                -ms-border-radius: 10px;
+                -o-border-radius: 10px;
+                display: flex;
+                flex-direction: column;
+                padding-left: 20px;
+                padding-top: 10px;
+                color: #ffffff;
+                line-height: 1.8em;
+            }
+        }
+    }
+}

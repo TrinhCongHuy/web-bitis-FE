@@ -7,6 +7,10 @@ import { useLocation } from 'react-router-dom';
 import * as message from '../../../components/Message/message'
 import { useSelector } from 'react-redux';
 import * as OrderService from '../../../services/OrderService'
+import * as ProductService from '../../../services/ProductService'
+import * as PaymentService from '../../../services/PaymentService'
+import { PayPalButton } from "react-paypal-button-v2";
+
 
 
 
@@ -20,8 +24,10 @@ const CheckOutPage = () => {
   const selectedProducts = location.state?.selectedProducts || [];
   const [showPaymentMethods, setShowPaymentMethods] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('Thanh toán khi nhận hàng')
-  const [deliveryMethod, setDeliveryMethod] = useState(0);
+  const [deliveryMethod, setDeliveryMethod] = useState('')
+  const [deliveryPrice, setDeliveryPrice] = useState(0);
   const [value, setValue] = useState(null);
+  const [sdkReady, setSdkReady] = useState(false)
 
   useEffect(() => {
     if (user?.address) {
@@ -71,6 +77,12 @@ const CheckOutPage = () => {
   const columns = [
     {
       title: `Tất cả (${selectedProducts?.length} sản phẩm)`,
+      dataIndex: 'image',
+      key: 'image',
+      render: (image) => <img src={image} alt="Product" style={{ width: '60px' }} />, 
+    },
+    {
+      title: 'Sản phẩm',
       dataIndex: 'name',
       key: 'name',
     },
@@ -93,7 +105,9 @@ const CheckOutPage = () => {
 
   const data = selectedProducts?.map((product) => ({
     key: product?._id,
+    product: product?._id,
     name: product?.name,
+    image: product?.image,
     price: product?.price - (product?.price * (product?.discount / 100)),
     amount: product?.quantity,
     discount: product?.discount,
@@ -101,11 +115,13 @@ const CheckOutPage = () => {
   }));
 
   const totalOrder = data?.reduce((total, product) => total + product.totalPrice, 0);
-  
-  const totalPay = totalOrder + Number(deliveryMethod)
+  const totalPay = totalOrder + Number(deliveryPrice)
 
   const handleDeliveryChange = (e) => {
-    setDeliveryMethod(e.target.value)
+    const price = e.target.value;
+    const type = e.target.data?.type;
+    setDeliveryPrice(price)
+    setDeliveryMethod(type)
   }
 
   const togglePaymentMethods = () => {
@@ -116,8 +132,33 @@ const CheckOutPage = () => {
     setIsModalVoucherOpen(true);
   }
 
+  // Cập nhật lại sản phẩm sau khi mua hàng
+  const placeOrderAndUpdateProduct = async (orderData) => {
+    try {
+      await OrderService.createOrder(orderData);
+      message.success('Đặt hàng thành công!');
+  
+      // Cập nhật số lượng đã bán của từng sản phẩm
+      for (const item of orderData.orderItems) {
+        const product = await ProductService.getDetailProduct(item.key);
+        const newSold = product?.data?.sold + item.amount;
+        const newCountInStock = product?.data?.countInStock - item.amount;
+  
+        await ProductService.updateProduct({
+          id: item.key, 
+          access_token: user?.access_token, 
+          rests: { sold: newSold, countInStock: newCountInStock }
+        });
+      }
+    } catch (error) {
+      console.error('Error creating order:', error);
+      message.error('Đã xảy ra lỗi khi đặt hàng. Vui lòng thử lại sau.');
+    }
+  };
+
+  // Thanh toán thường
   const handleOrder = async () => {
-    if (!deliveryMethod) {
+    if (!deliveryPrice) {
       message.error('Vui lòng chọn phương thức giao hàng!')
       return;
     }
@@ -131,20 +172,63 @@ const CheckOutPage = () => {
         phone: value?.phoneNumber
       },
       paymentMethod: paymentMethod, 
-      shippingPrice: deliveryMethod, 
+      shippingPrice: deliveryPrice, 
       totalPay: totalPay,
-      user: user?.id 
+      user: user?.id,
+      deliveryMethod: deliveryMethod,
+      email: user?.email
     };
 
-    try {
-      await OrderService.createOrder(orderData);
-      message.success('Đặt hàng thành công!');
-    } catch (error) {
-      console.error('Error creating order:', error);
-      message.error('Đã xảy ra lỗi khi đặt hàng. Vui lòng thử lại sau.');
-    }
+    await placeOrderAndUpdateProduct(orderData);
   }
 
+  // Thanh toán qua Paypal
+  const addPaypalScript = async () => {
+    const {data} = await PaymentService.getConfig()
+
+    console.log('data', data)
+    const script = document.createElement('script')
+    script.type = 'text/javascript'
+    script.src = `https://www.paypal.com/sdk/js?client-id=${data}`
+    script.async = true;
+    script.onload = () => {
+      setSdkReady(true)
+    }
+
+    document.body.appendChild(script)
+  }
+
+  useEffect(() => {
+    if(!window.paypal) {
+      addPaypalScript()
+    }else {
+      setSdkReady(true)
+    }
+    
+  }, [])
+
+  const onSuccessPaypal = async (details) => {
+    console.log('details', details)
+    const orderData = {
+      orderItems: data,
+      shippingAddress: {
+        name: value?.recipientName,
+        address: value?.overallAddress,
+        specificLocation: value?.specificLocation,
+        phone: value?.phoneNumber
+      },
+      paymentMethod: paymentMethod, 
+      shippingPrice: deliveryPrice, 
+      totalPay: totalPay,
+      user: user?.id,
+      deliveryMethod: deliveryMethod,
+      isPaid: true,
+      paidAt: details.update_time,
+      email: user?.email
+    };
+
+    await placeOrderAndUpdateProduct(orderData);
+  }
 
   return (
     <div className="container page__product--checkout">
@@ -156,7 +240,7 @@ const CheckOutPage = () => {
             <div className='shipping__address--detail'>
               <Space size='large'>
                 <span className='name'>{value?.recipientName} - {value?.phoneNumber}</span>
-                <span className='address'>{value?.specificLocation}, {value?.overallAddress}</span>
+                <span className='address'>{value?.specificLocation}, {value?.overallAddress.split(', ').reverse().join(', ')}</span>
                 {value?.isDefault && 
                   <span className='type'>Mặc định</span>
                 }
@@ -211,20 +295,37 @@ const CheckOutPage = () => {
               </div>
               <div className='order__delivery'>
                 <div>Tuỳ chọn dịch vụ giao hàng</div>
-                <Radio.Group onChange={handleDeliveryChange} style={{ marginLeft: '50px'}}>
+                <Radio.Group onChange={handleDeliveryChange} style={{ marginLeft: '50px' }}>
                   <Space direction="vertical">
-                    <Radio value={50000}>Hoả tốc - 50.000đ</Radio>
-                    <Radio value={30000}>Giao hàng nhanh - 30.000đ</Radio>
-                    <Radio value={10000}>Giao hàng tiết kiệm - 10.000đ</Radio>
+                    <Radio value={50000} data={{ type: 'Hoả tốc' }}>Hoả tốc - 50.000đ</Radio>
+                    <Radio value={30000} data={{ type: 'Giao hàng nhanh' }}>Giao hàng nhanh - 30.000đ</Radio>
+                    <Radio value={10000} data={{ type: 'Giao hàng tiết kiệm' }}>Giao hàng tiết kiệm - 10.000đ</Radio>
                   </Space>
                 </Radio.Group>
               </div>
               <div className='price__total'>
-                <span className='price__total--label'>Tổng thanh toán</span>
-                <span className='price__total--detail'>{totalPay} đ</span>
+                <span className='price__total--label'>Tổng thanh toán: </span>
+                <span className='price__total--detail'>{totalPay} VNĐ</span>
               </div>
-              <div className='btn-buy'>
-                <Button type="primary" danger onClick={handleOrder}>Đặt hàng</Button>
+              <div style={{marginTop: '20px'}}>
+                {paymentMethod === 'Thanh toán qua VN PAY' && sdkReady ? 
+                  <>
+                      <PayPalButton
+                          amount={Math.round(totalPay / 30000)}
+                          // shippingPreference="NO_SHIPPING" // default is "GET_FROM_FILE"
+                          onSuccess={onSuccessPaypal}
+                          onError={() => {
+                            alert('error')
+                          }}
+                      />
+                  </> 
+                  : 
+                  <>
+                      <div className='btn-buy'>
+                          <Button style={{width: '100%'}} type="primary" danger onClick={handleOrder}>Đặt hàng</Button>
+                      </div>
+                  </>
+                }
               </div>
           </div>
         </Col>
@@ -239,7 +340,7 @@ const CheckOutPage = () => {
                       <div style={{ padding: '20px 0', borderTop: '1px solid #999', lineHeight: '0.8em'}}>
                         <span style={{fontWeight: '500'}}>{address?.recipientName} - {address?.phoneNumber}</span>
                         <p style={{padding: '0'}}>{address?.specificLocation}</p>
-                        <p style={{padding: '0'}}>{address?.overallAddress}</p>
+                        <p style={{padding: '0'}}>{address?.overallAddress.split(', ').reverse().join(', ')}</p>
                         {address?.isDefault && 
                           <span style={{padding: '1px 5px', border: '1px solid red', color: 'red', fontSize: '0.9em'}}>Mặc định</span>
                         }

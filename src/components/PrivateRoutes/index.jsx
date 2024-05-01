@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import { Navigate, useNavigate, Outlet } from 'react-router-dom';
 import * as message from '../Message/message'
-import { jwtDecode } from 'jwt-decode';
 
 const PrivateRoutes = () => {
     const navigate = useNavigate();
@@ -12,8 +11,7 @@ const PrivateRoutes = () => {
         const fetchData = async () => {
             const token = localStorage.getItem('access_token');
             if (token) {
-                const decoded = await jwtDecode(token);
-                setIsLogin(decoded.isAdmin);
+                setIsLogin(true);
             } else {
                 setIsLogin(false);
                 message.error("Vui lòng đăng nhập!");

@@ -13,13 +13,11 @@ const TableComponent = (props) => {
 
   const rowSelection = {
     onChange: (selectedRowKeys) => {
-      // console.log(`selectedRowKeys: ${selectedRowKeys}`);
       setRowSelectKey(selectedRowKeys)
     },
   
     getCheckboxProps: (record) => ({
       disabled: record.name === 'Disabled User',
-      // Column configuration not to be checked
       name: record.name,
     }),
   };
@@ -47,7 +45,7 @@ const TableComponent = (props) => {
             <Button onClick={handleDeleteAll} danger>Xoá tất cả</Button>
           </div>
         )}
-        <Button onClick={handleClick}>Export excel</Button>
+        <Button onClick={handleClick} style={{marginBottom: '10px', backgroundColor: '#009966', color: '#ffffff'}}>Export excel</Button>
         <Table
           rowSelection={{
             type: selectionType,
