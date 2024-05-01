@@ -36,7 +36,27 @@ const RolePermission = () => {
         setPermissions(initialPermissions);
     };
   
-   
+    // const handlePermissionChange = (e) => {
+    //     const checked = e.target.checked;
+    //     console.log('checked', checked)
+    //     const dataName = e.target.closest('tr').dataset.name; 
+
+    //     const rowIndex = e.target.closest('td').cellIndex - 1;
+    //     const roleId = roles[rowIndex]._id;
+    
+    //     setPermissions(prevPermissions => {
+    //         const updatedPermissions = { ...prevPermissions };
+    //         if (checked) {
+    //             // Nếu ô input được chọn, thêm quyền vào mảng permissions của roleId
+    //             updatedPermissions[roleId] = [...updatedPermissions[roleId], dataName];
+    //         } else {
+    //             // Nếu ô input được bỏ chọn, loại bỏ quyền khỏi mảng permissions của roleId
+    //             updatedPermissions[roleId] = updatedPermissions[roleId].filter(item => item !== dataName);
+    //         }
+    //         return updatedPermissions;
+    //     });
+    // };
+    
 
     const handlePermissionChange = (e) => {
         const dataName = e.target.closest('tr').dataset.name; 
@@ -70,8 +90,6 @@ const RolePermission = () => {
         }
     };
 
-    console.log('roles', roles)
-
     return (
         <>
             <Divider>Quản lý phân quyền</Divider>
@@ -101,17 +119,18 @@ const RolePermission = () => {
                         </thead>
 
                         <tbody>
-                            {/* <tr data-name="id">
+                            <tr data-name="id">
                                 <td></td>
                                 {roles.map((item, index) => (
                                     <td key={index}>
                                         <input
                                             type="text"
                                             value={item._id}
+                                            readOnly
                                         />
                                     </td>
                                 ))}
-                            </tr> */}
+                            </tr>
                             {/* ================================ */}
                             <tr>
                                 <td

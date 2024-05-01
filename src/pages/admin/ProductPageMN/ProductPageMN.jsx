@@ -24,6 +24,7 @@ const ProductPageMN = () => {
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef(null);
+  const [uploadImage, setUploadImage] = useState();
 
 
   const renderAction = (record) => {
@@ -290,6 +291,7 @@ const ProductPageMN = () => {
   };
 
   const handleImageChange = (e) => {
+    setUploadImage(e.target.files[0])
     setStateProduct({
         ...stateProduct,
         image: e.target.files[0],
@@ -405,6 +407,13 @@ const ProductPageMN = () => {
     });
   };
 
+  const handleOnChangeDetailSelect = (value) => {
+    setStateProductDetail({
+      ...stateProductDetail,
+      type: value,
+    })
+  };
+
   const onUpdateProduct = () => {
     mutationUpdate.mutate({id: rowSelected, token: user?.access_token, ...stateProductDetail}, {
       onSettled: () => {
@@ -501,6 +510,8 @@ const ProductPageMN = () => {
       type: value,
     });
   };
+
+
   
 
   return (
@@ -656,35 +667,20 @@ const ProductPageMN = () => {
                 onChange={handleOnChange}
               />
             </Form.Item>
-            {/* <Form.Item
-              label="Image"
-              name="image"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your image product!",
-                },
-              ]}
-            >
-              <Upload onChange={handleChangeAvatar} maxCount={1}>
-                <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                {stateProduct?.image && (
-                <img
-                  src={stateProduct?.image}
-                  style={{
-                    height: "60px",
-                    width: "60px",
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                  }}
-                  alt="avatar"
-                />
-              )}
-              </Upload>
-            </Form.Item> */}
 
-            <label>Chọn ảnh</label>
-            <input type="file" id='file' multiple accept='image/*' onChange={handleImageChange} />
+            <Form.Item
+              name="image"
+              label="Hình ảnh"
+              rules={[{ required: true, message: 'Vui lòng chọn hình ảnh!' }]}
+            >
+              <div className="upload-image">
+                <input type="file" accept="image/*" icon={<UploadOutlined />} onChange={handleImageChange} />
+                {uploadImage && (
+                  <img src={URL.createObjectURL(uploadImage)} alt="upload" style={{marginTop: '10px', width: '100px', height: '100px', objectFit: 'cover', borderRadius: '10px'}}/>
+                )}
+              </div>
+            </Form.Item>
+
             <Form.Item
               wrapperCol={{
                 offset: 6,
@@ -743,20 +739,12 @@ const ProductPageMN = () => {
                 },
               ]}
             >
-              {/* <Select
-                    placeholder="Select a option and change input text above"
-                    onChange={handleOnChangeDetail}
-                    allowClear
-                    name='type'
-                  >
-                    <Option value="male">male</Option>
-                    <Option value="female">female</Option>
-                    <Option value="other">other</Option>
-                  </Select> */}
-              <Input
-                value={stateProductDetail.type}
-                name="type"
-                onChange={handleOnChangeDetail}
+              <Select
+                placeholder="Type product"
+                onChange={handleOnChangeDetailSelect}
+                allowClear
+                name='type'
+                options={options}
               />
             </Form.Item>
             <Form.Item
@@ -834,35 +822,19 @@ const ProductPageMN = () => {
                 onChange={handleOnChangeDetail}
               />
             </Form.Item>
-            {/* <Form.Item
-              label="Image"
+            <Form.Item
               name="image"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your image product!",
-                },
-              ]}
+              label="Hình ảnh"
+              rules={[{ required: true, message: 'Vui lòng chọn hình ảnh!' }]}
             >
-              <Upload fileList={stateProduct?.image ? [{uid: '-1', url: stateProduct.image}] : []} onChange={handleChangeAvatarDetail} maxCount={1}>
-                <Button icon={<UploadOutlined />}>Click to Upload</Button>
+              <div className="upload-image">
+                <input type="file" accept="image/*" icon={<UploadOutlined />} onChange={handleChangeImageDetail} />
                 {stateProductDetail?.image && (
-                  <img
-                    src={stateProductDetail?.image}
-                    style={{
-                      height: "60px",
-                      width: "60px",
-                      borderRadius: "50%",
-                      objectFit: "cover",
-                    }}
-                    alt="avatar"
-                  />
+                  <img src={stateProductDetail?.image} alt="upload" style={{marginTop: '10px', width: '100px', height: '100px', objectFit: 'cover', borderRadius: '10px'}}/>
                 )}
-              </Upload>
-            </Form.Item> */}
-
-            <label>Chọn ảnh</label>
-            <input type="file" id='file' multiple accept='image/*' onChange={handleChangeImageDetail} />
+              </div>
+            </Form.Item>
+            
             <Form.Item
               wrapperCol={{
                 offset: 6,

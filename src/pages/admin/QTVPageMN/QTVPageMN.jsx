@@ -1,10 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from "react";
-import { Divider, Button, Modal, Form, Input, Upload, Space, Popconfirm } from "antd";
+import { Divider, Button, Modal, Form, Input, Upload, Space, Popconfirm, Select } from "antd";
 import { PlusSquareOutlined, UploadOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import TableComponent from "../../../components/TableComponent/TableComponent";
 import { getBase64 } from "../../../utils";
 import * as AccountService from '../../../services/AccountService';
+import * as RoleService from '../../../services/RoleService';
 import { UseMutationHook } from "../../../hooks/useMutationHook";
 import * as message from '../../../components/Message/message'
 import { useQuery } from '@tanstack/react-query'
@@ -25,6 +26,7 @@ const QTVPageMN = () => {
   const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef(null);
   const [uploadImage, setUploadImage] = useState();
+  const [roles, setRoles] = useState([]);
 
 
   const renderAction = (record) => {
@@ -137,6 +139,7 @@ const QTVPageMN = () => {
     {
       title: 'Vai trò',
       dataIndex: 'role_id',
+      render: (roleId) => getRoleTitleById(roleId),
     },
     {
       title: 'Action',
@@ -155,6 +158,28 @@ const QTVPageMN = () => {
     role_id: "",
   });
 
+  // Call API Role
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const res = await RoleService.listRole(); 
+        if (res?.data) {
+          setRoles(res.data);
+        }
+      } catch (error) {
+        console.error('Error fetching roles:', error);
+      }
+    };
+
+    fetchRoles();
+  }, []);
+
+  const getRoleTitleById = (roleId) => {
+    const role = roles.find(role => role._id === roleId);
+    return role ? role.title : '';
+  };
+
+  // Call API Account
   const mutation = UseMutationHook((data) => {
     const { name, email, avatar, password, phone, role_id } = data;
     const res = AccountService.createAccount({ name, email, avatar, password, phone, role_id });
@@ -213,6 +238,13 @@ const QTVPageMN = () => {
       [e.target.name]: e.target.value,
     });
   };
+
+  const handleSelectChange = (value) => {
+    setStateAccount({
+      ...stateAccount,
+      role_id: value,
+    });
+  }
 
   const handleChangeAvatar = async (e) => {
     setUploadImage(e.target.files[0]);
@@ -320,6 +352,13 @@ const QTVPageMN = () => {
       [e.target.name]: e.target.value,
     });
   };
+
+  const handleSelectChangeDetail = (value) => {
+    setStateAccountDetail({
+      ...stateAccountDetail,
+      role_id: value,
+    });
+  }
 
   const onUpdateUser = () => {
     mutationUpdate.mutate({id: rowSelected, token: user?.access_token, ...stateAccountDetail}, {
@@ -456,15 +495,20 @@ const QTVPageMN = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input your vai trò user!",
+                  message: "Please select a role for the user!",
                 },
               ]}
             >
-              <Input
+              <Select
                 value={stateAccount.role_id}
-                name="role_id"
-                onChange={handleOnChange}
-              />
+                onChange={handleSelectChange}
+              >
+                {roles.map((role, index) => (
+                  <Select.Option key={index} value={role._id}>
+                    {role.title}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
             <Form.Item
               label="Password"
@@ -586,15 +630,20 @@ const QTVPageMN = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input your role_id user!",
+                  message: "Please select a role for the user!",
                 },
               ]}
             >
-              <Input
-                value={setStateAccountDetail.role_id}
-                name="role_id"
-                onChange={handleOnChangeDetail}
-              />
+              <Select
+                value={stateAccount.role_id}
+                onChange={handleSelectChangeDetail}
+              >
+                {roles.map((role, index) => (
+                  <Select.Option key={index} value={role._id}>
+                    {role.title}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
             <Form.Item
               label="Avatar"
