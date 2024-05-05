@@ -2,24 +2,30 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import * as PostService from '../../../services/PostService';
+import * as UserService from '../../../services/UserService';
 import { Typography, Divider, Row, Col, Space, Card } from 'antd';
 import './BlogDetailPage.scss'
 import moment from 'moment';
 import { CommentOutlined } from '@ant-design/icons';
+import { useSelector } from 'react-redux';
+import Comments from '../../../components/Comment/Comments';
 
 
 const { Title, Paragraph } = Typography;
 
 const BlogDetailPage = () => {
+    const user = useSelector((state) => state?.user)
     const [detailBlog, setDetailBlog] = useState(null);
     const [blogList, setBlogList] = useState([]);
-    const { id } = useParams();
+
+    const idPost = detailBlog?._id
+    const { id } = useParams()
 
     useEffect(() => {
         fetchPostDetail();
         fetchPostList();
     }, []);
-
+    
     const fetchPostDetail = async () => {
         try {
             const response = await PostService.getDetailPost(id); 
@@ -41,6 +47,8 @@ const BlogDetailPage = () => {
     if (!detailBlog) {
         return <div>Loading...</div>;
     }
+    // ====================
+    
 
     return (
         <div className="container page__blog--detail">
@@ -84,6 +92,12 @@ const BlogDetailPage = () => {
                             </div>
                         ))}
                     </Card>
+                </Col>
+                <Col span={16}>
+                    <Comments
+                        currentUserId={user?.id}
+                        idPost={idPost}
+                    />
                 </Col>
             </Row>
         </div>

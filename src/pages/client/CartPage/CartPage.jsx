@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Button, Col, Input, Popconfirm, Row } from 'antd'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table } from 'antd';
 import { DeleteOutlined } from "@ant-design/icons";
 import { useSelector } from 'react-redux';
@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom'
 import './CartPage.scss'
 import * as message from '../../../components/Message/message'
 import * as CartService from '../../../services/CartService'
-import { useQuery } from '@tanstack/react-query'
 import ModalAddressComponent from '../../../components/ModalAddressComponent/ModalAddressComponent';
 
 
@@ -17,6 +16,7 @@ const CartPage = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const user = useSelector((state) => state?.user)
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [dataCart, setDataCart] = useState([])
   const navigate = useNavigate()
 
   const token = user?.access_token
@@ -30,21 +30,25 @@ const CartPage = () => {
 
     try {
       const res = await CartService.listProductCart(userId);
-      return res.data
+      setDataCart(res.data)
     } catch (error) {
       console.error("Error fetching products cart:", error);
     }
   };
 
-  const { data: productsList } = useQuery({
-    queryKey: ['products-cart', user?.id], 
-    queryFn: fetchProductsCart, 
-    config: {
-      retry: 3,
-      retryDelay: 1000,
-      keePreviousData: true
-    }
-  });
+  // const { data: productsList } = useQuery({
+  //   queryKey: ['products-cart', user?.id], 
+  //   queryFn: fetchProductsCart, 
+  //   config: {
+  //     retry: 3,
+  //     retryDelay: 1000,
+  //     keePreviousData: true
+  //   }
+  // });
+
+  useEffect(() => {
+    fetchProductsCart()
+  }, [user?.id]);
 
   // Xoá nhiều sản phẩm trong giỏ hàng
   const handleDeleteAll = async () => {
@@ -58,10 +62,11 @@ const CartPage = () => {
     }
   }
 
+
   // TABLE
   const columns = [
     {
-      title: `Tất cả (${productsList?.length} sản phẩm)`,
+      title: `Tất cả (${dataCart?.length} sản phẩm)`,
       dataIndex: 'image',
       key: 'image',
       render: (image) => <img src={image} alt="Product" style={{ width: '80px' }} />, 
@@ -106,7 +111,7 @@ const CartPage = () => {
     },
   ];
 
-  const data = productsList?.map((product) => ({
+  const data = dataCart?.map((product) => ({
     key: product?._id,
     product: product?._id,
     image: product?.image,
@@ -127,6 +132,8 @@ const CartPage = () => {
   const handleAmountChange = async (key, value, token) => {
     try {
       await CartService.updateProductQuantityInCart(key, value, token);
+      // setDataCart(res?.data?.products)
+      fetchProductsCart()
     } catch (error) {
       console.error('Error updating product quantity in cart:', error);
     }
@@ -136,6 +143,7 @@ const CartPage = () => {
   const handleDelete = async (key, token) => {
     try {
       await CartService.deleteProductCart(key, token);
+      fetchProductsCart()
     } catch (error) {
       console.error('Error updating product quantity in cart:', error);
     }
@@ -160,14 +168,14 @@ const CartPage = () => {
       setIsModalOpen(true);
     }else {
 
-      const selectedProducts = productsList.filter(product => selectedRowKeys.includes(product._id));
+      const selectedProducts = dataCart.filter(product => selectedRowKeys.includes(product._id));
       navigate('/checkout', { state: { selectedProducts } })
     }
   }
 
   const handleCancelModal = () => {
     setIsModalOpen(false);
-    const selectedProducts = productsList.filter(product => selectedRowKeys.includes(product._id));
+    const selectedProducts = dataCart.filter(product => selectedRowKeys.includes(product._id));
     navigate('/checkout', { state: { selectedProducts } })
   };
 

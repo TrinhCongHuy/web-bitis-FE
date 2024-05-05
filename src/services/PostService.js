@@ -29,13 +29,30 @@ export const getDetailPost = async (id) => {
 
 export const updatePost = async ({id, token, rests}) => {
     try {
-        console.log('rests', rests)
         const res = await axiosJWT.patch(
             `${process.env.REACT_APP_API_URL}/posts/update/${id}`,
             rests,
             {
                 headers: {
                     'Content-Type': 'multipart/form-data',
+                    token: `Bearer ${token}`
+                }
+            }
+        );
+        return res.data;
+    } catch (error) {
+        console.error("Error updating product:", error);
+        throw error;
+    }
+};
+
+export const updateCommentPost = async ({id, token, rests}) => {
+    try {
+        const res = await axiosJWT.patch(
+            `${process.env.REACT_APP_API_URL}/posts/update-comment/${id}`,
+            rests,
+            {
+                headers: {
                     token: `Bearer ${token}`
                 }
             }

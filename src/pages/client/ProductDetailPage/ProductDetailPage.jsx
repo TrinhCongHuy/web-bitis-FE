@@ -66,6 +66,7 @@ const ProductDetailPage = () => {
 
             try {
                 await CartService.createProductCart(data);
+                
             } catch (error) {
                 console.error('Error create product in cart:', error);
             }

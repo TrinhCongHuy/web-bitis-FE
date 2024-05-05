@@ -9,8 +9,12 @@ export const listUser = async () => {
 }
 
 export const getUser = async (id) => {
-    const res = await axios.get(`${process.env.REACT_APP_API_URL}/user/${id}`, )
-    return res.data
+    let res
+    if (id) {
+        res = await axiosJWT.get(`${process.env.REACT_APP_API_URL}/user/${id}`, )
+        return res.data
+    }
+    
 }
 
 export const loginUser = async (data) => {

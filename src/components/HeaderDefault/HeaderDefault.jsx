@@ -58,7 +58,7 @@ const HeaderDefault = () => {
         }
     };
 
-    const { data: carts } = useQuery({
+    const { data: carts, refetch } = useQuery({
         queryKey: ['carts', user?.id], 
         queryFn: fetchProductsCart, 
         config: {
@@ -67,6 +67,14 @@ const HeaderDefault = () => {
           keePreviousData: true
         }
     });
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            refetch();
+        }, 1000); // Fetch lại sau mỗi 30 giây
+
+        return () => clearInterval(intervalId);
+    }, [refetch]);
 
     return (
         <>
