@@ -1,3 +1,4 @@
+import { Image } from "antd";
 import CommentForm from "./CommentForm";
 
 const Comment = ({
@@ -32,7 +33,7 @@ const Comment = ({
   return (
     <div key={comment.id} className="comment">
       <div className="comment-image-container">
-        <img src="/user-icon.png" />
+        <Image src="/user-icon.png" />
       </div>
       <div className="comment-right-part">
         <div className="comment-content">

@@ -4,7 +4,7 @@ import './CheckOutPage.scss'
 import ModalAddressComponent from '../../../components/ModalAddressComponent/ModalAddressComponent'
 import { EnvironmentOutlined, OneToOneOutlined, PlusOutlined } from '@ant-design/icons'
 import { useLocation } from 'react-router-dom';
-import * as message from '../../../components/Message/message'
+import * as message from '../../../components/Message/Message'
 import { useSelector } from 'react-redux';
 import * as OrderService from '../../../services/OrderService'
 import * as ProductService from '../../../services/ProductService'

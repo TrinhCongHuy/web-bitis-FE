@@ -5,7 +5,7 @@ import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import TableComponent from "../../../components/TableComponent/TableComponent";
 import * as UserService from '../../../services/UserService'
 import { UseMutationHook } from "../../../hooks/useMutationHook";
-import * as message from '../../../components/Message/message'
+import * as message from '../../../components/Message/Message'
 import { useQuery } from '@tanstack/react-query'
 import { useSelector } from 'react-redux';
 

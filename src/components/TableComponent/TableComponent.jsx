@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Table, Button } from 'antd';
 import './TableComponent.scss'
-import Loading from '../LoadingComponent/loading';
+import Loading from '../LoadingComponent/Loading';
 import { Excel } from "antd-table-saveas-excel";
 
 

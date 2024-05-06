@@ -5,8 +5,8 @@ import { Button, Col, Form, Input, Row } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { UseMutationHook } from '../../../hooks/useMutationHook';
 import * as UserService from '../../../services/UserService'
-import Loading from '../../../components/LoadingComponent/loading';
-import * as message from '../../../components/Message/message'
+import Loading from '../../../components/LoadingComponent/Loading';
+import * as message from '../../../components/Message/Message'
 
 
 const SingUpPage = () => {

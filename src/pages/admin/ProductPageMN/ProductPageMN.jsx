@@ -6,12 +6,12 @@ import { PlusSquareOutlined, UploadOutlined, EditOutlined, DeleteOutlined, Searc
 import TableComponent from "../../../components/TableComponent/TableComponent";
 import * as ProductService from "../../../services/ProductService";
 import { UseMutationHook } from "../../../hooks/useMutationHook";
-import * as message from '../../../components/Message/message'
+import * as message from '../../../components/Message/Message'
 import { useQuery } from '@tanstack/react-query'
 import "./ProductPageMN.scss";
 import DrawerComponent from "../../../components/DrawerComponent/DrawerComponent";
 import { useSelector } from 'react-redux';
-import Loading from "../../../components/LoadingComponent/loading";
+import Loading from "../../../components/LoadingComponent/Loading";
 const { TextArea } = Input;
 
 const ProductPageMN = () => {

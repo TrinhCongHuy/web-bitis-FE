@@ -6,7 +6,7 @@ import { DeleteOutlined } from "@ant-design/icons";
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom'
 import './CartPage.scss'
-import * as message from '../../../components/Message/message'
+import * as message from '../../../components/Message/Message'
 import * as CartService from '../../../services/CartService'
 import ModalAddressComponent from '../../../components/ModalAddressComponent/ModalAddressComponent';
 

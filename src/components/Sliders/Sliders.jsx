@@ -1,6 +1,6 @@
 import React from 'react'
 
-import SliderComponent from '../../components/SliderComponent/SliderComponent'
+import SliderComponent from '../SliderComponent/SliderComponent'
 import slider1 from '../../assets/images/slider/slider01.webp'
 import slider2 from '../../assets/images/slider/slider02.webp'
 import slider3 from '../../assets/images/slider/slider03.webp'

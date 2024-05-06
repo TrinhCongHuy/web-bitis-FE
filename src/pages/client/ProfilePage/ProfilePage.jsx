@@ -8,7 +8,7 @@ import './ProfilePage.scss'
 import * as UserService from '../../../services/UserService'
 import { UseMutationHook } from "../../../hooks/useMutationHook";
 import { useDispatch } from "react-redux";
-import * as message from '../../../components/Message/message'
+import * as message from '../../../components/Message/Message'
 import { updateUser } from "../../../redux/slides/userSlide";
 import { getBase64 } from "../../../utils";
 

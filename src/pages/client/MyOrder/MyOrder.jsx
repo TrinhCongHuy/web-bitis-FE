@@ -6,9 +6,7 @@ import { useSelector } from 'react-redux'
 import './MyOrder.scss'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
-import * as message from '../../../components/Message/message'
-
-
+import * as message from '../../../components/Message/Message'
 
 
 

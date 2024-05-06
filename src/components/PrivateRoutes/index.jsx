@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { Navigate, useNavigate, Outlet } from 'react-router-dom';
-import * as message from '../Message/message'
+import * as message from '../Message/Message'
 
 const PrivateRoutes = () => {
     const navigate = useNavigate();

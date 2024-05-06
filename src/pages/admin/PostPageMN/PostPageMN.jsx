@@ -1,18 +1,19 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from "react";
-import { Divider, Button, Modal, Form, Input, Space, Popconfirm } from "antd";
+import { Divider, Button, Modal, Form, Input, Space, Popconfirm, Upload } from "antd";
 import { PlusSquareOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import TableComponent from "../../../components/TableComponent/TableComponent";
-import * as TopicService from "../../../services/TopicService";
+import * as PostService from "../../../services/PostService";
 import { UseMutationHook } from "../../../hooks/useMutationHook";
-import * as message from '../../../components/Message/message'
+import * as message from '../../../components/Message/Message'
 import { useQuery } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom';
 import DrawerComponent from "../../../components/DrawerComponent/DrawerComponent";
 import { useSelector } from 'react-redux';
-import Loading from "../../../components/LoadingComponent/loading";
+import Loading from "../../../components/LoadingComponent/Loading";
 
-const TopicPageMN = () => {
+const PostPageMN = () => {
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
   const user = useSelector(state => state.user)
@@ -22,11 +23,12 @@ const TopicPageMN = () => {
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef(null);
+  const navigate = useNavigate();
 
   const renderAction = (record) => {
     return (
       <Space>
-        <EditOutlined style={{color: 'orange', cursor: 'pointer', fontSize: '18px'}} onClick={handleDetailTopic}/>
+        <EditOutlined style={{color: 'orange', cursor: 'pointer', fontSize: '18px'}} onClick={() => handleEditPost(record.key)}/>
         {columns.length >= 1 && (
           <Popconfirm title="Bạn có chắc chắn muốn xóa?" onConfirm={() => handleDelete(record.key)}>
             <DeleteOutlined style={{color: 'red', cursor: 'pointer', fontSize: '18px'}}/>
@@ -108,15 +110,22 @@ const TopicPageMN = () => {
 
   const columns = [
     {
-      title: 'Name',
-      dataIndex: 'name',
+      title: 'Tên bài viết',
+      dataIndex: 'title',
       render: (text) => <a>{text}</a>,
-      sorter: (a, b) => a.name.length - b.name.length,
-      ...getColumnSearchProps('name')
+      sorter: (a, b) => a.title.length - b.title.length,
+      ...getColumnSearchProps('title')
     },
     {
-      title: 'Mã code',
-      dataIndex: 'slug'
+      title: 'Chủ đề',
+      dataIndex: 'topic'
+    },
+    {
+      title: 'Hình ảnh',
+      dataIndex: 'image',
+      render: (image) => (
+        <img src={image} alt="Hình ảnh" style={{ width: 60, height: 60 }} />
+      )
     },
     {
       title: 'Action',
@@ -127,36 +136,37 @@ const TopicPageMN = () => {
 
   //=============== Display products ==================//
 
-  const [ stateTopic, setStateTopic ] = useState({
-    name: "",
-    slug: "",
+  const [ statePost, setStatePost ] = useState({
+    title: "",
+    topic: "",
+    image: ""
   });
 
   const mutation = UseMutationHook((data) => {
-    const { name } = data;
-    const res = TopicService.createTopic({name});
+    const { title, topic, image } = data;
+    const res = PostService.createPost({ title, topic, image });
     return res
   });
 
 
-  const fetchTopicAll = async () => {
-    const res = await TopicService.listTopic()
+  const fetchPostAll = async () => {
+    const res = await PostService.listPost()
     return res
   }
 
   const { data, isLoading, isSuccess, isError } = mutation
 
   // Lấy ra ds sản phẩm
-  const queryTopics = useQuery({
-    queryKey: ['topics'], 
-    queryFn: fetchTopicAll
+  const queryPosts = useQuery({
+    queryKey: ['posts'], 
+    queryFn: fetchPostAll
   });
 
-  const { isLoading: isLoadingTopics, data: topics } = queryTopics
+  const { isLoading: isLoadingPosts, data: posts } = queryPosts
 
 
-  const dataTable = topics && topics.data && topics.data.length && topics.data.map((topic) => {
-    return {...topic, key: topic._id}
+  const dataTable = posts && posts.data && posts.data.length && posts.data.map((post) => {
+    return {...post, key: post._id}
   })
 
   useEffect(() => {
@@ -175,7 +185,7 @@ const TopicPageMN = () => {
   
   const handleCancel = () => {
     setOpen(false);
-    setStateTopic({
+    setStatePost({
       name: "",
       slug: "",
     })
@@ -184,103 +194,32 @@ const TopicPageMN = () => {
 
   //   form
   const onFinish = () => {
-    mutation.mutate(stateTopic, {
+    mutation.mutate(statePost, {
       onSettled: () => {
-        queryTopics.refetch()
+        queryPosts.refetch()
       }
     })
   };
 
   const handleOnChange = (e) => {
-    setStateTopic({
-      ...stateTopic,
+    setStatePost({
+      ...statePost,
       [e.target.name]: e.target.value,
     });
   };
 
 
-  //================= EDIT TOPIC ==================//
+  //================= EDIT POST ==================//
 
-  const [ stateTopicDetail, setStateTopicDetail ] = useState({
-    name: "",
-  });
-
-  const mutationUpdate = UseMutationHook((data) => {
-    const { id, token, ...rests } = data;
-    const res = TopicService.updateTopic({ id, token, rests });
-    console.log('updateTopic', res)
-    return res
-  });
-
-  const { data: dataUpdated, isLoading: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate
-
-  useEffect(() => {
-    if (isSuccessUpdated && dataUpdated?.status === 'OK') {
-      message.success()
-      handleCancelUpdate()
-    }else if (isErrorUpdated) {
-      message.error()
-    }
-  }, [isSuccessUpdated, isErrorUpdated])
-
-  const handleCancelUpdate = () => {
-    setIsOpenDraw(false);
-    setStateTopicDetail({
-      name: "",
-    })
-    form.resetFields()
-  };
-
-
-  const fetchGetDetailTopic = async (id) => {
-    try {
-      const res = await TopicService.getDetailTopic(id);
-      console.log('res', res)
-      if (res?.data) {
-        setStateTopicDetail({
-          name: res.data.name
-        });
-        form.setFieldsValue(res.data);
-      }
-    } catch (error) {
-      console.error("Error fetching product details:", error);
-    }
-    setIsLoadingUpdate(false)
-  };
-
-  useEffect(() => {
-    if (rowSelected && isOpenDraw) {
-      setIsLoadingUpdate(true)
-      fetchGetDetailTopic(rowSelected)
-    }
-  }, [rowSelected, isOpenDraw])
-
-  const handleDetailTopic = () => {
-    setIsOpenDraw(true)
+  const handleEditPost = (id) => {
+    navigate(`/system/admin/edit-blog/${id}`)
   }
-
-  const handleOnChangeDetail = (e) => {
-    setStateTopicDetail({
-      ...stateTopicDetail,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const onUpdateTopic = () => {
-    mutationUpdate.mutate({id: rowSelected, token: user?.access_token, ...stateTopicDetail}, {
-      onSettled: () => {
-        queryTopics.refetch(); 
-      }
-    })
-  }
-  
-  
 
   // ============== DELETE ============= //
 
   const mutationDeleted = UseMutationHook((data) => {
     const { id, token } = data;
-    const res = TopicService.deleteTopic({ id, token });
+    const res = PostService.deletePost({ id, token });
     return res
   });
 
@@ -299,7 +238,7 @@ const TopicPageMN = () => {
   const handleDelete = (key) => {
     mutationDeleted.mutate({ id: key, token: user?.access_token }, {
       onSettled: () => {
-        queryTopics.refetch()
+        queryPosts.refetch()
       }
     })
   };
@@ -309,7 +248,7 @@ const TopicPageMN = () => {
 
   const mutationDeletedMany = UseMutationHook((data) => {
     const { token, ...ids } = data;
-    const res = TopicService.deleteManyTopic({ access_token: token, data: ids });
+    const res = PostService.deleteManyPost({ access_token: token, data: ids });
     return res;
 });
 
@@ -323,24 +262,19 @@ const TopicPageMN = () => {
     }
   }, [isSuccessDeletedMany, isErrorDeletedMany])
 
-  const handleDeletedManyTopic = (ids) => {
+  const handleDeletedManyPost = (ids) => {
     mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {
       onSettled: () => {
-        queryTopics.refetch()
+        queryPosts.refetch()
       }
     })
   };
 
-
   return (
     <>
-      <Divider>QUẢN LÝ CHỦ ĐỀ</Divider>
+      <Divider>QUẢN LÝ BÀI VIẾT</Divider>
 
-      <Button className="btn-add" onClick={showModal}>
-        <PlusSquareOutlined className="icon-add" />
-      </Button>
-
-      <TableComponent handleDeletedMany={handleDeletedManyTopic} columns={columns} isLoading={isLoadingTopics} data={dataTable} 
+      <TableComponent handleDeletedMany={handleDeletedManyPost} columns={columns} isLoading={isLoadingPosts} data={dataTable} 
         onRow={(record, rowIndex) => {
           return {
             onClick: event => {
@@ -351,7 +285,7 @@ const TopicPageMN = () => {
       />
 
       <Modal
-        title="Tạo mới chủ đề"
+        title="Tạo mới bài viết"
         forceRender
         open={open}
         onCancel={handleCancel}
@@ -377,20 +311,48 @@ const TopicPageMN = () => {
             autoComplete="off"
           >
             <Form.Item
-              label="Name"
-              name="name"
+              name="title"
+              label="Tên bài đăng"
+              rules={[{ required: true, message: "Vui lòng nhập tên bài đăng!" }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="topic"
+              label="Chủ đề"
+              rules={[{ required: true, message: "Vui lòng chọn chủ đề!" }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="description"
+              label="Mô tả ngắn"
               rules={[
-                {
-                  required: true,
-                  message: "Please input your name product!",
-                },
+                { required: true, message: "Vui lòng nhập mô tả ngắn!" },
               ]}
             >
-              <Input
-                value={stateTopic.name}
-                name="name"
-                onChange={handleOnChange}
-              />
+              <Input.TextArea />
+            </Form.Item>
+            <Form.Item
+              name="content"
+              label="Nội dung"
+              rules={[{ required: true, message: "Vui lòng nhập nội dung!" }]}
+            >
+              <Input.TextArea />
+            </Form.Item>
+            <Form.Item label="Hình ảnh">
+              {/* <Upload
+                accept="image/*"
+                listType="picture-card"
+                onChange={handleImageChange}
+              >
+                {imageList.length >= 8 ? null : (
+                  <div>
+                    <PlusOutlined />
+                    <div style={{ marginTop: 8 }}>Upload</div>
+                  </div>
+                )}
+              </Upload> */}
             </Form.Item>
             <Form.Item
               wrapperCol={{
@@ -406,57 +368,8 @@ const TopicPageMN = () => {
           </Form>
         </Loading>
       </Modal>
-
-      <DrawerComponent title="Chi tiết chủ đề" isOpen={isOpenDraw} onClose={() => setIsOpenDraw(false)} width='50%'>
-        <Loading isLoading={isLoadingUpdate || isLoadingUpdated}>
-          <Form
-            name="basic"
-            labelCol={{
-              span: 6,
-            }}
-            wrapperCol={{
-              span: 18,
-            }}
-            style={{
-              maxWidth: 600,
-            }}
-            onFinish={onUpdateTopic}
-            autoComplete="on"
-            form={form}
-          >
-            <Form.Item
-              label="Name"
-              name="name"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your name topic!",
-                },
-              ]}
-            >
-              <Input
-                value={stateTopicDetail['name']}
-                name="name"
-                onChange={handleOnChangeDetail}
-              />
-            </Form.Item>
-            <Form.Item
-              wrapperCol={{
-                offset: 6,
-                span: 16,
-              }}
-              style={{ display: "flex", justifyContent: "center" }}
-            >
-              <Button type="primary" htmlType="submit">
-                Cập nhật
-              </Button>
-            </Form.Item>
-          </Form>
-        </Loading>
-      </DrawerComponent>
-
     </>
-  );
-};
+  )
+}
 
-export default TopicPageMN;
+export default PostPageMN

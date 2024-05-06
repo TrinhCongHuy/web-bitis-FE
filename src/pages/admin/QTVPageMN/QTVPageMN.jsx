@@ -7,11 +7,11 @@ import { getBase64 } from "../../../utils";
 import * as AccountService from '../../../services/AccountService';
 import * as RoleService from '../../../services/RoleService';
 import { UseMutationHook } from "../../../hooks/useMutationHook";
-import * as message from '../../../components/Message/message'
+import * as message from '../../../components/Message/Message'
 import { useQuery } from '@tanstack/react-query'
 import DrawerComponent from "../../../components/DrawerComponent/DrawerComponent";
 import { useSelector } from 'react-redux';
-import Loading from "../../../components/LoadingComponent/loading";
+import Loading from "../../../components/LoadingComponent/Loading";
 import './QTVPageMN.scss'
 
 

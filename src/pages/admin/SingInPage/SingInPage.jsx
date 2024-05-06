@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import './SingInPage.scss'
 import * as AccountService from '../../../services/AccountService'
 import { UseMutationHook } from '../../../hooks/useMutationHook';
-import * as message from '../../../components/Message/message'
+import * as message from '../../../components/Message/Message'
 import { jwtDecode } from "jwt-decode";
 import { useDispatch } from 'react-redux';
 import { updateAccount } from '../../../redux/slides/accountSlide';
