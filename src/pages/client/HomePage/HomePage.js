@@ -42,7 +42,7 @@ const HomePage = () => {
       keePreviousData: true
     }
   });
-
+  
   useEffect(() => {
     const fetchData = async () => {
         if (refSearch.current) {
