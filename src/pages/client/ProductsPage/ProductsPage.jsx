@@ -8,7 +8,7 @@ import Sliders from '../../../components/Sliders/Sliders'
 import * as ProductService from '../../../services/ProductService'
 import { useQuery } from '@tanstack/react-query'
 import { useSelector } from 'react-redux'
-import { useDebounce } from '../../../hooks/useDebounce'
+// import { useDebounce } from '../../../hooks/useDebounce'
 
 
 
@@ -16,7 +16,7 @@ const ProductsPage = () => {
   const searchProduct = useSelector((state) => state.product.search)
   const refSearch = useRef()
   const [limit, setLimit] = useState(6)
-  const searchDebounce = useDebounce(searchProduct)
+  // const searchDebounce = useDebounce(searchProduct)
   const [selectedType, setSelectedType] = useState(null);
   const [pagination, setPagination] = useState({
     page: 0,
@@ -39,8 +39,18 @@ const ProductsPage = () => {
     return res
   }
 
+  // const { data: products } = useQuery({
+  //   queryKey: ['products', limit, searchDebounce, selectedType, pagination.page], 
+  //   queryFn: fetchProductAll, 
+  //   config: {
+  //     retry: 3,
+  //     retryDelay: 1000,
+  //     keePreviousData: true
+  //   }
+  // });
+
   const { data: products } = useQuery({
-    queryKey: ['products', limit, searchDebounce, selectedType, pagination.page], 
+    queryKey: ['products', limit, selectedType, pagination.page], 
     queryFn: fetchProductAll, 
     config: {
       retry: 3,

@@ -1,0 +1,124 @@
+.search,
+.search-result {
+  width: 361px;
+}
+
+.search-result {
+  background-color: #ffffff;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+}
+
+.search {
+  height: 40px;
+  padding-left: 16px;
+  background-color: rgba(22, 24, 35, 0.06);
+  border-radius: 92px;
+  -webkit-border-radius: 92px;
+  -moz-border-radius: 92px;
+  -ms-border-radius: 92px;
+  -o-border-radius: 92px;
+  display: flex;
+  position: relative;
+  border: 1.5px solid transparent;
+  overflow: hidden;
+
+  input {
+    flex: 1;
+    height: 100%;
+    padding-right: 40px;
+    color: var(--black);
+    font-size: 1.6rem;
+    background-color: transparent;
+    caret-color: var(--primary);
+    font-family: var(--font-family);
+    border: none;
+    outline: none;
+  }
+  input:not(:placeholder-shown) ~ .search-btn {
+    color: rgba(22, 24, 35, 0.75);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: var(--search-top-spacer);
+    right: var(--search-button-width);
+    width: 1px;
+    height: calc(var(--search-height) - var(--search-top-spacer) * 2);
+    background-color: rgba(22, 24, 35, 0.12);
+  }
+
+  &:focus-within {
+    border-color: rgba(22, 24, 35, 0.2);
+  }
+}
+
+.search-title {
+  padding: 5px 12px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: rgba(22, 24, 35, 0.5);
+}
+
+.clear,
+.loading {
+  position: absolute;
+  right: 35px;
+  top: 50%;
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -o-transform: translateY(-50%);
+  color: rgba(22, 24, 35, 0.34);
+  margin-right: 1.5rem;
+  border: none;
+}
+
+.loading {
+  animation: spinner 0.8s linear infinite;
+  -webkit-animation: spinner 0.8s linear infinite;
+}
+
+@keyframes spinner {
+  from {
+    transform: translateY(-50%) rotate(0);
+    -webkit-transform: translateY(-50%) rotate(0);
+    -moz-transform: translateY(-50%) rotate(0);
+    -ms-transform: translateY(-50%) rotate(0);
+    -o-transform: translateY(-50%) rotate(0);
+  }
+  to {
+    transform: translateY(-50%) rotate(360deg);
+    -webkit-transform: translateY(-50%) rotate(360deg);
+    -moz-transform: translateY(-50%) rotate(360deg);
+    -ms-transform: translateY(-50%) rotate(360deg);
+    -o-transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+.search-btn {
+  width: 45px;
+  height: 100%;
+  font-size: 1.8rem;
+  color: rgba(22, 24, 35, 0.34);
+  background-color: rgba(22, 24, 35, 0.03);
+  border: none;
+
+  &:hover {
+    cursor: pointer;
+    background-color: rgba(26, 28, 40, 0.03);
+  }
+  &:active {
+    background-color: rgba(22, 24, 35, 0.06);
+  }
+}
+
+.custom-login {
+  color: red;
+}

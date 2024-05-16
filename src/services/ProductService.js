@@ -24,12 +24,8 @@ export const listProductType = async ( search, limit, type, page ) => {
     
 }
 
-// export const createProduct = async (data) => {
-//     const res = await axios.post(`${process.env.REACT_APP_API_URL}/products/create`,data )
-//     return res.data
-// }
-
 export const createProduct = async (formData) => {
+    console.log('formData', formData)
     try {
         const res = await axios.post(`${process.env.REACT_APP_API_URL}/products/create`, formData, {
             headers: {
@@ -55,6 +51,24 @@ export const updateProduct = async ({id, access_token, rests}) => {
             {
                 headers: {
                     'Content-Type': 'multipart/form-data',
+                    token: `Bearer ${access_token}`
+                }
+            }
+        );
+        return res.data;
+    } catch (error) {
+        console.error("Error updating product:", error);
+        throw error;
+    }
+};
+
+export const updateCommentProduct = async ({id, access_token, rests}) => {
+    try {
+        const res = await axiosJWT.patch(
+            `${process.env.REACT_APP_API_URL}/products/update-comment/${id}`,
+            rests,
+            {
+                headers: {
                     token: `Bearer ${access_token}`
                 }
             }

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Card, Col, Row, Upload, Select } from 'antd';
-import { PlusOutlined, TableOutlined, UploadOutlined } from '@ant-design/icons';
+import { Card, Col, Row, Select } from 'antd';
+import { TableOutlined, UploadOutlined } from '@ant-design/icons';
 import { Button, Form, Input } from "antd";
 import './AddPost.scss';
 import { Editor } from '@tinymce/tinymce-react';

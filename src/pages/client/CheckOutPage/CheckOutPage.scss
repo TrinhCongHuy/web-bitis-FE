@@ -96,10 +96,28 @@
         background-color: #fafafa;
         line-height: 2.2em;
         float: right;
+        width: 350px;
     
         &--item {
             display: flex;
             justify-content: space-between;
+        }
+
+        &--code {
+            width: 100%;
+            display: flex;
+
+            input {
+                width: 100%;
+                padding: 8px;
+                border: 1px solid #d1c9c9;
+                border-radius: 5px;
+                -webkit-border-radius: 5px;
+                -moz-border-radius: 5px;
+                -ms-border-radius: 5px;
+                -o-border-radius: 5px;
+                outline: none;
+            }
         }
     
         .price__total {

@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from "react";
 import { Divider, Button, Modal, Form, Input, Upload, Space, Popconfirm, Select } from "antd";
-import { PlusSquareOutlined, UploadOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import { UploadOutlined, EditOutlined, DeleteOutlined, SearchOutlined, PlusOutlined } from "@ant-design/icons";
 import TableComponent from "../../../components/TableComponent/TableComponent";
 import * as ProductService from "../../../services/ProductService";
 import { UseMutationHook } from "../../../hooks/useMutationHook";
@@ -24,8 +24,8 @@ const ProductPageMN = () => {
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef(null);
-  const [uploadImage, setUploadImage] = useState();
-
+  const [uploadImages, setUploadImages] = useState([]);
+  const [uploadImageDetail, setUploadImageDetail] = useState([]);
 
   const renderAction = (record) => {
     return (
@@ -211,21 +211,23 @@ const ProductPageMN = () => {
     description: "",
     rating: "",
     discount: "",
-    image: "",
+    images: [],
     type: "",
     countInStock: "",
     sold: ""
   });
 
   const mutation = UseMutationHook((data) => {
-    const { name, price, description, rating, discount, image, type, countInStock, sold } = data;
-    const res = ProductService.createProduct({ name, price, description, rating, discount, image, type, countInStock, sold });
+    console.log('data', data)
+    const { name, price, description, rating, discount, images, type, countInStock, sold } = data;
+    const res = ProductService.createProduct({ name, price, description, rating, discount, images, type, countInStock, sold });
     return res
   });
 
 
   const fetchProductAll = async () => {
     const res = await ProductService.listProduct()
+    console.log('res', res)
     return res
   }
 
@@ -266,7 +268,7 @@ const ProductPageMN = () => {
       description: "",
       rating: "",
       discount: "",
-      image: "",
+      images: [],
       type: "",
       countInStock: "",
       sold: ""
@@ -277,10 +279,10 @@ const ProductPageMN = () => {
   //   form
   const onFinish = () => {
     mutation.mutate(stateProduct, {
-      onSettled: () => {
-        queryProducts.refetch()
-      }
-    })
+        onSettled: () => {
+            queryProducts.refetch();
+        }
+    });
   };
 
   const handleOnChange = (e) => {
@@ -291,12 +293,15 @@ const ProductPageMN = () => {
   };
 
   const handleImageChange = (e) => {
-    setUploadImage(e.target.files[0])
+    const filesArray = Array.from(e.target.files);
+    setUploadImages(filesArray);
     setStateProduct({
         ...stateProduct,
-        image: e.target.files[0],
+        images: filesArray,
     });
   };
+
+  console.log('uploadImages', uploadImages)
 
   // const handleChangeAvatar = ({ fileList }) => {
   //   if (fileList.length > 0) {
@@ -319,7 +324,7 @@ const ProductPageMN = () => {
     description: "",
     rating: "",
     discount: "",
-    image: "",
+    images: [],
     type: "",
     countInStock: "",
     sold: ""
@@ -350,7 +355,7 @@ const ProductPageMN = () => {
       description: "",
       rating: "",
       discount: "",
-      image: "",
+      images: [],
       type: "",
       countInStock: "",
       sold: ""
@@ -369,7 +374,7 @@ const ProductPageMN = () => {
           description: res.data.description,
           rating: res.data.rating,
           discount: res.data.discount,
-          image: res.data.image,
+          images: res.data.images,
           type: res.data.type,
           countInStock: res.data.countInStock,
           sold: res.data.sold
@@ -382,6 +387,8 @@ const ProductPageMN = () => {
     setIsLoadingUpdate(false)
   };
 
+  console.log('stateProductDetail', stateProductDetail)
+
   useEffect(() => {
     if (rowSelected && isOpenDraw) {
       setIsLoadingUpdate(true)
@@ -393,12 +400,23 @@ const ProductPageMN = () => {
     setIsOpenDraw(true)
   }
 
+  // const handleChangeImageDetail = (e) => {
+  //   const filesArray = Array.from(e.target.files);
+  //   setStateProductDetail({
+  //     ...stateProductDetail,
+  //     images: filesArray,
+  //   });
+  // };
+
   const handleChangeImageDetail = (e) => {
+    const filesArray = Array.from(e.target.files);
+    setUploadImageDetail(filesArray)
     setStateProductDetail({
       ...stateProductDetail,
-      image: e.target.files[0],
+      images: filesArray,
     });
   };
+  
 
   const handleOnChangeDetail = (e) => {
     setStateProductDetail({
@@ -511,6 +529,8 @@ const ProductPageMN = () => {
     });
   };
 
+  console.log('uploadImageDetail', uploadImageDetail)
+
 
   
 
@@ -519,10 +539,11 @@ const ProductPageMN = () => {
       <Divider>QUẢN LÝ SẢN PHẨM</Divider>
 
       <Button className="btn-add" onClick={showModal}>
-        <PlusSquareOutlined className="icon-add" />
+        Thêm mới sản phẩm <PlusOutlined className="icon-add" />
       </Button>
 
-      <TableComponent handleDeletedMany={handleDeletedManyProduct} columns={columns} isLoading={isLoadingProducts} data={dataTable} 
+      <TableComponent handleDeletedMany={handleDeletedManyProduct} columns={columns} isLoading={isLoadingProducts} dataSource={dataTable} 
+        pagination={{ pageSize: 8, position: ['bottomCenter'], }}
         onRow={(record, rowIndex) => {
           return {
             onClick: event => {
@@ -530,6 +551,7 @@ const ProductPageMN = () => {
             },
           };
         }}
+        
       />
 
       <Modal
@@ -669,15 +691,20 @@ const ProductPageMN = () => {
             </Form.Item>
 
             <Form.Item
-              name="image"
+              name="images"
               label="Hình ảnh"
               rules={[{ required: true, message: 'Vui lòng chọn hình ảnh!' }]}
             >
               <div className="upload-image">
-                <input type="file" accept="image/*" icon={<UploadOutlined />} onChange={handleImageChange} />
-                {uploadImage && (
-                  <img src={URL.createObjectURL(uploadImage)} alt="upload" style={{marginTop: '10px', width: '100px', height: '100px', objectFit: 'cover', borderRadius: '10px'}}/>
-                )}
+                <input type="file" accept="image/*" multiple icon={<UploadOutlined />} onChange={handleImageChange} />
+                {uploadImages.map((file, index) => (
+                  <img
+                    key={index}
+                    src={URL.createObjectURL(file)}
+                    alt="upload"
+                    style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '10px' }}
+                  />
+                ))}
               </div>
             </Form.Item>
 
@@ -823,16 +850,45 @@ const ProductPageMN = () => {
               />
             </Form.Item>
             <Form.Item
-              name="image"
+              name="images"
               label="Hình ảnh"
               rules={[{ required: true, message: 'Vui lòng chọn hình ảnh!' }]}
             >
               <div className="upload-image">
-                <input type="file" accept="image/*" icon={<UploadOutlined />} onChange={handleChangeImageDetail} />
-                {stateProductDetail?.image && (
-                  <img src={stateProductDetail?.image} alt="upload" style={{marginTop: '10px', width: '100px', height: '100px', objectFit: 'cover', borderRadius: '10px'}}/>
+              <input type="file" accept="image/*" multiple icon={<UploadOutlined />} onChange={handleChangeImageDetail} />
+              <div style={{display: 'flex', flexDirection: 'column'}}>
+
+                {stateProductDetail?.images && (
+                  <div style={{ marginTop: '10px', marginRight: '20px'}}>
+                    <label style={{ display: 'block', marginBottom: '5px' }}>Ảnh hiện tại:</label>
+                    <>
+                      {stateProductDetail?.images.map((file, index) => (
+                        <img
+                          key={index}
+                          src={file}
+                          alt="upload"
+                          style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '10px', marginRight: '5px' }}
+                        />
+                      ))}
+                    </>
+                  </div>
+                )}
+                
+                {uploadImageDetail?.length > 0 && (
+                  <div style={{ marginTop: '10px'}}>
+                    <label style={{ display: 'block', marginBottom: '5px' }}>Ảnh mới:</label>
+                    {uploadImageDetail.map((file, index) => (
+                        <img
+                          key={index}
+                          src={URL.createObjectURL(file)}
+                          alt="upload"
+                          style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '10px', marginRight: '5px'  }}
+                        />
+                      ))}
+                  </div>
                 )}
               </div>
+            </div>
             </Form.Item>
             
             <Form.Item

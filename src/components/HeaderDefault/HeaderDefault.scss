@@ -94,27 +94,41 @@
                     align-items: center;
                     position: relative;
                     border-bottom: 1px solid transparent;
-    
-                    &:hover {
-                        &::before {
-                            content: ''; 
-                            position: absolute;
-                            bottom: 0;
-                            left: 0;
-                            width: 0;
-                            height: 2px;
-                            background-color: rgb(241, 70, 101);
-                            animation: grow 0.3s ease-in-out forwards;
-                        }
-        
-                        a {
-                            color: rgb(241, 70, 101); 
-                        }
-                    }
-    
+
                     a {
                         color: #000;
                         font-size: 1.2em;
+
+                        &:hover {
+                            &::before {
+                                content: ''; 
+                                position: absolute;
+                                bottom: 0;
+                                left: 0;
+                                width: 0;
+                                height: 2px;
+                                background-color: rgb(241, 70, 101);
+                                animation: grow 0.3s ease-in-out forwards;
+                            }
+            
+                            a {
+                                color: rgb(241, 70, 101); 
+                            }
+                        }
+
+                        &.active {
+                            color: rgb(241, 70, 101); 
+                            &::before {
+                                content: ''; 
+                                position: absolute;
+                                bottom: 0;
+                                left: 0;
+                                width: 0;
+                                height: 2px;
+                                background-color: rgb(241, 70, 101);
+                                animation: grow 0.3s ease-in-out forwards;
+                            }
+                        }
                     }
                 }
             }

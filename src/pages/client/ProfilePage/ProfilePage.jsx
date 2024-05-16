@@ -1,8 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-import { Col, Row } from "antd";
 import { useSelector } from "react-redux";
-import { Image, Button, Modal, Input, Space, Upload } from "antd";
+import { Image, Button, Modal, Input, Space, Upload, Col, Form, Row} from "antd";
 import { EditOutlined, UploadOutlined } from "@ant-design/icons"
 import './ProfilePage.scss'
 import * as UserService from '../../../services/UserService'
@@ -16,6 +15,7 @@ import { getBase64 } from "../../../utils";
 const ProfilePage = () => {
     const initialUser = useSelector((state) => state.user);
     const [open, setOpen] = useState(false);
+    const [form] = Form.useForm();
     const [confirmLoading, setConfirmLoading] = useState(false);
     const dispatch = useDispatch()
     const [user, setUser] = useState({
@@ -78,101 +78,82 @@ const ProfilePage = () => {
         setOpen(false);
     };
 
-    // const handleChange = (e, key) => {
-    //     if (key === 'avatar') {
-    //         setUser({ ...user, [key]: e.target.files[0].name });
-    //         setFilteredUser({ ...filteredUser, [key]: e.target.files[0].name });
-    //     } else {
-    //         setUser(prevUser => ({ ...prevUser, [key]: e.target.value }));
-    //         setFilteredUser(prevUser => ({ ...prevUser, [key]: e.target.value }));
-    //     }
-    // };
-
     const handleChange = (e, key) => {
         setUser(prevUser => ({ ...prevUser, [key]: e.target.value }));
         setFilteredUser(prevUser => ({ ...prevUser, [key]: e.target.value }));
     };
 
-    const handleChangeAvatar = async ({fileList}) => {
-        const file = fileList[0]
-        if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj);
-        }
+    const handleChangeAvatar = async (e) => {
+        const file = e.target.files[0]
 
         setUser(()=> ({
-            avatar: file.preview
+            avatar: file
         }));
 
-        // setFilteredUser(() => ({
-        //     avatar: file.preview
-        // }))
-
-        setFilteredUser(prevUser => ({ ...prevUser, avatar: file.preview }))
+        setFilteredUser(prevUser => ({ ...prevUser, avatar: file }))
     }
 
 
     return (
         <>
-        <div className="container page__profile">
-            <div className="wrapper">
-            <Row>
-                <Col span={8} style={{textAlign: "center"}}>
-                    <div className="profile__avatar">
-                        <Image className="profile__avatar--img" src={user.avatar} alt="avatar"/>
-                    </div>
-                    <div className="profile__edit">
-                        <Button onClick={showModal}>
-                            EDIT <EditOutlined />
-                        </Button>
-                        <Modal
-                            title="CHỈNH SỬA THÔNG TIN"
-                            open={open}
-                            onOk={handleOk}
-                            confirmLoading={confirmLoading}
-                            onCancel={handleCancel}
-                            okText="Cập nhật"
-                        >
-                            <Space direction="vertical" size="middle" style={{width: '100%'}}>
-                                <Input value={initialUser.name} onChange={(e) => handleChange(e, 'name')} />
-                                <Input value={initialUser.email} onChange={(e) => handleChange(e, 'email')} />
-                                <Input value={initialUser.phone} onChange={(e) => handleChange(e, 'phone')} />
-                                <Upload onChange={handleChangeAvatar}>
-                                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                                </Upload>
-                                {user.avatar && (
-                                    <img src={user.avatar} style={{
-                                        height: '60px',
-                                        width: '60px',
-                                        borderRadius: '50%',
-                                        objectFit: 'cover'
-                                    }} alt="avatar"/>
-                                )}
-                            </Space>
-                            
-                        </Modal>
-                    </div>
-                </Col>
-                <Col span={15} style={{marginLeft: '20px'}}>
-                    <div className="profile__info">
-                        <div className="profile__info--item">
-                            <span className="profile__info--title">Họ tên:</span>
-                            <span className="profile__info--content">{initialUser.name}</span>
-                        </div>
-                        <div className="profile__info--item">
-                            <span className="profile__info--title">Email:</span>
-                            <span className="profile__info--content">{initialUser.email}</span>
-                        </div>
-                        <div className="profile__info--item">
-                            <span className="profile__info--title">Số điện thoại:</span>
-                            <span className="profile__info--content">{initialUser.phone}</span>
-                        </div>
-                    </div>
-                </Col>
-            </Row>
+            <div className="container page__profile">
+                <div className="wrapper">
+                    <h3 style={{marginLeft: '140px'}}>Thông tin cá nhân</h3>
+                    <Row>
+                        <Col span={8} style={{textAlign: "center"}}>
+                            <div className="profile__avatar">
+                                <img className="profile__avatar--img" src={user.avatar} alt="avatar"/>
+                            </div>
+                            <div className="profile__edit">
+                                <Button onClick={showModal}>
+                                    EDIT <EditOutlined />
+                                </Button>
+                                <Modal
+                                    title="CHỈNH SỬA THÔNG TIN"
+                                    open={open}
+                                    onOk={handleOk}
+                                    confirmLoading={confirmLoading}
+                                    onCancel={handleCancel}
+                                    okText="Cập nhật"
+                                >
+                                    <Space direction="vertical" size="middle" style={{width: '100%'}}>
+                                        <Input value={initialUser.name} onChange={(e) => handleChange(e, 'name')} />
+                                        <Input value={initialUser.email} onChange={(e) => handleChange(e, 'email')} />
+                                        <Input value={initialUser.phone} onChange={(e) => handleChange(e, 'phone')} />
+                                        <Upload onChange={handleChangeAvatar}>
+                                            <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                                        </Upload>
+                                        {user.avatar && (
+                                            <img src={user.avatar} style={{
+                                                height: '60px',
+                                                width: '60px',
+                                                borderRadius: '50%',
+                                                objectFit: 'cover'
+                                            }} alt="avatar"/>
+                                        )}
+                                    </Space>
+                                    
+                                </Modal>
+                            </div>
+                        </Col>
+                        <Col span={15} style={{marginLeft: '20px'}}>
+                            <Form form={form} style={{width:'500px'}} layout="vertical">
+                                <Form.Item name="name" label="Họ và tên">
+                                    <Input disabled defaultValue={initialUser.name} />
+                                </Form.Item>
+                                <Form.Item name="email" label="Email">
+                                    <Input disabled defaultValue={initialUser.email} />
+                                </Form.Item>
+                                <Form.Item name="phone" label="Số điện thoại">
+                                    <Input disabled defaultValue={initialUser.phone} />
+                                </Form.Item>
+                            </Form>
+                        </Col>
+                    </Row>
+                </div>
             </div>
-        </div>
         </>
     );
-    };
+};
 
-    export default ProfilePage;
+export default ProfilePage;

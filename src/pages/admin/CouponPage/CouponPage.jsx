@@ -1,21 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from "react";
-import { Divider, Button, Modal, Form, Input, Upload, Space, Popconfirm, Select } from "antd";
-import { PlusSquareOutlined, UploadOutlined, EditOutlined, DeleteOutlined, SearchOutlined, PlusOutlined } from "@ant-design/icons";
+import { Divider, Button, Modal, Form, Input, Space, Popconfirm } from "antd";
+import { EditOutlined, DeleteOutlined, SearchOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import TableComponent from "../../../components/TableComponent/TableComponent";
-import { getBase64 } from "../../../utils";
-import * as AccountService from '../../../services/AccountService';
-import * as RoleService from '../../../services/RoleService';
+import * as CouponService from '../../../services/CouponService';
 import { UseMutationHook } from "../../../hooks/useMutationHook";
 import * as message from '../../../components/Message/Message'
 import { useQuery } from '@tanstack/react-query'
 import DrawerComponent from "../../../components/DrawerComponent/DrawerComponent";
 import { useSelector } from 'react-redux';
 import Loading from "../../../components/LoadingComponent/Loading";
-import './QTVPageMN.scss'
+import moment from 'moment';
 
 
-const QTVPageMN = () => {
+
+const CouponPage = () => {
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
   const user = useSelector(state => state.user)
@@ -26,7 +25,10 @@ const QTVPageMN = () => {
   const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef(null);
   const [uploadImage, setUploadImage] = useState();
-  const [roles, setRoles] = useState([]);
+  const [uploadImageDetail, setUploadImageDetail] = useState();
+
+
+ 
 
 
   const renderAction = (record) => {
@@ -114,32 +116,34 @@ const QTVPageMN = () => {
 
   const columns = [
     {
-      title: 'Name',
-      dataIndex: 'name',
+      title: 'Hình ảnh ',
+      dataIndex: 'image',
+      render: (image) => <img src={image} alt="coupon" style={{width: '50px', height: '50px', objectFit: 'cover'}}/>
+    },
+    {
+      title: 'Mã code',
+      dataIndex: 'code',
       render: (text) => <a>{text}</a>,
-      sorter: (a, b) => a.name.length - b.name.length,
-      ...getColumnSearchProps('name')
+      sorter: (a, b) => a.code.length - b.code.length,
+      ...getColumnSearchProps('code')
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      sorter: (a, b) => a.email - b.email,
+      title: 'Giảm giá',
+      dataIndex: 'discount',
+      sorter: (a, b) => a.discount - b.discount,
     },
     {
-      title: 'Phone',
-      dataIndex: 'phone',
+      title: 'Số lượng',
+      dataIndex: 'count',
     },
     {
-      title: 'Avatar',
-      dataIndex: 'avatar',
-      render: (avatar) => (
-        <img src={avatar} alt="Hình ảnh" style={{ width: 60, height: 60 }} />
-      )
+      title: 'Mô tả',
+      dataIndex: 'description',
     },
     {
-      title: 'Vai trò',
-      dataIndex: 'role_id',
-      render: (roleId) => getRoleTitleById(roleId),
+      title: 'Ngày hết hạn',
+      dataIndex: 'expireAt',
+      render: (expireAt) => moment(expireAt).format('DD-MM-YYYY HH:mm:ss')
     },
     {
       title: 'Action',
@@ -149,65 +153,45 @@ const QTVPageMN = () => {
   ];
 
 
-  const [ stateAccount, setStateAccount ] = useState({
-    name: "",
-    email: "",
-    password: "",
-    avatar: "",
-    phone: "",
-    role_id: "",
+  const [ stateCoupon, setStateCoupon ] = useState({
+    code: "",
+    discount: "",
+    count: "",
+    image: "",
+    description: "",
+    expireAt: "",
   });
 
-  // Call API Role
-  useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        const res = await RoleService.listRole(); 
-        if (res?.data) {
-          setRoles(res.data);
-        }
-      } catch (error) {
-        console.error('Error fetching roles:', error);
-      }
-    };
-
-    fetchRoles();
-  }, []);
-
-  const getRoleTitleById = (roleId) => {
-    const role = roles.find(role => role._id === roleId);
-    return role ? role.title : '';
-  };
-
-  // Call API Account
+  // Call API Coupon
   const mutation = UseMutationHook((data) => {
-    const { name, email, avatar, password, phone, role_id } = data;
-    const res = AccountService.createAccount({ name, email, avatar, password, phone, role_id });
-    return res
+    const { code, discount, count, image, description, expireAt } = data;
+    const res = CouponService.createCoupon({ code, discount, count, image, description, expireAt });
+    return res;
   });
+  
 
-  const fetchAccountAll = async () => {
-    const res = await AccountService.listAccount()
+  const fetchCouponAll = async () => {
+    const res = await CouponService.listCoupon()
     return res
   }
 
   const { data, isLoading, isSuccess, isError } = mutation
 
   // Lấy ra ds sản phẩm
-  const queryAccounts = useQuery({
-    queryKey: ['accounts'], 
-    queryFn: fetchAccountAll
+  const queryCoupons = useQuery({
+    queryKey: ['coupons'], 
+    queryFn: fetchCouponAll
   });
 
-  const { isLoading: isLoadingAccount, data: accounts } = queryAccounts
+  const { isLoading: isLoadingAccount, data: coupons } = queryCoupons
 
-  const dataTable = accounts?.data.length && accounts?.data.map((account) => {
-    return {...account, key: account._id }
+  const dataTable = coupons?.data.length && coupons?.data.map((coupon) => {
+    return {...coupon, key: coupon._id }
   })
 
   useEffect(() => {
     if (isSuccess && data?.status === 'OK') {
-      message.success()
+      message.success('Thêm mới mã giảm giá thành công!')
       handleCancel()
     }else if (isError) {
       message.error()
@@ -221,62 +205,58 @@ const QTVPageMN = () => {
   
   const handleCancel = () => {
     setOpen(false);
-    setStateAccount({
-      name: "",
-      email: "",
-      password: "",
-      avatar: "",
-      phone: "",
-      role_id: ""
+    setStateCoupon({
+        code: "",
+        discount: "",
+        count: "",
+        image: "",
+        description: "",
+        expireAt: "",
     })
     form.resetFields()
   };
 
   const handleOnChange = (e) => {
-    setStateAccount({
-      ...stateAccount,
+    setStateCoupon({
+      ...stateCoupon,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSelectChange = (value) => {
-    setStateAccount({
-      ...stateAccount,
-      role_id: value,
-    });
-  }
-
-  const handleChangeAvatar = async (e) => {
-    setUploadImage(e.target.files[0]);
-
-    setStateAccount({
-      ...stateAccount,
-      avatar: e.target.files[0],
+  const handleImageChange = (e) => {
+    setUploadImage(e.target.files[0])
+    setStateCoupon({
+      ...stateCoupon,
+      image: e.target.files[0],
     });
   };
+  
 
   //   form
   const onFinish = () => {
-    mutation.mutate(stateAccount, {
+    mutation.mutate(stateCoupon, {
       onSettled: () => {
-        queryAccounts.refetch()
+        queryCoupons.refetch()
       }
     })
   };
 
-  //================= EDIT USER ==================//
+  //================= EDIT COUPON ==================//
 
-  const [ stateAccountDetail, setStateAccountDetail ] = useState({
-      name: "",
-      email: "",
-      avatar: "",
-      phone: "",
-      role_id: ""
+  const [ stateCouponDetail, setStateCouponDetail ] = useState({
+    code: "",
+    discount: "",
+    count: "",
+    image: "",
+    description: "",
+    expireAt: "",
   });
+
+
 
   const mutationUpdate = UseMutationHook((data) => {
     const { id, token, ...rests } = data;
-    const res = AccountService.updateAccount({ id, token, rests });
+    const res = CouponService.updateCoupon({ id, token, rests });
     return res
   });
 
@@ -284,7 +264,7 @@ const QTVPageMN = () => {
 
   useEffect(() => {
     if (isSuccessUpdated && dataUpdated?.status === 'OK') {
-      message.success()
+      message.success('Cập nhật mã giảm giá thành công!')
       handleCancelUpdate()
     }else if (isErrorUpdated) {
       message.error()
@@ -293,27 +273,29 @@ const QTVPageMN = () => {
 
   const handleCancelUpdate = () => {
     setIsOpenDraw(false);
-    setStateAccountDetail({
-      name: "",
-      email: "",
-      avatar: "",
-      phone: "",
-      role_id: ""
+    setStateCouponDetail({
+        code: "",
+        discount: "",
+        count: "",
+        image: "",
+        description: "",
+        expireAt: "",
     })
     form.resetFields()
   };
 
 
-  const fetchGetDetailUser = async (id) => {
+  const fetchGetDetailCoupon = async (id) => {
     try {
-      const res = await AccountService.getDetailAccount(id);
+      const res = await CouponService.getDetailCoupon(id);
       if (res?.data) {
-        setStateAccountDetail({
-          name: res.data.name,
-          email: res.data.email,
-          avatar: res.data.avatar,
-          phone: res.data.phone,
-          role_id: res.data.role_id,
+        setStateCouponDetail({
+            code: res.data.code,
+            discount: res.data.discount,
+            count: res.data.count,
+            image: res.data.image,
+            description: res.data.description,
+            expireAt: res.data.expireAt,
         });
         form.setFieldsValue(res.data);
       }
@@ -323,10 +305,12 @@ const QTVPageMN = () => {
     setIsLoadingUpdate(false)
   };
 
+  console.log('stateCouponDetail',stateCouponDetail)
+
   useEffect(() => {
     if (rowSelected && isOpenDraw) {
       setIsLoadingUpdate(true)
-      fetchGetDetailUser(rowSelected)
+      fetchGetDetailCoupon(rowSelected)
     }
   }, [rowSelected, isOpenDraw])
 
@@ -334,36 +318,28 @@ const QTVPageMN = () => {
     setIsOpenDraw(true)
   }
 
-  const handleChangeAvatarDetail = async ({ fileList }) => {
-    const file = fileList[0];
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
-    }
-
-    setStateAccountDetail({
-      ...stateAccountDetail,
-      avatar: file.preview,
-    });
-  };
 
   const handleOnChangeDetail = (e) => {
-    setStateAccountDetail({
-      ...stateAccountDetail,
+    setStateCouponDetail({
+      ...stateCouponDetail,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSelectChangeDetail = (value) => {
-    setStateAccountDetail({
-      ...stateAccountDetail,
-      role_id: value,
+  const handleImageChangeDetail = (e) => {
+    const file = e.target.files[0]
+    setUploadImageDetail(e.target.files[0])
+    setStateCouponDetail({
+      ...stateCouponDetail,
+      image: file,
     });
   }
 
-  const onUpdateUser = () => {
-    mutationUpdate.mutate({id: rowSelected, token: user?.access_token, ...stateAccountDetail}, {
+
+  const onUpdateCoupon = () => {
+    mutationUpdate.mutate({id: rowSelected, token: user?.access_token, ...stateCouponDetail}, {
       onSettled: () => {
-        queryAccounts.refetch()
+        queryCoupons.refetch()
       }
     })
   }
@@ -372,7 +348,7 @@ const QTVPageMN = () => {
 
   const mutationDeleted = UseMutationHook((data) => {
     const { id, token } = data;
-    const res = AccountService.deleteAccount({ id, token });
+    const res = CouponService.deleteCoupon({ id, token });
     return res
   });
 
@@ -391,7 +367,7 @@ const QTVPageMN = () => {
   const handleDelete = (key) => {
     mutationDeleted.mutate({ id: key, token: user?.access_token }, {
       onSettled: () => {
-        queryAccounts.refetch()
+        queryCoupons.refetch()
       }
     })
   };
@@ -399,10 +375,10 @@ const QTVPageMN = () => {
 
   return (
     <>
-      <Divider>QUẢN LÝ QUẢN TRỊ VIÊN</Divider>
+      <Divider>QUẢN LÝ MÃ GIẢM GIÁ</Divider>
 
       <Button className="btn-add" onClick={showModal}>
-        Thêm mới tài khoản <PlusOutlined className="icon-add" />
+        Thêm mới mã giảm giá <PlusOutlined className="icon-add" />
       </Button>
 
       <TableComponent columns={columns} isLoading={isLoadingAccount} data={dataTable} 
@@ -417,7 +393,7 @@ const QTVPageMN = () => {
       />
 
       <Modal
-        title="Tạo mới thành viên"
+        title="Tạo mới mã giảm giá"
         forceRender
         open={open}
         onCancel={handleCancel}
@@ -443,106 +419,97 @@ const QTVPageMN = () => {
             autoComplete="off"
           >
             <Form.Item
-              label="Name"
-              name="name"
+              label="Mã code"
+              name="code"
               rules={[
                 {
                   required: true,
-                  message: "Please input your name product!",
+                  message: "Please input your code coupon!",
                 },
               ]}
             >
               <Input
-                value={stateAccount.name}
-                name="name"
+                value={stateCoupon.code}
+                name="code"
                 onChange={handleOnChange}
               />
             </Form.Item>
             <Form.Item
-              label="Email"
-              name="email"
+              label="Giảm giá"
+              name="discount"
               rules={[
                 {
                   required: true,
-                  message: "Please input your email user!",
+                  message: "Please input your discount coupon!",
                 },
               ]}
             >
               <Input
-                value={stateAccount.email}
-                name="email"
+                value={stateCoupon.discount}
+                name="discount"
                 onChange={handleOnChange}
               />
             </Form.Item>
             <Form.Item
-              label="Phone"
-              name="phone"
+              label="Số lượng"
+              name="count"
               rules={[
                 {
                   required: true,
-                  message: "Please input your phone user!",
+                  message: "Please input your count coupon!",
                 },
               ]}
             >
               <Input
-                value={stateAccount.phone}
-                name="phone"
+                value={stateCoupon.count}
+                name="count"
                 onChange={handleOnChange}
               />
             </Form.Item>
             <Form.Item
-              label="Vai trò"
-              name="role_id"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select a role for the user!",
-                },
-              ]}
-            >
-              <Select
-                value={stateAccount.role_id}
-                onChange={handleSelectChange}
-              >
-                {roles.map((role, index) => (
-                  <Select.Option key={index} value={role._id}>
-                    {role.title}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item
-              label="Password"
-              name="password"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your password account!",
-                },
-              ]}
-            >
-              <Input
-                value={stateAccount.password}
-                name="password"
-                onChange={handleOnChange}
-              />
-            </Form.Item>
-
-            <Form.Item
-            name="avatar"
+            name="image"
             label="Hình ảnh"
+            rules={[{ required: true, message: 'Vui lòng chọn hình ảnh!' }]}
+          >
+            <div className="upload-image">
+              <input type="file" accept="image/*" icon={<UploadOutlined />} onChange={handleImageChange} />
+              {uploadImage && (
+                <img src={URL.createObjectURL(uploadImage)} alt="upload" style={{marginTop: '10px', width: '100px', height: '100px', objectFit: 'cover', borderRadius: '10px'}}/>
+              )}
+            </div>
+          </Form.Item>
+            <Form.Item
+              label="Mô tả"
+              name="description"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your description coupon!",
+                },
+              ]}
             >
-              <div className="upload-image">
-                <input type="file" accept="image/*" icon={<UploadOutlined />} onChange={handleChangeAvatar} />
-              
-                {uploadImage && (
-                  <div style={{ marginTop: '10px'}}>
-                    <label style={{ display: 'block', marginBottom: '5px' }}>Ảnh mới:</label>
-                    <img src={URL.createObjectURL(uploadImage)} alt="upload" style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '10px' }} />
-                  </div>
-                )}
-              </div>
-
+              <Input
+                value={stateCoupon.description}
+                name="description"
+                onChange={handleOnChange}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Ngày hết hạn"
+              name="expireAt"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your expireAt coupon!",
+                },
+              ]}
+            >
+              <Input
+                type="date"
+                value={stateCoupon.expireAt}
+                name="expireAt"
+                onChange={handleOnChange}
+              />
             </Form.Item>
 
             <Form.Item
@@ -560,9 +527,10 @@ const QTVPageMN = () => {
         </Loading>
       </Modal>
 
-      <DrawerComponent title="Chi tiết thành viên" isOpen={isOpenDraw} onClose={() => setIsOpenDraw(false)} width='50%'>
+      <DrawerComponent title="Chi tiết mã giảm giá" isOpen={isOpenDraw} onClose={() => setIsOpenDraw(false)} width='50%'>
         <Loading isLoading={isLoadingUpdate || isLoadingUpdated}>
-          <Form
+            <Form
+            form={form}
             name="basic"
             labelCol={{
               span: 6,
@@ -573,105 +541,117 @@ const QTVPageMN = () => {
             style={{
               maxWidth: 600,
             }}
-            onFinish={onUpdateUser}
-            autoComplete="on"
-            form={form}
+            initialValues={{
+              remember: true,
+            }}
+            onFinish={onUpdateCoupon}
+            autoComplete="off"
           >
             <Form.Item
-              label="Name"
-              name="name"
+              label="Mã code"
+              name="code"
               rules={[
                 {
                   required: true,
-                  message: "Please input your name product!",
+                  message: "Please input your code coupon!",
                 },
               ]}
             >
               <Input
-                value={setStateAccountDetail['name']}
-                name="name"
+                value={stateCouponDetail.code}
+                name="code"
                 onChange={handleOnChangeDetail}
               />
             </Form.Item>
             <Form.Item
-              label="Email"
-              name="email"
+              label="Giảm giá"
+              name="discount"
               rules={[
                 {
                   required: true,
-                  message: "Please input your email user!",
+                  message: "Please input your discount coupon!",
                 },
               ]}
             >
               <Input
-                value={setStateAccountDetail.email}
-                name="email"
+                value={stateCouponDetail.discount}
+                name="discount"
                 onChange={handleOnChangeDetail}
               />
             </Form.Item>
             <Form.Item
-              label="Phone"
-              name="phone"
+              label="Số lượng"
+              name="count"
               rules={[
                 {
                   required: true,
-                  message: "Please input your phone user!",
+                  message: "Please input your count coupon!",
                 },
               ]}
             >
               <Input
-                value={setStateAccountDetail.phone}
-                name="phone"
+                value={stateCouponDetail.count}
+                name="count"
                 onChange={handleOnChangeDetail}
               />
             </Form.Item>
             <Form.Item
-              label="Vai trò"
-              name="role_id"
+              label="Mô tả"
+              name="description"
               rules={[
                 {
                   required: true,
-                  message: "Please select a role for the user!",
+                  message: "Please input your description coupon!",
                 },
               ]}
             >
-              <Select
-                value={stateAccount.role_id}
-                onChange={handleSelectChangeDetail}
-              >
-                {roles.map((role, index) => (
-                  <Select.Option key={index} value={role._id}>
-                    {role.title}
-                  </Select.Option>
-                ))}
-              </Select>
+              <Input
+                value={stateCouponDetail.description}
+                name="description"
+                onChange={handleOnChangeDetail}
+              />
             </Form.Item>
             <Form.Item
-              label="Avatar"
-              name="avatar"
+              label="Ngày hết hạn"
+              name="expireAt"
               rules={[
                 {
                   required: true,
-                  message: "Please input your avatar account!",
+                  message: "Please input your expireAt coupon!",
                 },
               ]}
             >
-              <Upload fileList={stateAccount?.avatar ? [{uid: '-1', url: stateAccount.avatar}] : []} onChange={handleChangeAvatarDetail} maxCount={1}>
-                <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                {stateAccountDetail?.avatar && (
-                  <img
-                    src={stateAccountDetail?.avatar}
-                    style={{
-                      height: "60px",
-                      width: "60px",
-                      borderRadius: "50%",
-                      objectFit: "cover",
-                    }}
-                    alt="avatar"
-                  />
+              <Input
+                // value={stateCouponDetail.expireAt}moment(res.data.expireAt).format('DD-MM-YYYY HH:mm:ss')
+                value={moment(stateCouponDetail.expireAt).format('DD-MM-YYYY HH:mm:ss')}
+                name="expireAt"
+                onChange={handleOnChangeDetail}
+              />
+            </Form.Item>
+            <Form.Item
+            name="image"
+            label="Hình ảnh"
+          >
+            <div className="upload-image">
+              <input type="file" accept="image/*" icon={<UploadOutlined />} onChange={handleImageChangeDetail} />
+              <div style={{display: 'flex'}}>
+                {stateCouponDetail?.image && (
+                  <div style={{ marginTop: '10px', marginRight: '20px'}}>
+                    <label style={{ display: 'block', marginBottom: '5px' }}>Ảnh hiện tại:</label>
+                    <img src={stateCouponDetail?.image} alt="upload" style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '10px' }} />
+                  </div>
                 )}
-              </Upload>
-            </Form.Item>
+                
+                {uploadImageDetail && (
+                  <div style={{ marginTop: '10px'}}>
+                    <label style={{ display: 'block', marginBottom: '5px' }}>Ảnh mới:</label>
+                    <img src={URL.createObjectURL(uploadImageDetail)} alt="upload" style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '10px' }} />
+                  </div>
+                )}
+              </div>
+            </div>
+
+          </Form.Item>
 
             <Form.Item
               wrapperCol={{
@@ -684,11 +664,11 @@ const QTVPageMN = () => {
                 Cập nhật
               </Button>
             </Form.Item>
-          </Form>
+            </Form>
         </Loading>
       </DrawerComponent>
     </>
   )
 }
 
-export default QTVPageMN
+export default CouponPage

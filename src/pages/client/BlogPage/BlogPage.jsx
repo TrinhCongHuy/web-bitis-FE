@@ -88,7 +88,7 @@ const BlogPage = () => {
           >
             {topics?.map((topic, index) => (
               <div key={index} style={{padding: '10px 0'}}>
-                <Link style={{color: '#000'}}>{topic.name}</Link>
+                <Link style={{color: '#000'}} to={``}>{topic.name}</Link>
               </div>
               
             ))}

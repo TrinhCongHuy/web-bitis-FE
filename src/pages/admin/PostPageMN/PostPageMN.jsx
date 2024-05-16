@@ -275,6 +275,7 @@ const PostPageMN = () => {
       <Divider>QUẢN LÝ BÀI VIẾT</Divider>
 
       <TableComponent handleDeletedMany={handleDeletedManyPost} columns={columns} isLoading={isLoadingPosts} data={dataTable} 
+        pagination={{ pageSize: 5, position: ['bottomCenter'], }}
         onRow={(record, rowIndex) => {
           return {
             onClick: event => {

@@ -2,11 +2,11 @@
 import { useState, useEffect } from "react";
 import CommentForm from "./CommentForm";
 import Comment from "./Comment";
-import * as PostService from '../../services/PostService'
+import * as ProductService from '../../services/ProductService'
 import { useSelector } from "react-redux";
 
 
-const Comments = ({ currentUserId, idPost }) => {
+const Comments = ({ currentUserId, idProduct }) => {
   const user = useSelector((state) => state?.user)
   const [backendComments, setBackendComments] = useState([]);
   const [activeComment, setActiveComment] = useState(null);
@@ -34,15 +34,15 @@ const Comments = ({ currentUserId, idPost }) => {
         createdAt: new Date(),
       }
 
-      await PostService.updateCommentPost({
-          id: idPost,
+      await ProductService.updateCommentProduct({
+          id: idProduct,
           access_token: user?.access_token,
           rests: {
             $push: { comments: newComment } 
           }
       })
 
-      fetchPostDetail()
+      fetchProductDetail()
       setActiveComment(null);
     }catch (e) {
       console.log(e)
@@ -61,8 +61,8 @@ const Comments = ({ currentUserId, idPost }) => {
         const updatedBackendComments = [...backendComments];
         updatedBackendComments[commentIndex].body = text;
 
-        await PostService.updateCommentPost({
-            id: idPost,
+        await ProductService.updateCommentProduct({
+            id: idProduct,
             access_token: user?.access_token,
             rests: { comments: updatedBackendComments }
         });
@@ -84,22 +84,22 @@ const Comments = ({ currentUserId, idPost }) => {
 
         setBackendComments(updatedBackendComments);
 
-        await PostService.updateCommentPost({
-            id: idPost,
+        await ProductService.updateCommentProduct({
+            id: idProduct,
             access_token: user?.access_token,
             rests: {comments: updatedBackendComments}
         });
 
-        fetchPostDetail();
+        fetchProductDetail();
       } catch (error) {
           console.error("Error deleting comment:", error);
       }
     }
   };
 
-  const fetchPostDetail = async () => {
+  const fetchProductDetail = async () => {
     try {
-        const response = await PostService.getDetailPost(idPost); 
+        const response = await ProductService.getDetailProduct(idProduct); 
         setBackendComments(response?.data?.comments);
     } catch (error) {
         console.error('Error fetching post:', error);
@@ -107,7 +107,7 @@ const Comments = ({ currentUserId, idPost }) => {
 };
 
   useEffect(() => {
-    fetchPostDetail()
+    fetchProductDetail()
   }, []);
 
 

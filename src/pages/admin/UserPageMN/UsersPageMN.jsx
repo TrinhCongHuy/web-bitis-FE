@@ -217,9 +217,10 @@ const UsersPageMN = () => {
 
   return (
     <>
-      <Divider>Quản lý khách hàng</Divider>
+      <Divider>QUẢN LÝ KHÁCH HÀNG</Divider>
 
-      <TableComponent handleDeletedMany={handleDeletedManyProduct} columns={columns} isLoading={isLoadingUsers} data={dataTable} 
+      <TableComponent handleDeletedMany={handleDeletedManyProduct} columns={columns} isLoading={isLoadingUsers} data={dataTable}
+        pagination={{ pageSize: 8, position: ['bottomCenter'], }} 
         onRow={(record, rowIndex) => {
           return {
             onClick: event => {

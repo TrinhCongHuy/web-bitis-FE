@@ -27,6 +27,12 @@ import BlogDetailPage from "../pages/client/BlogDetailPage/BlogDetailPage";
 import EditBlog from "../pages/admin/EditBlog/EditBlog";
 import RolePermission from "../pages/admin/RolePermissionPageMN/RolePermission";
 import Roles from "../pages/admin/RolesPage/Roles";
+import ChatPage from "../pages/admin/ChatPage/ChatPage";
+import ForgotPassword from "../pages/client/SingInPage/ForgotPassword";
+import OtpPassword from "../pages/client/SingInPage/OtpPassword";
+import ResetPassword from "../pages/client/SingInPage/ResetPassword";
+import CouponPage from "../pages/admin/CouponPage/CouponPage";
+import DiscountPage from "../pages/client/DiscountPage/DiscountPage";
 
 
 export const Routes = [
@@ -45,6 +51,10 @@ export const Routes = [
             {
                 path: '/blogs',
                 element: <BlogPage />
+            },
+            {
+                path: '/discounts',
+                element: <DiscountPage />
             },
             {
                 path: '/blog-detail/:id',
@@ -77,6 +87,18 @@ export const Routes = [
             {
                 path: '/product-detail/:id',
                 element: <ProductDetailPage />
+            },
+            {
+                path: '/password/forgot',
+                element: <ForgotPassword />
+            },
+            {
+                path: '/password/otp/:email',
+                element: <OtpPassword />
+            },
+            {
+                path: '/password/reset/:email',
+                element: <ResetPassword />
             },
             {
                 path: '/profile',
@@ -124,6 +146,10 @@ export const Routes = [
                         element: <OrderPageMN />
                     },
                     {
+                        path: 'coupons', 
+                        element: <CouponPage />
+                    },
+                    {
                         path: 'users', 
                         element: <UserPageMN />
                     },
@@ -138,7 +164,11 @@ export const Routes = [
                     {
                         path: 'roles/permission', 
                         element: <RolePermission />
-                    }
+                    },
+                    {
+                        path: 'chat', 
+                        element: <ChatPage />
+                    },
                 ]
             }
         ]

@@ -156,6 +156,7 @@ const OrderPageMN = () => {
         <Divider>QUẢN LÝ ĐƠN HÀNG</Divider>
 
         <TableComponent columns={columns} isLoading={isLoadingProducts} data={dataTable} 
+            pagination={{ pageSize: 8, position: ['bottomCenter'], }}
             onRow={(record, rowIndex) => {
             return {
                 onClick: event => {

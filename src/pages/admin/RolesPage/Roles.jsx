@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Form, Input, Space, Popconfirm, Card } from "antd";
-import { PlusSquareOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { PlusSquareOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import TableComponent from "../../../components/TableComponent/TableComponent";
 import * as RoleService from '../../../services/RoleService';
 import { UseMutationHook } from "../../../hooks/useMutationHook";
@@ -228,12 +228,13 @@ const Roles = () => {
 
     return (
         <>
-            <Card type="inner" title='Danh sách các quyền'>
-                <Button className='btn-add' onClick={showModal}>
-                    <PlusSquareOutlined className='icon-add'/>
-                </Button>
+            <Card type="inner" title='DANH SÁCH CÁC QUYỀN'>
+            <Button className="btn-add" onClick={showModal}>
+                Thêm mới nhóm quyền <PlusOutlined className="icon-add" />
+            </Button>
 
                 <TableComponent columns={columns} isLoading={isLoadingAccount} data={dataTable} 
+                    pagination={{ pageSize: 5, position: ['bottomCenter'], }}
                     onRow={(record, rowIndex) => {
                     return {
                         onClick: event => {

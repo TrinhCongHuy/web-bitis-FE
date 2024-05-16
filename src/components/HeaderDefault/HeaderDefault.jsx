@@ -1,28 +1,22 @@
 import { Col, Row } from 'antd'
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import './HeaderDefault.scss'
 import logo from '../../assets/images/logo-web/logo-bitis.jpg'
-import { Input } from 'antd';
+// import { Input } from 'antd';
 import { ShoppingCartOutlined } from '@ant-design/icons'
 import { Space } from 'antd';
 import AccountComponent from '../AccountComponent/AccountComponent'
-import { useSelector, useDispatch } from 'react-redux'
-import { searchProduct } from '../../redux/slides/productSlide'
+import { useSelector } from 'react-redux'
 import * as CartService from '../../services/CartService'
 import { useQuery } from '@tanstack/react-query'
+import Search from '../Search/Search'
 
-
-
-const { Search } = Input;
 
 const HeaderDefault = () => {
     const user = useSelector((state) => state.user)
-    const [search, setSearch] = useState('')
-    const dispatch = useDispatch()
     const [isSticky, setIsSticky] = useState(false);
     
-
     useEffect(() => {
         const handleScroll = () => {
             const scrollPosition = window.scrollY;
@@ -39,42 +33,35 @@ const HeaderDefault = () => {
         };
     }, []);
 
-    const onSearch = (e) => {
-        setSearch(e.target.value)
-        dispatch(searchProduct(e.target.value))
-    }
+
 
     const fetchProductsCart = async () => {
-        if (!user?.id) {
-            return [];
-        }else {
-            try {
+        try {
+            if (user?.id) {
                 const res = await CartService.listProductCart(user?.id);
                 return res.data || [];
-            } catch (error) {
-                console.error('Error fetching cart products:', error);
-                throw error;
             }
+        } catch (error) {
+            console.error('Error fetching cart products:', error);
         }
+        return [];
     };
 
     const { data: carts, refetch } = useQuery({
         queryKey: ['carts', user?.id], 
         queryFn: fetchProductsCart, 
         config: {
-          retry: 3,
-          retryDelay: 1000,
-          keePreviousData: true
+            retry: 3,
+            // retryDelay: 1000,
+            keePreviousData: true
         }
     });
 
     useEffect(() => {
-        const intervalId = setInterval(() => {
+        if (user?.id) {
             refetch();
-        }, 1000); // Fetch lại sau mỗi 30 giây
-
-        return () => clearInterval(intervalId);
-    }, [refetch]);
+        }
+    }, [user?.id, refetch]);
 
     return (
         <>
@@ -124,20 +111,18 @@ const HeaderDefault = () => {
                                 <div className="header__nav--menu">
                                     <ul style={{display: 'flex', listStyle: 'none'}}>
                                         <li>
-                                            <Link to='/'>Trang chủ</Link>
+                                            <NavLink to='/'>Trang chủ</NavLink>
                                         </li>
                                         <li>
-                                            <Link to='/products'>Cửa hàng</Link>
+                                            <NavLink to='/products'>Cửa hàng</NavLink>
                                         </li>
                                         <li>
-                                            <Link to='/blogs'>Tin tức</Link>
+                                            <NavLink to='/blogs'>Tin tức</NavLink>
                                         </li>
                                         <li>
-                                            <Link to='/sales'>Giảm giá</Link>
+                                            <NavLink to='/discounts'>Giảm giá</NavLink>
                                         </li>
-                                        <li>
-                                            <Link to='/introduce'>Giới thiệu</Link>
-                                        </li>
+                                       
                                     </ul>
                                 </div>
                             </Col>
@@ -145,7 +130,7 @@ const HeaderDefault = () => {
                                 <div className="header__nav--action">
                                     <Space size='large'>
                                         <div className="action__item">
-                                            <Search placeholder="Input search text" onChange={onSearch} enterButton style={{ width: '210px' }}/>
+                                            <Search />
                                         </div>
                                         <div className="action__item">
                                             <AccountComponent user={user}/>

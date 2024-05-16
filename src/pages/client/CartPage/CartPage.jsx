@@ -9,6 +9,7 @@ import './CartPage.scss'
 import * as message from '../../../components/Message/Message'
 import * as CartService from '../../../services/CartService'
 import ModalAddressComponent from '../../../components/ModalAddressComponent/ModalAddressComponent';
+import Loading from '../../../components/Loading/Loading'
 
 
 
@@ -18,12 +19,12 @@ const CartPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dataCart, setDataCart] = useState([])
   const navigate = useNavigate()
+  const [prevUserId, setPrevUserId] = useState(null);
 
   const token = user?.access_token
 
   const fetchProductsCart = async () => {
     const userId = user?.id;
-
     if (!userId) {
       return [];
     }
@@ -36,19 +37,13 @@ const CartPage = () => {
     }
   };
 
-  // const { data: productsList } = useQuery({
-  //   queryKey: ['products-cart', user?.id], 
-  //   queryFn: fetchProductsCart, 
-  //   config: {
-  //     retry: 3,
-  //     retryDelay: 1000,
-  //     keePreviousData: true
-  //   }
-  // });
-
   useEffect(() => {
-    fetchProductsCart()
-  }, [user?.id]);
+    if (prevUserId !== user?.id) {
+      fetchProductsCart();
+      setPrevUserId(user?.id);
+    }
+  }, [[user?.id]]);
+
 
   // Xoá nhiều sản phẩm trong giỏ hàng
   const handleDeleteAll = async () => {
@@ -67,9 +62,9 @@ const CartPage = () => {
   const columns = [
     {
       title: `Tất cả (${dataCart?.length} sản phẩm)`,
-      dataIndex: 'image',
+      dataIndex: 'images',
       key: 'image',
-      render: (image) => <img src={image} alt="Product" style={{ width: '80px' }} />, 
+      render: (images) => <img src={images[0]} alt="Product" style={{ width: '80px' }} />, 
     },
     {
       title: 'Sản phẩm',
@@ -114,7 +109,7 @@ const CartPage = () => {
   const data = dataCart?.map((product) => ({
     key: product?._id,
     product: product?._id,
-    image: product?.image,
+    images: product?.images,
     name: product?.name,
     price: product?.price - (product?.price * (product?.discount / 100)),
     amount: product?.quantity,
@@ -132,12 +127,23 @@ const CartPage = () => {
   const handleAmountChange = async (key, value, token) => {
     try {
       await CartService.updateProductQuantityInCart(key, value, token);
-      // setDataCart(res?.data?.products)
-      fetchProductsCart()
+      // Cập nhật số lượng sản phẩm
+      const updatedDataCart = dataCart.map(product => {
+        if (product._id === key) {
+          return {
+            ...product,
+            quantity: value,
+            totalPrice: (product.price - (product.price * (product.discount / 100))) * value
+          };
+        }
+        return product;
+      });
+      setDataCart(updatedDataCart);
     } catch (error) {
       console.error('Error updating product quantity in cart:', error);
     }
   };
+  
 
   // Xoá sản phẩm trong giỏ hàng
   const handleDelete = async (key, token) => {
@@ -179,6 +185,10 @@ const CartPage = () => {
     navigate('/checkout', { state: { selectedProducts } })
   };
 
+  if (dataCart.length === 0) {
+    return <Loading />
+  };
+
   return (
     <div className="container page__product--order">
       <Row>
@@ -188,9 +198,9 @@ const CartPage = () => {
         <Col span={8}>
           <div className='order__result'>
               <div className='price__total'>
-                <div className='price__total--title'>Mức giá tạm tính</div>
+                <div className='price__total--title'>ĐƠN HÀNG</div>
                 <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '10px'}}>
-                  <span className='price__total--label'>Tổng thanh toán:</span>
+                  <span className='price__total--label'>Mức giá tạm tính:</span>
                   <span className='price__total--detail'>{totalPay} VNĐ</span>
                 </div>
                 

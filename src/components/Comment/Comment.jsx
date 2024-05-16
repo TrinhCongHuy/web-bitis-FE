@@ -29,7 +29,6 @@ const Comment = ({
   const replyId = parentId ? parentId : comment.id;
   const createdAt = new Date(comment.createdAt).toLocaleDateString();
 
-  console.log('currentUserId === comment.userId', currentUserId, comment.userId)
   return (
     <div key={comment.id} className="comment">
       <div className="comment-image-container">

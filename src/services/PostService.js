@@ -2,8 +2,8 @@ import axios from "axios"
 import { axiosJWT } from "./UserService"
 
 
-export const listPost = async () => {
-    const res = await axios.get(`${process.env.REACT_APP_API_URL}/posts`)
+export const listPost = async (limit) => {
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/posts?limit=${limit}`)
     return res.data
 }
 

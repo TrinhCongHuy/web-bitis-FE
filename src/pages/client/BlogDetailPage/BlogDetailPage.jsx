@@ -2,13 +2,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import * as PostService from '../../../services/PostService';
-import * as UserService from '../../../services/UserService';
 import { Typography, Divider, Row, Col, Space, Card } from 'antd';
 import './BlogDetailPage.scss'
 import moment from 'moment';
 import { CommentOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
-import Comments from '../../../components/Comment/Comments';
+import Comments from '../../../components/Comment/CommentsPost';
+import Loading from '../../../components/Loading/Loading';
 
 
 const { Title, Paragraph } = Typography;
@@ -21,10 +21,12 @@ const BlogDetailPage = () => {
     const idPost = detailBlog?._id
     const { id } = useParams()
 
+    console.log('detailBlog', detailBlog)
+
     useEffect(() => {
         fetchPostDetail();
         fetchPostList();
-    }, []);
+    }, [id]);
     
     const fetchPostDetail = async () => {
         try {
@@ -45,7 +47,7 @@ const BlogDetailPage = () => {
     };
 
     if (!detailBlog) {
-        return <div>Loading...</div>;
+        return <Loading />;
     }
     // ====================
     
@@ -66,7 +68,6 @@ const BlogDetailPage = () => {
                         <Paragraph style={{padding: '20px', backgroundColor: '#ffffff', marginBottom: '0', borderLeft: '1px solid #33CC66'}}>{detailBlog.description}</Paragraph>
                     </div>
                     
-                   
                     <Divider />
                     <div dangerouslySetInnerHTML={{ __html: detailBlog.content }}></div>
                 </Col>

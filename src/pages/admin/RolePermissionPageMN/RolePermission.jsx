@@ -92,7 +92,7 @@ const RolePermission = () => {
 
     return (
         <>
-            <Divider>Quản lý phân quyền</Divider>
+            <Divider>QUẢN LÝ PHÂN QUYỀN</Divider>
 
             {roles && (
                 <div data-records={roles}>

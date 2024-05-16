@@ -67,14 +67,14 @@ const SingInPageClient = () => {
   };
 
   // login by Google
-  // const handleGoogleLogin = async () => {
-  //   try {
-  //     const response = await AuthService.loginGG(); // Gọi hàm loginGG từ UserService
-  //     console.log(response); // Xử lý kết quả nếu cần
-  //   } catch (error) {
-  //     console.error('Error during Google login:', error); // Xử lý lỗi nếu cần
-  //   }
-  // };
+  const handleLoginGG = async () => {
+    try {
+      const response = await AuthService.loginGG(); // Gọi hàm loginGG từ UserService
+      console.log(response); // Xử lý kết quả nếu cần
+    } catch (error) {
+      console.error('Error during Google login:', error); // Xử lý lỗi nếu cần
+    }
+  };
 
   return (
     <div className="container">
@@ -122,7 +122,7 @@ const SingInPageClient = () => {
                   <Checkbox>Remember me</Checkbox>
                 </Form.Item>
 
-                <Link className="login-form-forgot" href="">
+                <Link className="login-form-forgot" to="/password/forgot">
                   Forgot password
                 </Link>
               </Form.Item>
@@ -133,16 +133,18 @@ const SingInPageClient = () => {
                 </Button>
               </Form.Item>
 
-              {/* <Form.Item style={{textAlign: 'center'}}>
+              <Form.Item style={{textAlign: 'center'}}>
                 <Space size='middle'>
-                  <Button type="primary" className="login-form-button" onClick={handleGoogleLogin}>
+                  {/* <Button type="primary" className="login-form-button" onClick={handleGoogleLogin}>
                     Google
                   </Button>
                   <Button type="primary" className="login-form-button">
                     FaceBook
-                  </Button>
+                  </Button> */}
+                  {/* <Link to='/auth/google'>Google</Link> */}
+                  <Button onClick={handleLoginGG}>Google</Button>
                 </Space>
-              </Form.Item> */}
+              </Form.Item>
 
               <Form.Item >
                 <span>Chưa có tài khoản?</span>

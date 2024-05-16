@@ -21,7 +21,7 @@ const CardComponent = (props) => {
                 style={{
                 width: 240,
                 }}
-                cover={<img alt="example" src={product.image} />}
+                cover={<img alt="example" src={product.images[0]} />}
                 onClick={() => handleDetailProduct(id)}
             >
                 <div className="hoverable">

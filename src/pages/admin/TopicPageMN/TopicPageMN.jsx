@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from "react";
 import { Divider, Button, Modal, Form, Input, Space, Popconfirm } from "antd";
-import { PlusSquareOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import { PlusSquareOutlined, EditOutlined, DeleteOutlined, SearchOutlined, PlusOutlined } from "@ant-design/icons";
 import TableComponent from "../../../components/TableComponent/TableComponent";
 import * as TopicService from "../../../services/TopicService";
 import { UseMutationHook } from "../../../hooks/useMutationHook";
@@ -337,10 +337,11 @@ const TopicPageMN = () => {
       <Divider>QUẢN LÝ CHỦ ĐỀ</Divider>
 
       <Button className="btn-add" onClick={showModal}>
-        <PlusSquareOutlined className="icon-add" />
+        Thêm mới chủ đề <PlusOutlined className="icon-add" />
       </Button>
 
       <TableComponent handleDeletedMany={handleDeletedManyTopic} columns={columns} isLoading={isLoadingTopics} data={dataTable} 
+        pagination={{ pageSize: 8, position: ['bottomCenter'], }}
         onRow={(record, rowIndex) => {
           return {
             onClick: event => {
