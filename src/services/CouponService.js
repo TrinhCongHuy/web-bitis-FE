@@ -9,7 +9,6 @@ export const listCoupon = async () => {
 }
 
 export const createCoupon = async (data) => {
-    console.log('data', data)
     const res = await axios.post(`${process.env.REACT_APP_API_URL}/coupon/create-coupon`, data, {
         headers: {
             'Content-Type': 'multipart/form-data'
@@ -19,7 +18,6 @@ export const createCoupon = async (data) => {
 }
 
 export const getDetailCoupon = async ({id, access_token}) => {
-    console.log('id', id)
     const res = await axiosJWT.get(`${process.env.REACT_APP_API_URL}/coupon/detail-coupon/${id}`, {
         headers: {
             token: `Bearer ${access_token}`

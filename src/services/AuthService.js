@@ -2,7 +2,6 @@ import axios from "axios"
 
 
 export const loginGG = async () => {
-    const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/google`, )
-    console.log('res',res)
+    const res = await axios.get(`http://localhost:3001/api/v1/auth/google`, )
     return res.data
 }

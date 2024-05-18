@@ -10,6 +10,7 @@ import * as message from '../../../components/Message/Message'
 import * as CartService from '../../../services/CartService'
 import ModalAddressComponent from '../../../components/ModalAddressComponent/ModalAddressComponent';
 import Loading from '../../../components/Loading/Loading'
+import FormatNumber from '../../../components/FormatNumber/FormatNumber';
 
 
 
@@ -111,15 +112,16 @@ const CartPage = () => {
     product: product?._id,
     images: product?.images,
     name: product?.name,
-    price: product?.price - (product?.price * (product?.discount / 100)),
+    price: FormatNumber(product?.price - (product?.price * (product?.discount / 100))),
     amount: product?.quantity,
-    totalPrice: (product?.price - (product?.price * (product?.discount / 100))) * product?.quantity
+    totalPrice: FormatNumber((product?.price - (product?.price * (product?.discount / 100))) * product?.quantity)
   }));
 
+  console.log('data', data)
 
   const totalOrder = data
     ?.filter((product) => selectedRowKeys.includes(product.key))
-    ?.reduce((total, product) => total + product.totalPrice, 0);
+    ?.reduce((total, product) => total + parseInt(product.totalPrice.replace(/\./g, ''), 10), 0); 
   
   const totalPay = totalOrder
 
@@ -173,7 +175,6 @@ const CartPage = () => {
     }else if (user?.address?.length === 0) {
       setIsModalOpen(true);
     }else {
-
       const selectedProducts = dataCart.filter(product => selectedRowKeys.includes(product._id));
       navigate('/checkout', { state: { selectedProducts } })
     }
@@ -201,7 +202,7 @@ const CartPage = () => {
                 <div className='price__total--title'>ĐƠN HÀNG</div>
                 <div style={{display: 'flex', justifyContent: 'space-between', marginTop: '10px'}}>
                   <span className='price__total--label'>Mức giá tạm tính:</span>
-                  <span className='price__total--detail'>{totalPay} VNĐ</span>
+                  <span className='price__total--detail'>{FormatNumber(totalPay)} VNĐ</span>
                 </div>
                 
               </div>

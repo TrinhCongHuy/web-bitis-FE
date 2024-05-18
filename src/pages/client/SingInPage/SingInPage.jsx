@@ -11,6 +11,7 @@ import * as message from '../../../components/Message/Message'
 import { jwtDecode } from "jwt-decode";
 import { useDispatch } from 'react-redux';
 import { updateUser } from '../../../redux/slides/userSlide';
+import axios from 'axios';
 
 
 
@@ -66,15 +67,30 @@ const SingInPageClient = () => {
     })
   };
 
-  // login by Google
-  const handleLoginGG = async () => {
-    try {
-      const response = await AuthService.loginGG(); // Gọi hàm loginGG từ UserService
-      console.log(response); // Xử lý kết quả nếu cần
-    } catch (error) {
-      console.error('Error during Google login:', error); // Xử lý lỗi nếu cần
-    }
+  const handleLoginGG = () => {
+    window.location.href = 'http://localhost:3001/api/v1/auth/google';
   };
+
+  // Handle the callback from Google login
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    console.log('params', params)
+    const accessToken = params.get('access_token');
+    console.log('accessToken', accessToken)
+    const status = params.get('status');
+    console.log('status', status)
+    
+    if (status === 'OK' && accessToken) {
+      localStorage.setItem('access_token', JSON.stringify(accessToken));
+      const decoded = jwtDecode(accessToken);
+      if (decoded?.id) {
+        handleGetDetailUser(decoded?.id, accessToken);
+      }
+      navigate('/');
+    } else if (status === 'ERR') {
+      message.error('Google login failed');
+    }
+  }, []);
 
   return (
     <div className="container">

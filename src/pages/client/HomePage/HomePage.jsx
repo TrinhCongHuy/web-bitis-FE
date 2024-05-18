@@ -11,7 +11,6 @@ import SuggestiveComponent from '../../../components/SuggestiveComponent/Suggest
 import { Link } from 'react-router-dom'
 import moment from 'moment';
 import { CommentOutlined } from '@ant-design/icons'
-import ChatComponent from '../../../components/ChatComponent/ChatComponent'
 
 
 const HomePage = () => {
@@ -172,7 +171,6 @@ const HomePage = () => {
           </div>
       </div>
 
-      <ChatComponent userType="client" />
     </>
   )
 }

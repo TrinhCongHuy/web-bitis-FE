@@ -27,7 +27,6 @@ import BlogDetailPage from "../pages/client/BlogDetailPage/BlogDetailPage";
 import EditBlog from "../pages/admin/EditBlog/EditBlog";
 import RolePermission from "../pages/admin/RolePermissionPageMN/RolePermission";
 import Roles from "../pages/admin/RolesPage/Roles";
-import ChatPage from "../pages/admin/ChatPage/ChatPage";
 import ForgotPassword from "../pages/client/SingInPage/ForgotPassword";
 import OtpPassword from "../pages/client/SingInPage/OtpPassword";
 import ResetPassword from "../pages/client/SingInPage/ResetPassword";
@@ -164,11 +163,7 @@ export const Routes = [
                     {
                         path: 'roles/permission', 
                         element: <RolePermission />
-                    },
-                    {
-                        path: 'chat', 
-                        element: <ChatPage />
-                    },
+                    }
                 ]
             }
         ]

@@ -3,8 +3,14 @@ import { axiosJWT } from "./UserService"
 
 
 export const listPost = async (limit) => {
-    const res = await axios.get(`${process.env.REACT_APP_API_URL}/posts?limit=${limit}`)
-    return res.data
+    if (limit) {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/posts?limit=${limit}`)
+        return res.data
+    }else {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/posts`)
+        return res.data
+    }
+    
 }
 
 

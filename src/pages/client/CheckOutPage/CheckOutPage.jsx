@@ -17,6 +17,9 @@ import * as PaymentService from "../../../services/PaymentService";
 import * as CouponService from "../../../services/CouponService";
 import { PayPalButton } from "react-paypal-button-v2";
 import moment from "moment";
+import FormatNumber from '../../../components/FormatNumber/FormatNumber';
+
+
 
 const CheckOutPage = () => {
   const [isModalAddAddressOpen, setIsModalAddAddressOpen] = useState(false);
@@ -159,19 +162,17 @@ const CheckOutPage = () => {
     product: product?._id,
     name: product?.name,
     images: product?.images,
-    price: product?.price - product?.price * (product?.discount / 100),
+    price: FormatNumber(product?.price - product?.price * (product?.discount / 100)),
     amount: product?.quantity,
     discount: product?.discount,
-    totalPrice:
-      (product?.price - product?.price * (product?.discount / 100)) *
-      product?.quantity,
-  }));
+    totalPrice: FormatNumber((product?.price - product?.price * (product?.discount / 100)) *product?.quantity,)
+  }));   
 
   const totalOrder = data?.reduce(
-    (total, product) => total + product.totalPrice,
+    (total, product) => total + parseInt(product.totalPrice.replace(/\./g, ''), 10),
     0
   );
-  const totalPay = totalOrder - (totalOrder * discountCode) / 100 + Number(deliveryPrice);
+  const totalPay = FormatNumber(totalOrder - (totalOrder * discountCode) / 100 + Number(deliveryPrice));
 
   // Lựa chọn loại hình vận chuyển
   const handleDeliveryChange = (e) => {
@@ -442,7 +443,7 @@ const CheckOutPage = () => {
           <div className="order__result">
             <div className="order__result--item">
               <span>Tạm tính</span>
-              <span>{totalOrder} đ</span>
+              <span>{FormatNumber(totalOrder)} đ</span>
             </div>
             <div className="order__result--code">
               <Space size='small'>
