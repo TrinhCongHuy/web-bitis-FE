@@ -5,13 +5,11 @@ import { Button, Checkbox, Col, Form, Input, Row, Space } from 'antd';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './SingInPage.scss'
 import * as UserService from '../../../services/UserService'
-import * as AuthService from '../../../services/AuthService'
 import { UseMutationHook } from '../../../hooks/useMutationHook';
 import * as message from '../../../components/Message/Message'
 import { jwtDecode } from "jwt-decode";
 import { useDispatch } from 'react-redux';
 import { updateUser } from '../../../redux/slides/userSlide';
-import axios from 'axios';
 
 
 
@@ -72,25 +70,25 @@ const SingInPageClient = () => {
   };
 
   // Handle the callback from Google login
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    console.log('params', params)
-    const accessToken = params.get('access_token');
-    console.log('accessToken', accessToken)
-    const status = params.get('status');
-    console.log('status', status)
+  // useEffect(() => {
+  //   const params = new URLSearchParams(window.location.search);
+  //   console.log('params', params)
+  //   const accessToken = params.get('access_token');
+  //   console.log('accessToken', accessToken)
+  //   const status = params.get('status');
+  //   console.log('status', status)
     
-    if (status === 'OK' && accessToken) {
-      localStorage.setItem('access_token', JSON.stringify(accessToken));
-      const decoded = jwtDecode(accessToken);
-      if (decoded?.id) {
-        handleGetDetailUser(decoded?.id, accessToken);
-      }
-      navigate('/');
-    } else if (status === 'ERR') {
-      message.error('Google login failed');
-    }
-  }, []);
+  //   if (status === 'OK' && accessToken) {
+  //     localStorage.setItem('access_token', JSON.stringify(accessToken));
+  //     const decoded = jwtDecode(accessToken);
+  //     if (decoded?.id) {
+  //       handleGetDetailUser(decoded?.id, accessToken);
+  //     }
+  //     navigate('/');
+  //   } else if (status === 'ERR') {
+  //     message.error('Google login failed');
+  //   }
+  // }, []);
 
   return (
     <div className="container">
@@ -151,14 +149,12 @@ const SingInPageClient = () => {
 
               <Form.Item style={{textAlign: 'center'}}>
                 <Space size='middle'>
-                  {/* <Button type="primary" className="login-form-button" onClick={handleGoogleLogin}>
-                    Google
+                  <Button style={{width: '100px'}} onClick={handleLoginGG}>
+                    <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png' style={{width: '20px', height: '20px', objectFit: 'cover'}} title="Login with google" alt='gg'/>
                   </Button>
-                  <Button type="primary" className="login-form-button">
-                    FaceBook
-                  </Button> */}
-                  {/* <Link to='/auth/google'>Google</Link> */}
-                  <Button onClick={handleLoginGG}>Google</Button>
+                  <Button style={{width: '100px'}} >
+                    <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Facebook-icon-1.png/768px-Facebook-icon-1.png' style={{width: '20px', height: '20px', objectFit: 'cover', borderRadius: '50%'}} title="Login with facebook" alt='fb'/>
+                  </Button>
                 </Space>
               </Form.Item>
 

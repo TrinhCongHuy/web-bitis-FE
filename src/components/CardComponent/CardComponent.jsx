@@ -4,6 +4,7 @@ import { EyeOutlined, HeartOutlined, ShoppingCartOutlined } from '@ant-design/ic
 import './CardComponent.scss'
 import { useNavigate } from 'react-router-dom'
 import { priceNew } from "../../utils";
+import FormatNumber from "../FormatNumber/FormatNumber";
 
 
 const CardComponent = (props) => {
@@ -57,8 +58,8 @@ const CardComponent = (props) => {
                     </div>
                     
                     <div className="product__content--price">
-                        <span className="current">{priceNew(product.price, product.discount)} đ</span>
-                        <span className="normal">{product.price} đ</span>
+                        <span className="current">{FormatNumber(priceNew(product.price, product.discount))} đ</span>
+                        <span className="normal">{FormatNumber(product.price)} đ</span>
                     </div>
                     <div className="product__content--stock">
                         <span>Sold: <strong className="qty-sold">{product.sold}</strong></span>

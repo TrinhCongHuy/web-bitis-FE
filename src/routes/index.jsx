@@ -33,6 +33,8 @@ import ResetPassword from "../pages/client/SingInPage/ResetPassword";
 import CouponPage from "../pages/admin/CouponPage/CouponPage";
 import DiscountPage from "../pages/client/DiscountPage/DiscountPage";
 
+import AuthSuccess from "../components/AuthSuccess/AuthSuccess";
+
 
 export const Routes = [
     {
@@ -103,6 +105,10 @@ export const Routes = [
                 path: '/profile',
                 element: <ProfilePage />
             },
+            {
+                path: '/auth/success',
+                element: <AuthSuccess />
+            }
         ]
     },
     {
