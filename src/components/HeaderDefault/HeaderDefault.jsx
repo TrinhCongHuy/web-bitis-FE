@@ -11,11 +11,15 @@ import { useSelector } from 'react-redux'
 import * as CartService from '../../services/CartService'
 import { useQuery } from '@tanstack/react-query'
 import Search from '../Search/Search'
+import { useShoppingContext } from '../../contexts/ShoppingContext'
 
 
 const HeaderDefault = () => {
     const user = useSelector((state) => state.user)
     const [isSticky, setIsSticky] = useState(false);
+    const { cartItems } = useShoppingContext()
+
+    const totalProduct = cartItems.reduce((acc, item) => acc + item.quantity, 0);
     
     useEffect(() => {
         const handleScroll = () => {
@@ -140,7 +144,7 @@ const HeaderDefault = () => {
                                                 <ShoppingCartOutlined />
                                             </Link>
                                             <span className='fly-item flexcenter'>
-                                                {carts?.length || 0}
+                                                {totalProduct}
                                             </span>
                                         </div>
                                     </Space>

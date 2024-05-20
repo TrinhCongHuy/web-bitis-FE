@@ -7,6 +7,7 @@ import * as CartService from "../../../services/CartService";
 import { useQuery } from "@tanstack/react-query";
 import * as message from '../../../components/Message/Message'
 import { CheckCircleOutlined, SafetyOutlined, SplitCellsOutlined, SwapOutlined, TruckOutlined } from '@ant-design/icons'
+import { useShoppingContext } from '../../../contexts/ShoppingContext'
 
 // Import Swiper
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -28,6 +29,7 @@ const ProductDetailPage = () => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
+  const { addCartItem } = useShoppingContext();
 
   const fetchGetDetailProduct = async (context) => {
     const id = context?.queryKey && context?.queryKey[1];
@@ -42,6 +44,16 @@ const ProductDetailPage = () => {
       enable: !!id,
     },
   });
+
+  const ScrollToTop = () => {
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
+  
+    return null;
+  };
+
+  ScrollToTop()
 
   const changeNumber = (value) => {
     setNumberProduct(value);
@@ -63,17 +75,20 @@ const ProductDetailPage = () => {
     if (!user?.id) {
         navigate("/sing-in", { state: location?.pathname });
     } else {
+        
         const data = {
             user_id: user.id,
             product_id: productDetails?._id,
             quantity: numberProduct,
         };
+        console.log('productDetails', productDetails)
 
         try {
+            await addCartItem({ ...productDetails, quantity: numberProduct });
             await CartService.createProductCart(data);
             message.success('Thêm mới sản phẩm thành công!')
         } catch (error) {
-            console.error("Error create product in cart:", error);
+            console.error("Lỗi thêm sản phẩm vào giỏ hàng:", error);
         }
     }
   };

@@ -12,6 +12,7 @@ import {
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { PersistGate } from 'redux-persist/integration/react'
+import { ShoppingContextProvider } from './contexts/ShoppingContext';
 
 
 
@@ -21,9 +22,11 @@ root.render(
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
       <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <App />
-      </PersistGate>
+        <PersistGate loading={null} persistor={persistor}>
+          <ShoppingContextProvider>
+            <App />
+          </ShoppingContextProvider>
+        </PersistGate>
       </Provider>
     </BrowserRouter>
     <ReactQueryDevtools initialIsOpen={false} />

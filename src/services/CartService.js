@@ -12,11 +12,6 @@ export const listProductCart = async (id) => {
     return res.data;
 };
 
-// export const countProductCart = async (id) => {
-//     const res = await axios.get(`${process.env.REACT_APP_API_URL}/carts/countProductCart/${id}`);
-//     return res.data;
-// };
-
 export const updateProductQuantityInCart = async (id, newQuantity, token) => {
     try {
         const res = await axiosJWT.patch(

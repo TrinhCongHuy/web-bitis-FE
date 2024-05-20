@@ -149,6 +149,7 @@ const CheckOutPage = () => {
       title: "Số lượng",
       dataIndex: "amount",
       key: "amount",
+      render: (amount) => <p>x{amount}</p>
     },
     {
       title: "Thành tiền",

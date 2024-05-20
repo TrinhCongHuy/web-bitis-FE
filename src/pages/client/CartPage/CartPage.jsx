@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, Col, Input, Popconfirm, Row } from 'antd'
+import { Button, Col, Popconfirm, Row } from 'antd'
 import React, { useEffect, useState } from 'react';
 import { Table } from 'antd';
 import { DeleteOutlined } from "@ant-design/icons";
@@ -9,8 +9,8 @@ import './CartPage.scss'
 import * as message from '../../../components/Message/Message'
 import * as CartService from '../../../services/CartService'
 import ModalAddressComponent from '../../../components/ModalAddressComponent/ModalAddressComponent';
-import Loading from '../../../components/Loading/Loading'
 import FormatNumber from '../../../components/FormatNumber/FormatNumber';
+import { useShoppingContext } from '../../../contexts/ShoppingContext';
 
 
 
@@ -18,32 +18,20 @@ const CartPage = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const user = useSelector((state) => state?.user)
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [dataCart, setDataCart] = useState([])
   const navigate = useNavigate()
-  const [prevUserId, setPrevUserId] = useState(null);
+  const { cartItems, increaseQty, decreaseQty, removeCartItem, clearCart } = useShoppingContext()
 
   const token = user?.access_token
 
-  const fetchProductsCart = async () => {
-    const userId = user?.id;
-    if (!userId) {
-      return [];
-    }
-
-    try {
-      const res = await CartService.listProductCart(userId);
-      setDataCart(res.data)
-    } catch (error) {
-      console.error("Error fetching products cart:", error);
-    }
+  const ScrollToTop = () => {
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
+  
+    return null;
   };
 
-  useEffect(() => {
-    if (prevUserId !== user?.id) {
-      fetchProductsCart();
-      setPrevUserId(user?.id);
-    }
-  }, [[user?.id]]);
+  ScrollToTop()
 
 
   // Xoá nhiều sản phẩm trong giỏ hàng
@@ -51,7 +39,7 @@ const CartPage = () => {
     if (selectedRowKeys.length > 0) {
       try {
         await CartService.deleteManyProductCart(selectedRowKeys, token);
-        fetchProductsCart();
+        clearCart()
       } catch (error) {
         console.error('Error updating product quantity in cart:', error);
       }
@@ -62,7 +50,7 @@ const CartPage = () => {
   // TABLE
   const columns = [
     {
-      title: `Tất cả (${dataCart?.length} sản phẩm)`,
+      title: `Tất cả (${cartItems?.length} sản phẩm)`,
       dataIndex: 'images',
       key: 'image',
       render: (images) => <img src={images[0]} alt="Product" style={{ width: '80px' }} />, 
@@ -82,13 +70,17 @@ const CartPage = () => {
       dataIndex: 'amount',
       key: 'amount',
       render: (_, record) => (
-        <Input
-          type="number"
-          style={{ width: 80 }}
-          min={1}
-          defaultValue={record.amount}
-          onChange={(e) => handleAmountChange(record.key, e.target.value, token)}
-        />
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Button
+            onClick={() => decreaseQty(record.key)}
+            disabled={record.quantity <= 1}
+            size='small'
+          >
+            -
+          </Button>
+          <span style={{ margin: '0 10px' }}>{record.amount}</span>
+          <Button size='small' onClick={() => increaseQty(record.key)}>+</Button>
+        </div>
       ),
     },
     {
@@ -100,14 +92,14 @@ const CartPage = () => {
       title: <DeleteOutlined onClick={handleDeleteAll}/>,
       key: 'action',
       render: (_, record) => (
-        <Popconfirm title="Bạn có chắc chắn muốn xóa?" onConfirm={() => handleDelete(record.key, token)}>
+        <Popconfirm title="Bạn có chắc chắn muốn xóa?" onConfirm={() => removeCartItem(record.key)}>
           <DeleteOutlined style={{color: 'red', cursor: 'pointer', fontSize: '18px'}}/>
         </Popconfirm>
       ),
     },
   ];
 
-  const data = dataCart?.map((product) => ({
+  const data = cartItems?.map((product) => ({
     key: product?._id,
     product: product?._id,
     images: product?.images,
@@ -117,45 +109,11 @@ const CartPage = () => {
     totalPrice: FormatNumber((product?.price - (product?.price * (product?.discount / 100))) * product?.quantity)
   }));
 
-  console.log('data', data)
-
   const totalOrder = data
     ?.filter((product) => selectedRowKeys.includes(product.key))
     ?.reduce((total, product) => total + parseInt(product.totalPrice.replace(/\./g, ''), 10), 0); 
-  
+    
   const totalPay = totalOrder
-
-
-  const handleAmountChange = async (key, value, token) => {
-    try {
-      await CartService.updateProductQuantityInCart(key, value, token);
-      // Cập nhật số lượng sản phẩm
-      const updatedDataCart = dataCart.map(product => {
-        if (product._id === key) {
-          return {
-            ...product,
-            quantity: value,
-            totalPrice: (product.price - (product.price * (product.discount / 100))) * value
-          };
-        }
-        return product;
-      });
-      setDataCart(updatedDataCart);
-    } catch (error) {
-      console.error('Error updating product quantity in cart:', error);
-    }
-  };
-  
-
-  // Xoá sản phẩm trong giỏ hàng
-  const handleDelete = async (key, token) => {
-    try {
-      await CartService.deleteProductCart(key, token);
-      fetchProductsCart()
-    } catch (error) {
-      console.error('Error updating product quantity in cart:', error);
-    }
-  };
 
   // ===========
 
@@ -175,19 +133,15 @@ const CartPage = () => {
     }else if (user?.address?.length === 0) {
       setIsModalOpen(true);
     }else {
-      const selectedProducts = dataCart.filter(product => selectedRowKeys.includes(product._id));
+      const selectedProducts = cartItems.filter(product => selectedRowKeys.includes(product._id));
       navigate('/checkout', { state: { selectedProducts } })
     }
   }
 
   const handleCancelModal = () => {
     setIsModalOpen(false);
-    const selectedProducts = dataCart.filter(product => selectedRowKeys.includes(product._id));
+    const selectedProducts = cartItems.filter(product => selectedRowKeys.includes(product._id));
     navigate('/checkout', { state: { selectedProducts } })
-  };
-
-  if (dataCart.length === 0) {
-    return <Loading />
   };
 
   return (
