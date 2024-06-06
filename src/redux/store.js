@@ -1,6 +1,5 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import userReducer from './slides/userSlide'
-import productReducer from './slides/productSlide'
 import accountReducer from './slides/accountSlide'
 import {
   persistStore,
@@ -13,23 +12,18 @@ import {
   REGISTER,
 } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
-import orderSlide from './slides/orderSlide'
-import cartSlide from './slides/cartSlide'
 
 
 const persistConfig = {
     key: 'root',
     version: 1,
     storage,
-    blacklist: ['product', 'user', 'account']
+    blacklist: ['user', 'account']
 }
 
 const rootReducer = combineReducers({
     user: userReducer,
-    product: productReducer,
     account: accountReducer,
-    order: orderSlide,
-    cart: cartSlide,
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

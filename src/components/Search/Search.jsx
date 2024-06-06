@@ -1,11 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-// import { faCircleXmark, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import HeadlessTippy from '@tippyjs/react/headless';
-// import { Wrapper as PopperWrapper } from '~/components/Popper';
-// import AccountItem from '~/components/AccountItem';
-// import { SearchIcon } from '~/components/Icon';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { useDebounce } from '~/hooks';
 import * as ProductServices from '../../services/ProductService';
 
 import './Search.scss'
@@ -33,8 +27,6 @@ function Search() {
       setLoading(true);
 
       const result = await ProductServices.listProduct(debouncedValue, 6);
-
-      console.log('result', result)
       setSearchResult(result?.data);
 
       setLoading(false);

@@ -4,7 +4,6 @@ import CommentForm from "./CommentForm";
 import Comment from "./Comment";
 import * as PostService from '../../services/PostService'
 import { useSelector } from "react-redux";
-// import { useLocation, useNavigate } from "react-router-dom";
 import * as message from "../Message/Message"
 
 
@@ -12,8 +11,6 @@ const Comments = ({ currentUserId, idPost }) => {
   const user = useSelector((state) => state?.user)
   const [backendComments, setBackendComments] = useState([]);
   const [activeComment, setActiveComment] = useState(null);
-  // const navigate = useNavigate();
-  // const location = useLocation();
 
 
   const rootComments = backendComments.filter(
@@ -57,7 +54,6 @@ const Comments = ({ currentUserId, idPost }) => {
       }
     }else {
       message.error("Vui lòng đăng nhập trước khi bình luận!")
-      // navigate("/sing-in", { state: location?.pathname });  
     }
   };
 
@@ -66,7 +62,7 @@ const Comments = ({ currentUserId, idPost }) => {
         const commentIndex = backendComments.findIndex(comment => comment.id === commentId);
         
         if (commentIndex === -1) {
-            console.error("Comment not found");
+            console.error("Bình luận không tìm thấy.");
             return;
         }
 
@@ -82,13 +78,13 @@ const Comments = ({ currentUserId, idPost }) => {
         setBackendComments(updatedBackendComments);
         setActiveComment(null);
     } catch (error) {
-        console.error("Error updating comment:", error);
+        console.error("Lỗi cập nhật bình luận:", error);
     }
 };
 
 
   const deleteComment = async (commentId) => {
-    if (window.confirm("Are you sure you want to remove comment?")) {
+    if (window.confirm("Bạn có chắc muốn xoá bình luận này?")) {
       try {
         const updatedBackendComments = backendComments.filter(
           (backendComment) => backendComment.id !== commentId
@@ -104,7 +100,7 @@ const Comments = ({ currentUserId, idPost }) => {
 
         fetchPostDetail();
       } catch (error) {
-          console.error("Error deleting comment:", error);
+          console.error("Lỗi xoá bình luận:", error);
       }
     }
   };
@@ -114,7 +110,7 @@ const Comments = ({ currentUserId, idPost }) => {
         const response = await PostService.getDetailPost(idPost); 
         setBackendComments(response?.data?.comments);
     } catch (error) {
-        console.error('Error fetching post:', error);
+        console.error('Lỗi dữ liệu bài viết:', error);
     }
 };
 

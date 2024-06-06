@@ -1,0 +1,50 @@
+/* CSS để giảm khoảng cách giữa các ngôi sao trong component Rate */
+.tight-rate .ant-rate-star {
+    margin-right: 2px; /* Giảm khoảng cách giữa các ngôi sao */
+}
+
+/* CSS cho container form đánh giá */
+.review-form-container {
+border: 1px solid #d9d9d9;
+padding: 20px;
+border-radius: 5px;
+position: relative;
+margin-top: 20px;
+}
+
+.review-form-title {
+position: absolute;
+top: -12px;
+left: 25%;
+font-size: 1.2em;
+transform: translateX(-50%);
+background: white;
+padding: 0 10px;
+font-weight: bold;
+}
+
+// .upload-image input[type="file"] {
+//     width: 100%;
+//     padding: 10px 15px;
+//     text-align: center;
+//     border: 2px dashed #a5bfda;
+//     border-radius: 10px;
+//     background: #f8f9fa;
+//     transition: border .3s ease;
+//   }
+  
+//   .upload-image input[type="file"]:hover,
+//   .upload-image input[type="file"]:focus {
+//     border-color: #96a8bb;
+//   }
+  
+//   .upload-image img {
+//     width: 100px;
+//     height: 100px;
+//     object-fit: cover;
+//     border-radius: 10px;
+//     margin: 5px;
+//     border: 1px solid #ddd;
+//     box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.2);
+//   }
+

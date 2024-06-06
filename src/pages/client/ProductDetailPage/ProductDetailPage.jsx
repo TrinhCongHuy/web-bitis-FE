@@ -8,6 +8,8 @@ import { useQuery } from "@tanstack/react-query";
 import * as message from '../../../components/Message/Message'
 import { CheckCircleOutlined, SafetyOutlined, SplitCellsOutlined, SwapOutlined, TruckOutlined } from '@ant-design/icons'
 import { useShoppingContext } from '../../../contexts/ShoppingContext'
+import FormatNumber from '../../../components/FormatNumber/FormatNumber';
+
 
 // Import Swiper
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -20,7 +22,6 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { priceNew } from "../../../utils";
 import Comments from "../../../components/Comment/CommentsProduct";
-// import { addOrderProduct } from "../../../redux/slides/orderSlide";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -30,6 +31,9 @@ const ProductDetailPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { addCartItem } = useShoppingContext();
+  const [sizeProduct, setSizeProduct] = useState()
+  const [productState, setProductState] = useState('')
+  const [quantityProduct, setQuantityProduct] = useState(0)
 
   const fetchGetDetailProduct = async (context) => {
     const id = context?.queryKey && context?.queryKey[1];
@@ -63,7 +67,7 @@ const ProductDetailPage = () => {
   const handleClickNumber = (type) => {
     if (type === "increase") {
       setNumberProduct((prev) =>
-        prev < productDetails?.countInStock ? prev + 1 : prev
+        prev < quantityProduct ? prev + 1 : prev
       );
     } else if (type === "decrease" && numberProduct > 1) {
       setNumberProduct((prev) => prev - 1);
@@ -80,11 +84,11 @@ const ProductDetailPage = () => {
             user_id: user.id,
             product_id: productDetails?._id,
             quantity: numberProduct,
+            size: sizeProduct
         };
-        console.log('productDetails', productDetails)
 
         try {
-            await addCartItem({ ...productDetails, quantity: numberProduct });
+            await addCartItem({ ...productDetails, quantity: numberProduct, size: sizeProduct });
             await CartService.createProductCart(data);
             message.success('Thêm mới sản phẩm thành công!')
         } catch (error) {
@@ -104,6 +108,17 @@ const ProductDetailPage = () => {
     }
   }, [currentSlideIndex, productDetails]);
 
+  const handleSize = (size) => {
+    setSizeProduct(size)
+    const sizeItem = productDetails?.sizes.find(item => item.size === size)
+    if (sizeItem) {
+        setProductState(`Còn hàng (${sizeItem?.quantity})`)
+        setQuantityProduct(sizeItem?.quantity)
+    }else {
+        setProductState(`Hết hàng (0)`)
+        setQuantityProduct(0)
+    }
+  }
 
   return (
     <div className="container page__product--detail">
@@ -203,47 +218,31 @@ const ProductDetailPage = () => {
 
                     <div className="product__content--price">
                         <span className="current">
-                            {priceNew(productDetails?.price, productDetails?.discount)} đ
+                            {FormatNumber(priceNew(productDetails?.price, productDetails?.discount))} đ
                         </span>
-                        <span className="normal">{productDetails?.price} đ</span>
+                        <span className="normal">{FormatNumber(productDetails?.price)} đ</span>
                     </div>
 
                     <div className="sizes">
-                        <p>Size</p>
+                        <p>Kích thướt <Link href="#">(Cách chọn size)</Link></p>
                         <div className="variant">
                             <form action="">
-                                <p>
-                                    <Input type="radio" name="size" id="size-40"/>
-                                    <label htmlFor="size-40" className="circle"><span>40</span></label>
-                                </p>
-                                <p>
-                                    <Input type="radio" name="size" id="size-41" />
-                                    <label htmlFor="size-41" className="circle"><span>41</span></label>
-                                </p>
-                                <p>
-                                    <Input type="radio" name="size" id="size-42" />
-                                    <label htmlFor="size-42" className="circle"><span>42</span></label>
-                                </p>
-                                <p>
-                                    <Input type="radio" name="size" id="size-43" />
-                                    <label htmlFor="size-43" className="circle"><span>43</span></label>
-                                </p>
+                                {[38, 39, 40, 41, 42, 43].map((size, index) => (
+                                    <p key={index}>
+                                        <Input type="radio" name="size" id={`size ${size}`} onClick={() => handleSize(size)}/>
+                                        <label htmlFor={`size ${size}`} className="circle"><span>{size}</span></label>
+                                    </p>
+                                ))} 
                             </form>
                         </div>
                     </div>
 
                     <div className="product__content--stock">
                         <span>
-                        InStock:{" "}
+                        Tình trạng:{" "}
                         <strong className="qty-stock">
-                            {productDetails?.countInStock}
+                            {productState}
                         </strong>
-                        </span>
-                    </div>
-                    <div className="product__content--sold">
-                        <span>
-                        Sold:{" "}
-                        <strong className="qty-sold">{productDetails?.sold}</strong>
                         </span>
                     </div>
                     <div className="product__content--qty flexitem">
@@ -269,10 +268,10 @@ const ProductDetailPage = () => {
                     </div>
                     <div className="btn-buy">
                         <Button
-                        onClick={handleAddCartProduct}
-                        disabled={productDetails?.countInStock === 0}
+                            onClick={handleAddCartProduct}
+                            disabled={quantityProduct === 0}
                         >
-                        Thêm vào giỏ hàng
+                            Thêm vào giỏ hàng
                         </Button>
                     </div>
 
@@ -346,12 +345,9 @@ const ProductDetailPage = () => {
                     
                 </div>
             </Col>
-            
-            <Col span={16}>
-                <Comments
-                    currentUserId={user?.id}
-                    idProduct={id}
-                />
+            <hr style={{width: "60%", height: "1px", background: "#c6c2c2"}}/>                     
+            <Col span={24} >
+                <Comments currentUserId={user?.id} idProduct={id}/>
             </Col>
         </Row>
       )}

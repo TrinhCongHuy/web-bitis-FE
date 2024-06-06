@@ -125,14 +125,15 @@ const CheckOutPage = () => {
     setIsModalAddressOpen(false);
   };
 
+  console.log('selectedProducts', selectedProducts)
   // TABLE
   const columns = [
     {
       title: `Tất cả (${selectedProducts?.length} sản phẩm)`,
-      dataIndex: "images",
-      key: "images",
-      render: (images) => (
-        <img src={images[0]} alt="Product" style={{ width: "60px" }} />
+      dataIndex: "image",
+      key: "image",
+      render: (image) => (
+        <img src={image} alt="Product" style={{ width: "60px" }} />
       ),
     },
     {
@@ -141,9 +142,15 @@ const CheckOutPage = () => {
       key: "name",
     },
     {
+      title: "Size",
+      dataIndex: "size",
+      key: "size",
+    },
+    {
       title: "Đơn giá",
       dataIndex: "price",
       key: "price",
+      render: (price) => FormatNumber(price)
     },
     {
       title: "Số lượng",
@@ -155,6 +162,7 @@ const CheckOutPage = () => {
       title: "Thành tiền",
       dataIndex: "totalPrice",
       key: "totalPrice",
+      render: (totalPrice) => FormatNumber(totalPrice)
     },
   ];
 
@@ -162,18 +170,19 @@ const CheckOutPage = () => {
     key: product?._id,
     product: product?._id,
     name: product?.name,
-    images: product?.images,
-    price: FormatNumber(product?.price - product?.price * (product?.discount / 100)),
+    size: product?.size,
+    image: product?.images[0],
+    price: product?.price - product?.price * (product?.discount / 100),
     amount: product?.quantity,
     discount: product?.discount,
-    totalPrice: FormatNumber((product?.price - product?.price * (product?.discount / 100)) *product?.quantity,)
+    totalPrice: (product?.price - product?.price * (product?.discount / 100)) *product?.quantity
   }));   
 
   const totalOrder = data?.reduce(
-    (total, product) => total + parseInt(product.totalPrice.replace(/\./g, ''), 10),
+    (total, product) => total + product.totalPrice,
     0
   );
-  const totalPay = FormatNumber(totalOrder - (totalOrder * discountCode) / 100 + Number(deliveryPrice));
+  const totalPay = totalOrder - (totalOrder * discountCode) / 100 + Number(deliveryPrice);
 
   // Lựa chọn loại hình vận chuyển
   const handleDeliveryChange = (e) => {
@@ -482,7 +491,7 @@ const CheckOutPage = () => {
             </div>
             <div className="price__total">
               <span className="price__total--label">Tổng thanh toán: </span>
-              <span className="price__total--detail">{totalPay} VNĐ</span>
+              <span className="price__total--detail">{FormatNumber(totalPay)} VNĐ</span>
             </div>
             <div style={{ marginTop: "20px" }}>
               {paymentMethod === "Thanh toán qua VN PAY" && sdkReady ? (

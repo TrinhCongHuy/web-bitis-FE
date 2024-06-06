@@ -49,8 +49,28 @@ export const refreshToken = async () => {
 
 export const updateUser = async ({id, access_token, rests}) => {
     try {
+        console.log('rests', rests)
         const res = await axiosJWT.patch(
             `${process.env.REACT_APP_API_URL}/update-user/${id}`,
+            rests,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    token: `Bearer ${access_token}`
+                }
+            }
+        );
+        return res.data;
+    } catch (error) {
+        console.error("Error updating product:", error);
+        throw error;
+    }
+};
+
+export const updateAddressUser = async ({id, access_token, rests}) => {
+    try {
+        const res = await axiosJWT.patch(
+            `${process.env.REACT_APP_API_URL}/update-address/${id}`,
             rests,
             {
                 headers: {
@@ -64,6 +84,7 @@ export const updateUser = async ({id, access_token, rests}) => {
         throw error;
     }
 };
+
 
 export const deleteUser = async ({id, access_token}) => {
     const res = await axiosJWT.delete(`${process.env.REACT_APP_API_URL}/delete-user/${id}`, 

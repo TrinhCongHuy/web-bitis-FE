@@ -11,12 +11,10 @@ export const listProduct = async (search, limit) => {
     return res.data
 }
 
-export const listProductType = async ( search, limit, type, page ) => {
+export const listProductType = async ( limit, type, page ) => {
     let res = {}
     if (type) {
         res = await axios.get(`${process.env.REACT_APP_API_URL}/products?filter=type&filter=${type}&page=${page}`)
-    }else if (search?.length > 0) {
-        res = await axios.get(`${process.env.REACT_APP_API_URL}/products?filter=name&filter=${search}&limit=${limit}&page=${page}`)
     }else {
         res = await axios.get(`${process.env.REACT_APP_API_URL}/products?limit=${limit}&page=${page}`)
     }
@@ -25,8 +23,8 @@ export const listProductType = async ( search, limit, type, page ) => {
 }
 
 export const createProduct = async (formData) => {
-    console.log('formData', formData)
     try {
+        console.log('formData', formData)
         const res = await axios.post(`${process.env.REACT_APP_API_URL}/products/create`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
@@ -62,13 +60,14 @@ export const updateProduct = async ({id, access_token, rests}) => {
     }
 };
 
-export const updateCommentProduct = async ({id, access_token, rests}) => {
+export const addCommentProduct = async ({id, access_token, rests}) => {
     try {
-        const res = await axiosJWT.patch(
-            `${process.env.REACT_APP_API_URL}/products/update-comment/${id}`,
+        const res = await axiosJWT.post(
+            `${process.env.REACT_APP_API_URL}/products/add-comment/${id}`,
             rests,
             {
                 headers: {
+                    'Content-Type': 'multipart/form-data',
                     token: `Bearer ${access_token}`
                 }
             }

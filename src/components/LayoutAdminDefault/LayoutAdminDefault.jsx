@@ -53,14 +53,17 @@ const LayoutAdminDefault = () => {
             getItem('Danh sách bài viết', '3', null, null, '/system/admin/posts'),
             getItem('Thêm mới bài viết', '4', null, null, '/system/admin/addPost'),
         ], null),
-        getItem('Quản lý sản phẩm', 'sub2', <MergeOutlined />, null, '/system/admin/products'),
+        getItem('Quản lý danh mục', '5', <MergeOutlined />, null, '/system/admin/category-product'),
+        getItem('Quản lý sản phẩm', 'sub2', <UserOutlined />, [
+            getItem('Danh sách sản phẩm', '7', null, null, '/system/admin/products'),
+            getItem('Thêm mới sản phẩm', '8', null, null, '/system/admin/addProduct'),
+        ], null),
         getItem('Quản lý đơn hàng', '9', <ShoppingCartOutlined />, null, '/system/admin/orders'),
         getItem('Quản lý coupon', '10', <UserOutlined />, null, '/system/admin/coupons'),
         getItem('Khách hàng', '11', <UsergroupAddOutlined />, null, '/system/admin/users'),
         getItem('Admin', '12', <UserOutlined />, null, '/system/admin/accounts'),
         getItem('Nhóm quyền', '13', <UserOutlined />, null, '/system/admin/roles'),
         getItem('Phân quyền', '14', <UserOutlined />, null, '/system/admin/roles/permission'),
-        getItem('Chat', '15', <UserOutlined />, null, '/system/admin/chat'),
         
     ];
 

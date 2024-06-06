@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from "react";
 import { Divider, Button, Modal, Form, Input, Upload, Space, Popconfirm, Select } from "antd";
-import { PlusSquareOutlined, UploadOutlined, EditOutlined, DeleteOutlined, SearchOutlined, PlusOutlined } from "@ant-design/icons";
+import { UploadOutlined, EditOutlined, DeleteOutlined, SearchOutlined, PlusOutlined } from "@ant-design/icons";
 import TableComponent from "../../../components/TableComponent/TableComponent";
 import { getBase64 } from "../../../utils";
 import * as AccountService from '../../../services/AccountService';

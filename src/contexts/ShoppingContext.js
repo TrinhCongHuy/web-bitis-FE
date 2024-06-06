@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { createContext, useContext, useState, useEffect } from 'react';
-import * as CartService from '../services/CartService'
+import * as CartService from '../services/CartService';
 import { useSelector } from 'react-redux';
 
 const ShoppingContext = createContext({});
@@ -10,47 +10,49 @@ export const useShoppingContext = () => {
 }
 
 export const ShoppingContextProvider = ({ children }) => {
-    const user = useSelector((state) => state?.user)
+    const user = useSelector((state) => state?.user);
     const userId = user?.id;
 
-    const syncCartWithDB = async (userId) => {
+    const [cartItems, setCartItems] = useState(() => {
+        const jsonCartData = localStorage.getItem('shopping_cart');
         try {
-            const res = await CartService.listProductCart(userId);
-            const dbCartItems = res.data;
-            setCartItems(dbCartItems);
-            localStorage.setItem('shopping_cart', JSON.stringify(dbCartItems));
+            const parsedData = JSON.parse(jsonCartData);
+            return parsedData ? parsedData : [];
         } catch (error) {
-            console.error('Lỗi đồng bộ dữ liệu:', error);
+            console.error('Error parsing JSON from localStorage:', error);
+            return [];
         }
-    };
+    });
 
     useEffect(() => {
         if (userId) {
             syncCartWithDB(userId);
+        } else {
+            localStorage.removeItem('shopping_cart');
         }
     }, [userId]);
-
-    const [cartItems, setCartItems] = useState(() => {
-        const jsonCartData = localStorage.getItem('shopping_cart');
-        return jsonCartData ? JSON.parse(jsonCartData) : [];
-    });
 
     useEffect(() => {
         localStorage.setItem('shopping_cart', JSON.stringify(cartItems));
     }, [cartItems]);
 
-    const cartQty = cartItems.reduce((qty, item) => qty + item.qty, 0);
-
-    const totalPrice = cartItems.reduce((total, product) => total + ((product?.price - (product?.price * (product?.discount / 100))) * product?.quantity), 0);
+    const syncCartWithDB = async (userId) => {
+        try {
+            const res = await CartService.listProductCart(userId);
+            const dbCartItems = res.data;
+            setCartItems(Array.isArray(dbCartItems) ? dbCartItems : []);
+        } catch (error) {
+            console.error('Lỗi đồng bộ dữ liệu:', error);
+        }
+    };
 
     const handleAmountChange = async (id, value, token) => {
         try {
-          await CartService.updateProductQuantityInCart(id, value, token);
+            await CartService.updateProductQuantityInCart(id, value, token);
         } catch (error) {
-          console.error('Lỗi cập nhật số lượng sản phẩm trong giỏ hàng:', error);
+            console.error('Lỗi cập nhật số lượng sản phẩm trong giỏ hàng:', error);
         }
-      };
-
+    };
 
     const increaseQty = (id) => {
         const currentCartItem = cartItems.find(item => item._id === id);
@@ -65,7 +67,6 @@ export const ShoppingContextProvider = ({ children }) => {
             setCartItems(newItems); 
             handleAmountChange(id, currentCartItem.quantity + 1,  user?.access_token)
         }
-        
     }
 
     const decreaseQty = (id) => {
@@ -82,7 +83,6 @@ export const ShoppingContextProvider = ({ children }) => {
             handleAmountChange(id, currentCartItem.quantity - 1, user?.access_token);
         }
     }
-    
 
     const addCartItem = (product) => {
         if (product) {
@@ -90,8 +90,7 @@ export const ShoppingContextProvider = ({ children }) => {
             if (currentCartItem) {
                 const newItems = cartItems.map(item => {
                     if (item._id === product._id) {
-                        return { ...item, quantity: item.quantity + product.quantity
-                             };
+                        return { ...item, quantity: item.quantity + product.quantity };
                     } else {
                         return item;
                     }
@@ -106,8 +105,8 @@ export const ShoppingContextProvider = ({ children }) => {
 
     const removeCartItem = async (id) => {
         try {
-            await CartService.deleteProductCart(id, user?.access_token);
             const newItems = cartItems.filter(item => item._id !== id);
+            await CartService.deleteProductCart(id, user?.access_token);
             setCartItems(newItems);
         } catch (error) {
             console.error('Lỗi xoá sản phẩm từ giỏ hàng:', error);
@@ -116,6 +115,13 @@ export const ShoppingContextProvider = ({ children }) => {
 
     const clearCart = () => {
         setCartItems([]);
+    }
+
+    let cartQty = 0;
+    let totalPrice = 0;
+    if (cartItems) {
+        cartQty = cartItems.reduce((qty, item) => qty + item.quantity, 0);
+        totalPrice = cartItems.reduce((total, product) => total + ((product?.price - (product?.price * (product?.discount / 100))) * product?.quantity), 0);
     }
 
     return (

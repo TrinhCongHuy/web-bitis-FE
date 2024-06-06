@@ -1,44 +1,64 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from "react";
-import { Divider, Button, Modal, Form, Input, Upload, Space, Popconfirm, Select } from "antd";
-import { UploadOutlined, EditOutlined, DeleteOutlined, SearchOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  Divider,
+  Button,
+  Form,
+  Input,
+  Space,
+  Popconfirm,
+  Select,
+} from "antd";
+import {
+  UploadOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import TableComponent from "../../../components/TableComponent/TableComponent";
 import * as ProductService from "../../../services/ProductService";
+import * as CategoryService from "../../../services/CategoryService";
 import { UseMutationHook } from "../../../hooks/useMutationHook";
-import * as message from '../../../components/Message/Message'
-import { useQuery } from '@tanstack/react-query'
+import * as message from "../../../components/Message/Message";
+import { useQuery } from "@tanstack/react-query";
 import "./ProductPageMN.scss";
 import DrawerComponent from "../../../components/DrawerComponent/DrawerComponent";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 import Loading from "../../../components/LoadingComponent/Loading";
 const { TextArea } = Input;
 
 const ProductPageMN = () => {
-  const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
-  const user = useSelector(state => state.user)
-  const [ rowSelected, setRowSelected ] = useState('')
-  const [ isOpenDraw, setIsOpenDraw ] = useState(false)
-  const [isLoadingUpdate, setIsLoadingUpdate] = useState(false)
-  const [searchText, setSearchText] = useState('');
-  const [searchedColumn, setSearchedColumn] = useState('');
+  const user = useSelector((state) => state.user);
+  const [rowSelected, setRowSelected] = useState("");
+  const [isOpenDraw, setIsOpenDraw] = useState(false);
+  const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
-  const [uploadImages, setUploadImages] = useState([]);
   const [uploadImageDetail, setUploadImageDetail] = useState([]);
 
   const renderAction = (record) => {
     return (
       <Space>
-        <EditOutlined style={{color: 'orange', cursor: 'pointer', fontSize: '18px'}} onClick={handleDetailProduct}/>
+        <EditOutlined
+          style={{ color: "orange", cursor: "pointer", fontSize: "18px" }}
+          onClick={handleDetailProduct}
+        />
         {columns.length >= 1 && (
-          <Popconfirm title="Bạn có chắc chắn muốn xóa?" onConfirm={() => handleDelete(record.key)}>
-            <DeleteOutlined style={{color: 'red', cursor: 'pointer', fontSize: '18px'}}/>
+          <Popconfirm
+            title="Bạn có chắc chắn muốn xóa?"
+            onConfirm={() => handleDelete(record.key)}
+          >
+            <DeleteOutlined
+              style={{ color: "red", cursor: "pointer", fontSize: "18px" }}
+            />
           </Popconfirm>
         )}
       </Space>
-    )
-  }
+    );
+  };
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -47,11 +67,16 @@ const ProductPageMN = () => {
   };
   const handleReset = (clearFilters) => {
     clearFilters();
-    setSearchText('');
+    setSearchText("");
   };
 
   const getColumnSearchProps = (dataIndex) => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
       <div
         style={{
           padding: 8,
@@ -62,11 +87,13 @@ const ProductPageMN = () => {
           ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
           onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
           style={{
             marginBottom: 8,
-            display: 'block',
+            display: "block",
           }}
         />
         <Space>
@@ -96,7 +123,7 @@ const ProductPageMN = () => {
     filterIcon: (filtered) => (
       <SearchOutlined
         style={{
-          color: filtered ? '#1677ff' : undefined,
+          color: filtered ? "#1677ff" : undefined,
         }}
       />
     ),
@@ -108,217 +135,115 @@ const ProductPageMN = () => {
       }
     },
   });
-  
 
   const columns = [
     {
-      title: 'Name',
-      dataIndex: 'name',
+      title: "Name",
+      dataIndex: "name",
       render: (text) => <a>{text}</a>,
       sorter: (a, b) => a.name.length - b.name.length,
-      ...getColumnSearchProps('name')
+      ...getColumnSearchProps("name"),
     },
     {
-      title: 'Price',
-      dataIndex: 'price',
+      title: "Price",
+      dataIndex: "price",
       sorter: (a, b) => a.price - b.price,
       filters: [
         {
-          text: '>=500000',
-          value: '>=500000',
+          text: ">=500000",
+          value: ">=500000",
         },
         {
-          text: '<=500000',
-          value: '<=500000',
+          text: "<=500000",
+          value: "<=500000",
         },
         {
-          text: '>=1000000',
-          value: '>=1000000',
+          text: ">=1000000",
+          value: ">=1000000",
         },
         {
-          text: '<=1000000',
-          value: '<=1000000',
+          text: "<=1000000",
+          value: "<=1000000",
         },
       ],
       onFilter: (value, record) => {
-        if (value === '>=500000') { 
+        if (value === ">=500000") {
           return record.price >= 500000;
         }
-        if (value === '<=500000') {
+        if (value === "<=500000") {
           return record.price <= 500000;
         }
-        if (value === '>=1000000') {
+        if (value === ">=1000000") {
           return record.price >= 1000000;
         }
-        if (value === '<=1000000') {
+        if (value === "<=1000000") {
           return record.price <= 1000000;
         }
         return true;
-      },      
-      filterMode: 'tree',
+      },
+      filterMode: "tree",
     },
     {
-      title: 'Rating',
-      dataIndex: 'rating',
+      title: "Rating",
+      dataIndex: "rating",
       sorter: (a, b) => a.rating - b.rating,
       filters: [
         {
-          text: '>=3',
-          value: '>=',
+          text: ">=3",
+          value: ">=",
         },
         {
-          text: '<=3',
-          value: '<=',
+          text: "<=3",
+          value: "<=",
         },
       ],
       onFilter: (value, record) => {
-        if (value === '>=') {
-          return Number(record.rating) >= 3
+        if (value === ">=") {
+          return Number(record.rating) >= 3;
         }
-        return Number(record.rating) <= 3
+        return Number(record.rating) <= 3;
       },
-      filterMode: 'tree',
+      filterMode: "tree",
     },
     {
-      title: 'Discount',
-      dataIndex: 'discount'
+      title: "Discount",
+      dataIndex: "discount",
     },
     {
-      title: 'Type',
-      dataIndex: 'type',
-      ...getColumnSearchProps('type')
+      title: "Type",
+      dataIndex: "type",
+      ...getColumnSearchProps("type"),
     },
     {
-      title: 'CountInStock',
-      dataIndex: 'countInStock',
-    },
-    {
-      title: 'Sold',
-      dataIndex: 'sold',
-    },
-    {
-      title: 'Action',
-      dataIndex: 'action',
-      render: (_, record) => renderAction(record)
+      title: "Action",
+      dataIndex: "action",
+      render: (_, record) => renderAction(record),
     },
   ];
 
   //=============== Display products ==================//
-
-  const [ stateProduct, setStateProduct ] = useState({
-    name: "",
-    price: "",
-    description: "",
-    rating: "",
-    discount: "",
-    images: [],
-    type: "",
-    countInStock: "",
-    sold: ""
-  });
-
-  const mutation = UseMutationHook((data) => {
-    console.log('data', data)
-    const { name, price, description, rating, discount, images, type, countInStock, sold } = data;
-    const res = ProductService.createProduct({ name, price, description, rating, discount, images, type, countInStock, sold });
-    return res
-  });
-
-
   const fetchProductAll = async () => {
-    const res = await ProductService.listProduct()
-    console.log('res', res)
-    return res
-  }
-
-  const { data, isLoading, isSuccess, isError } = mutation
+    const res = await ProductService.listProduct();
+    return res;
+  };
 
   // Lấy ra ds sản phẩm
   const queryProducts = useQuery({
-    queryKey: ['products'], 
-    queryFn: fetchProductAll
+    queryKey: ["products"],
+    queryFn: fetchProductAll,
   });
 
-  const { isLoading: isLoadingProducts, data: products } = queryProducts
+  const { isLoading: isLoadingProducts, data: products } = queryProducts;
 
-
-  const dataTable = products?.data.length && products?.data.map((product) => {
-    return {...product, key: product._id}
-  })
-
-  useEffect(() => {
-    if (isSuccess && data?.status === 'OK') {
-      message.success()
-      handleCancel()
-    }else if (isError) {
-      message.error()
-    }
-  }, [isSuccess, isError])
-
-  // modal
-  const showModal = () => {
-    setOpen(true);
-  };
-  
-  const handleCancel = () => {
-    setOpen(false);
-    setStateProduct({
-      name: "",
-      price: "",
-      description: "",
-      rating: "",
-      discount: "",
-      images: [],
-      type: "",
-      countInStock: "",
-      sold: ""
-    })
-    form.resetFields()
-  };
-
-  //   form
-  const onFinish = () => {
-    mutation.mutate(stateProduct, {
-        onSettled: () => {
-            queryProducts.refetch();
-        }
+  const dataTable =
+    products?.data.length &&
+    products?.data.map((product) => {
+      return { ...product, key: product._id };
     });
-  };
-
-  const handleOnChange = (e) => {
-    setStateProduct({
-      ...stateProduct,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleImageChange = (e) => {
-    const filesArray = Array.from(e.target.files);
-    setUploadImages(filesArray);
-    setStateProduct({
-        ...stateProduct,
-        images: filesArray,
-    });
-  };
-
-  console.log('uploadImages', uploadImages)
-
-  // const handleChangeAvatar = ({ fileList }) => {
-  //   if (fileList.length > 0) {
-  //     const file = fileList[0];
-  //     if (!file.url && !file.preview) {
-  //       file.preview = URL.createObjectURL(file.originFileObj);
-  //     }
-  //     setStateProduct({
-  //       ...stateProduct,
-  //       image: file.preview,
-  //     });
-  //   }
-  // };
 
   //================= EDIT PRODUCT ==================//
 
-  const [ stateProductDetail, setStateProductDetail ] = useState({
+  const [stateProductDetail, setStateProductDetail] = useState({
     name: "",
     price: "",
     description: "",
@@ -326,26 +251,31 @@ const ProductPageMN = () => {
     discount: "",
     images: [],
     type: "",
-    countInStock: "",
-    sold: ""
+    sizes: [],
+    sold: "",
   });
 
   const mutationUpdate = UseMutationHook((data) => {
     const { id, token, ...rests } = data;
     const res = ProductService.updateProduct({ id, token, rests });
-    return res
+    return res;
   });
 
-  const { data: dataUpdated, isLoading: isLoadingUpdated, isSuccess: isSuccessUpdated, isError: isErrorUpdated } = mutationUpdate
+  const {
+    data: dataUpdated,
+    isLoading: isLoadingUpdated,
+    isSuccess: isSuccessUpdated,
+    isError: isErrorUpdated,
+  } = mutationUpdate;
 
   useEffect(() => {
-    if (isSuccessUpdated && dataUpdated?.status === 'OK') {
-      message.success()
-      handleCancelUpdate()
-    }else if (isErrorUpdated) {
-      message.error()
+    if (isSuccessUpdated && dataUpdated?.status === "OK") {
+      message.success("Cập nhật sản phẩm thành công!");
+      handleCancelUpdate();
+    } else if (isErrorUpdated) {
+      message.error("Cập nhật sản phẩm thất bại!");
     }
-  }, [isSuccessUpdated, isErrorUpdated])
+  }, [isSuccessUpdated, isErrorUpdated]);
 
   const handleCancelUpdate = () => {
     setIsOpenDraw(false);
@@ -357,12 +287,11 @@ const ProductPageMN = () => {
       discount: "",
       images: [],
       type: "",
-      countInStock: "",
-      sold: ""
-    })
-    form.resetFields()
+      sizes: [],
+      sold: "",
+    });
+    form.resetFields();
   };
-
 
   const fetchGetDetailProduct = async (id) => {
     try {
@@ -376,47 +305,42 @@ const ProductPageMN = () => {
           discount: res.data.discount,
           images: res.data.images,
           type: res.data.type,
-          countInStock: res.data.countInStock,
-          sold: res.data.sold
+          sizes: res.data.sizes,
+          sold: res.data.sold,
         });
-        form.setFieldsValue(res.data);
+        form.setFieldsValue({
+          ...res.data,
+          sizes: res.data.sizes.map(size => ({
+            size: size.size,
+            quantity: size.quantity
+          }))
+        });
       }
     } catch (error) {
       console.error("Error fetching product details:", error);
     }
-    setIsLoadingUpdate(false)
+    setIsLoadingUpdate(false);
   };
-
-  console.log('stateProductDetail', stateProductDetail)
 
   useEffect(() => {
     if (rowSelected && isOpenDraw) {
-      setIsLoadingUpdate(true)
-      fetchGetDetailProduct(rowSelected)
+      setIsLoadingUpdate(true);
+      fetchGetDetailProduct(rowSelected);
     }
-  }, [rowSelected, isOpenDraw])
+  }, [rowSelected, isOpenDraw]);
 
   const handleDetailProduct = () => {
-    setIsOpenDraw(true)
-  }
-
-  // const handleChangeImageDetail = (e) => {
-  //   const filesArray = Array.from(e.target.files);
-  //   setStateProductDetail({
-  //     ...stateProductDetail,
-  //     images: filesArray,
-  //   });
-  // };
+    setIsOpenDraw(true);
+  };
 
   const handleChangeImageDetail = (e) => {
     const filesArray = Array.from(e.target.files);
-    setUploadImageDetail(filesArray)
+    setUploadImageDetail(filesArray);
     setStateProductDetail({
       ...stateProductDetail,
       images: filesArray,
     });
   };
-  
 
   const handleOnChangeDetail = (e) => {
     setStateProductDetail({
@@ -429,301 +353,169 @@ const ProductPageMN = () => {
     setStateProductDetail({
       ...stateProductDetail,
       type: value,
-    })
+    });
   };
 
   const onUpdateProduct = () => {
-    mutationUpdate.mutate({id: rowSelected, token: user?.access_token, ...stateProductDetail}, {
-      onSettled: () => {
-        queryProducts.refetch()
+    mutationUpdate.mutate(
+      { id: rowSelected, token: user?.access_token, ...stateProductDetail },
+      {
+        onSettled: () => {
+          queryProducts.refetch();
+        },
       }
-    })
-  }
+    );
+  };
 
   // ============== DELETE ============= //
 
   const mutationDeleted = UseMutationHook((data) => {
     const { id, token } = data;
     const res = ProductService.deleteProduct({ id, token });
-    return res
+    return res;
   });
 
-  const { data: dataDeleted, isSuccess: isSuccessDeleted, isError: isErrorDeleted } = mutationDeleted
+  const {
+    data: dataDeleted,
+    isSuccess: isSuccessDeleted,
+    isError: isErrorDeleted,
+  } = mutationDeleted;
 
   useEffect(() => {
-    if (isSuccessDeleted && dataDeleted?.status === 'OK') {
-      message.success()
-    }else if (isErrorDeleted) {
-      message.error()
+    if (isSuccessDeleted && dataDeleted?.status === "OK") {
+      message.success();
+    } else if (isErrorDeleted) {
+      message.error();
     }
-  }, [isSuccessDeleted, isErrorDeleted])
-
-
+  }, [isSuccessDeleted, isErrorDeleted]);
 
   const handleDelete = (key) => {
-    mutationDeleted.mutate({ id: key, token: user?.access_token }, {
-      onSettled: () => {
-        queryProducts.refetch()
+    mutationDeleted.mutate(
+      { id: key, token: user?.access_token },
+      {
+        onSettled: () => {
+          queryProducts.refetch();
+        },
       }
-    })
+    );
   };
-  
 
   // ============== DELETE-MANY============= //
 
   const mutationDeletedMany = UseMutationHook((data) => {
     const { token, ...ids } = data;
-    const res = ProductService.deleteManyProduct({ access_token: token, data: ids });
+    const res = ProductService.deleteManyProduct({
+      access_token: token,
+      data: ids,
+    });
     return res;
-});
+  });
 
-  const { data: dataDeletedMany, isSuccess: isSuccessDeletedMany, isError: isErrorDeletedMany } = mutationDeletedMany
+  const {
+    data: dataDeletedMany,
+    isSuccess: isSuccessDeletedMany,
+    isError: isErrorDeletedMany,
+  } = mutationDeletedMany;
 
   useEffect(() => {
-    if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
-      message.success()
-    }else if (isErrorDeletedMany) {
-      message.error()
+    if (isSuccessDeletedMany && dataDeletedMany?.status === "OK") {
+      message.success();
+    } else if (isErrorDeletedMany) {
+      message.error();
     }
-  }, [isSuccessDeletedMany, isErrorDeletedMany])
+  }, [isSuccessDeletedMany, isErrorDeletedMany]);
 
   const handleDeletedManyProduct = (ids) => {
-    mutationDeletedMany.mutate({ ids: ids, token: user?.access_token }, {
-      onSettled: () => {
-        queryProducts.refetch()
+    mutationDeletedMany.mutate(
+      { ids: ids, token: user?.access_token },
+      {
+        onSettled: () => {
+          queryProducts.refetch();
+        },
       }
-    })
+    );
   };
-
 
   // fetch types product
   const fetchTypesProduct = async () => {
-    const res = await ProductService.listTypes()
-    return res.data
-  }
+    const res = await CategoryService.listCategory();
+    return res.data;
+  };
 
   const { data: typesProduct } = useQuery({
-    queryKey: ['type-product'], 
-    queryFn: fetchTypesProduct, 
+    queryKey: ["type-product"],
+    queryFn: fetchTypesProduct,
     config: {
       retry: 3,
       retryDelay: 1000,
-      keePreviousData: true
-    }
+      keePreviousData: true,
+    },
   });
 
   let options = [];
 
   if (typesProduct && Array.isArray(typesProduct)) {
     options = typesProduct.map((item) => ({
-      value: item, 
-      label: item, 
-      name: 'type',
+      value: item?.slug,
+      label: item?.name,
+      name: "type",
     }));
   }
 
-  const handleOnChangeSelect = (value) => {
-    setStateProduct({
-      ...stateProduct,
-      type: value,
+  //=============== SIZES ===================//
+  const handleSizeChange = (index, field, value) => {
+    const newSizes = [...stateProductDetail.sizes];
+    newSizes[index] = {
+      ...newSizes[index],
+      [field]: value,
+    };
+    setStateProductDetail({
+      ...stateProductDetail,
+      sizes: newSizes,
     });
   };
 
-  console.log('uploadImageDetail', uploadImageDetail)
+  const addSizeField = () => {
+    setStateProductDetail({
+      ...stateProductDetail,
+      sizes: [...stateProductDetail.sizes, { size: "", quantity: "" }],
+    });
+  };
 
-
-  
+  const removeSizeField = (index) => {
+    const newSizes = [...stateProductDetail.sizes];
+    newSizes.splice(index, 1);
+    setStateProductDetail({
+      ...stateProductDetail,
+      sizes: newSizes,
+    });
+  };
 
   return (
-    <>
+    <div className="page_product--mn">
       <Divider>QUẢN LÝ SẢN PHẨM</Divider>
 
-      <Button className="btn-add" onClick={showModal}>
-        Thêm mới sản phẩm <PlusOutlined className="icon-add" />
-      </Button>
-
-      <TableComponent handleDeletedMany={handleDeletedManyProduct} columns={columns} isLoading={isLoadingProducts} dataSource={dataTable} 
-        pagination={{ pageSize: 8, position: ['bottomCenter'], }}
+      <TableComponent
+        handleDeletedMany={handleDeletedManyProduct}
+        columns={columns}
+        isLoading={isLoadingProducts}
+        dataSource={dataTable}
+        pagination={{ pageSize: 8, position: ["bottomCenter"] }}
         onRow={(record, rowIndex) => {
           return {
-            onClick: event => {
-              setRowSelected(record._id)
+            onClick: (event) => {
+              setRowSelected(record._id);
             },
           };
         }}
-        
       />
 
-      <Modal
-        title="Tạo mới sản phẩm"
-        forceRender
-        open={open}
-        onCancel={handleCancel}
-        footer={null}
+      <DrawerComponent
+        title="Chi tiết sản phẩm"
+        isOpen={isOpenDraw}
+        onClose={() => setIsOpenDraw(false)}
+        width="50%"
       >
-        <Loading isLoading={isLoading}>
-          <Form
-            form={form}
-            name="basic"
-            labelCol={{
-              span: 6,
-            }}
-            wrapperCol={{
-              span: 18,
-            }}
-            style={{
-              maxWidth: 600,
-            }}
-            initialValues={{
-              remember: true,
-            }}
-            onFinish={onFinish}
-            autoComplete="off"
-          >
-            <Form.Item
-              label="Name"
-              name="name"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your name product!",
-                },
-              ]}
-            >
-              <Input
-                value={stateProduct.name}
-                name="name"
-                onChange={handleOnChange}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Type"
-              name="type"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your type product!",
-                },
-              ]}
-            >
-              <Select
-                placeholder="Type product"
-                onChange={handleOnChangeSelect}
-                allowClear
-                name='type'
-                options={options}
-              />
-            </Form.Item>
-            <Form.Item
-              label="CountInStock"
-              name="countInStock"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your countInStock!",
-                },
-              ]}
-            >
-              <Input
-                value={stateProduct.countInStock}
-                name="countInStock"
-                onChange={handleOnChange}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Price"
-              name="price"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your price product!",
-                },
-              ]}
-            >
-              <Input
-                value={stateProduct.price}
-                name="price"
-                onChange={handleOnChange}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Description"
-              name="description"
-            >
-              <TextArea
-                rows={4}
-                value={stateProduct.description}
-                name="description"
-                onChange={handleOnChange}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Rating"
-              name="rating"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your rating product!",
-                },
-              ]}
-            >
-              <Input
-                value={stateProduct.rating}
-                name="rating"
-                onChange={handleOnChange}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Discount"
-              name="discount"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your discount product!",
-                },
-              ]}
-            >
-              <Input
-                value={stateProduct.discount}
-                name="discount"
-                onChange={handleOnChange}
-              />
-            </Form.Item>
-
-            <Form.Item
-              name="images"
-              label="Hình ảnh"
-              rules={[{ required: true, message: 'Vui lòng chọn hình ảnh!' }]}
-            >
-              <div className="upload-image">
-                <input type="file" accept="image/*" multiple icon={<UploadOutlined />} onChange={handleImageChange} />
-                {uploadImages.map((file, index) => (
-                  <img
-                    key={index}
-                    src={URL.createObjectURL(file)}
-                    alt="upload"
-                    style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '10px' }}
-                  />
-                ))}
-              </div>
-            </Form.Item>
-
-            <Form.Item
-              wrapperCol={{
-                offset: 6,
-                span: 16,
-              }}
-              style={{ display: "flex", justifyContent: "center" }}
-            >
-              <Button type="primary" htmlType="submit">
-                Tạo mới
-              </Button>
-            </Form.Item>
-          </Form>
-        </Loading>
-      </Modal>
-
-      <DrawerComponent title="Chi tiết sản phẩm" isOpen={isOpenDraw} onClose={() => setIsOpenDraw(false)} width='50%'>
         <Loading isLoading={isLoadingUpdate || isLoadingUpdated}>
           <Form
             name="basic"
@@ -731,8 +523,9 @@ const ProductPageMN = () => {
               span: 6,
             }}
             wrapperCol={{
-              span: 18,
+              span: 24,
             }}
+            layout="vertical"
             style={{
               maxWidth: 600,
             }}
@@ -751,7 +544,7 @@ const ProductPageMN = () => {
               ]}
             >
               <Input
-                value={stateProductDetail['name']}
+                value={stateProductDetail["name"]}
                 name="name"
                 onChange={handleOnChangeDetail}
               />
@@ -770,26 +563,37 @@ const ProductPageMN = () => {
                 placeholder="Type product"
                 onChange={handleOnChangeDetailSelect}
                 allowClear
-                name='type'
+                name="type"
                 options={options}
               />
             </Form.Item>
-            <Form.Item
-              label="CountInStock"
-              name="countInStock"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your countInStock!",
-                },
-              ]}
-            >
-              <Input
-                value={stateProductDetail.countInStock}
-                name="countInStock"
-                onChange={handleOnChangeDetail}
-              />
-            </Form.Item>
+            <Form.Item name="sizes">
+            {stateProductDetail.sizes.map((size, index) => (
+              <Space key={index} style={{ display: 'flex', marginBottom: 8, justifyContent: "center", alignItems: 'center'}} align="baseline">
+                <Form.Item
+                  label='Size'
+                  name={['sizes', index, 'size']}
+                >
+                  <Input placeholder="Size" onChange={(e) => handleSizeChange(index, 'size', e.target.value)} />
+                </Form.Item>
+                
+                <Form.Item
+                  label='Số lượng trong kho'
+                  name={['sizes', index, 'quantity']}
+                >
+                  <Input placeholder="Quantity" type="number" onChange={(e) => handleSizeChange(index, 'quantity', e.target.value)} />
+                </Form.Item>
+                <Form.Item
+                  label='Số lượng đã bán'
+                  name={['sizes', index, 'sold']}
+                >
+                  <Input placeholder="Sold" defaultValue={size.sold} type="number" disabled />
+                </Form.Item>
+                <Button type="dashed" style={{marginTop: '7px'}} onClick={() => removeSizeField(index)} icon={<DeleteOutlined />} />
+              </Space>
+            ))}
+            <Button type="dashed" onClick={addSizeField} icon={<UploadOutlined />}>Add Size</Button>
+          </Form.Item>
             <Form.Item
               label="Price"
               name="price"
@@ -806,10 +610,7 @@ const ProductPageMN = () => {
                 onChange={handleOnChangeDetail}
               />
             </Form.Item>
-            <Form.Item
-              label="Description"
-              name="description"
-            >
+            <Form.Item label="Description" name="description">
               <TextArea
                 rows={4}
                 value={stateProductDetail.description}
@@ -852,45 +653,66 @@ const ProductPageMN = () => {
             <Form.Item
               name="images"
               label="Hình ảnh"
-              rules={[{ required: true, message: 'Vui lòng chọn hình ảnh!' }]}
+              rules={[{ required: true, message: "Vui lòng chọn hình ảnh!" }]}
             >
               <div className="upload-image">
-              <input type="file" accept="image/*" multiple icon={<UploadOutlined />} onChange={handleChangeImageDetail} />
-              <div style={{display: 'flex', flexDirection: 'column'}}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  icon={<UploadOutlined />}
+                  onChange={handleChangeImageDetail}
+                />
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  {stateProductDetail?.images && (
+                    <div style={{ marginTop: "10px", marginRight: "20px" }}>
+                      <label style={{ display: "block", marginBottom: "5px" }}>
+                        Ảnh hiện tại:
+                      </label>
+                      <>
+                        {stateProductDetail?.images.map((file, index) => (
+                          <img
+                            key={index}
+                            src={file}
+                            alt="upload"
+                            style={{
+                              width: "100px",
+                              height: "100px",
+                              objectFit: "cover",
+                              borderRadius: "10px",
+                              marginRight: "5px",
+                            }}
+                          />
+                        ))}
+                      </>
+                    </div>
+                  )}
 
-                {stateProductDetail?.images && (
-                  <div style={{ marginTop: '10px', marginRight: '20px'}}>
-                    <label style={{ display: 'block', marginBottom: '5px' }}>Ảnh hiện tại:</label>
-                    <>
-                      {stateProductDetail?.images.map((file, index) => (
-                        <img
-                          key={index}
-                          src={file}
-                          alt="upload"
-                          style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '10px', marginRight: '5px' }}
-                        />
-                      ))}
-                    </>
-                  </div>
-                )}
-                
-                {uploadImageDetail?.length > 0 && (
-                  <div style={{ marginTop: '10px'}}>
-                    <label style={{ display: 'block', marginBottom: '5px' }}>Ảnh mới:</label>
-                    {uploadImageDetail.map((file, index) => (
+                  {uploadImageDetail?.length > 0 && (
+                    <div style={{ marginTop: "10px" }}>
+                      <label style={{ display: "block", marginBottom: "5px" }}>
+                        Ảnh mới:
+                      </label>
+                      {uploadImageDetail.map((file, index) => (
                         <img
                           key={index}
                           src={URL.createObjectURL(file)}
                           alt="upload"
-                          style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '10px', marginRight: '5px'  }}
+                          style={{
+                            width: "100px",
+                            height: "100px",
+                            objectFit: "cover",
+                            borderRadius: "10px",
+                            marginRight: "5px",
+                          }}
                         />
                       ))}
-                  </div>
-                )}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
             </Form.Item>
-            
+
             <Form.Item
               wrapperCol={{
                 offset: 6,
@@ -905,8 +727,7 @@ const ProductPageMN = () => {
           </Form>
         </Loading>
       </DrawerComponent>
-
-    </>
+    </div>
   );
 };
 

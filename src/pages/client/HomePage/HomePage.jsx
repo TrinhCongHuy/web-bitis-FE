@@ -6,7 +6,6 @@ import Sliders from '../../../components/Sliders/Sliders'
 import { useQuery } from '@tanstack/react-query'
 import * as ProductService from '../../../services/ProductService'
 import * as PostService from '../../../services/PostService'
-import { useSelector } from 'react-redux'
 import SuggestiveComponent from '../../../components/SuggestiveComponent/SuggestiveComponent'
 import { Link } from 'react-router-dom'
 import moment from 'moment';
@@ -14,7 +13,6 @@ import { CommentOutlined } from '@ant-design/icons'
 
 
 const HomePage = () => {
-  const searchProduct = useSelector((state) => state.product.search)
   const refSearch = useRef()
   const [limit, setLimit] = useState(12)
   const [posts, setPosts] = useState([]);
@@ -39,16 +37,6 @@ const HomePage = () => {
       keePreviousData: true
     }
   });
-  
-  useEffect(() => {
-    const fetchData = async () => {
-        if (refSearch.current) {
-          await fetchProductAll(searchProduct); 
-        }
-    };
-    fetchData();
-    refSearch.current = true;
-  }, [searchProduct]);
 
   // call api post
   useEffect(() => {
@@ -63,11 +51,6 @@ const HomePage = () => {
       console.error('Error fetching posts:', error);
     }
   };
-  
-
-  // if (!products) {
-  //   return <Loading />
-  // }
 
   return (
     <>

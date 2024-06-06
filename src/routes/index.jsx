@@ -21,7 +21,6 @@ import MyOrder from "../pages/client/MyOrder/MyOrder";
 import MyOrderDetail from "../pages/client/MyOrderDetail/MyOrderDetail";
 import OrderPageMN from "../pages/admin/OrderPageMN/OrderPageMN";
 import TopicPageMN from "../pages/admin/TopicPageMN/TopicPageMN";
-import AddPost from "../pages/admin/AddPost/AddPost";
 import BlogPage from "../pages/client/BlogPage/BlogPage";
 import BlogDetailPage from "../pages/client/BlogDetailPage/BlogDetailPage";
 import EditBlog from "../pages/admin/EditBlog/EditBlog";
@@ -34,6 +33,9 @@ import CouponPage from "../pages/admin/CouponPage/CouponPage";
 import DiscountPage from "../pages/client/DiscountPage/DiscountPage";
 
 import AuthSuccess from "../components/AuthSuccess/AuthSuccess";
+import CategoryProductPageMN from "../pages/admin/CategoryProductPageMN/CategoryProductPageMN";
+import AddPost from "../pages/admin/PostPageMN/AddPost";
+import AddProduct from "../pages/admin/ProductPageMN/AddProduct";
 
 
 export const Routes = [
@@ -143,8 +145,16 @@ export const Routes = [
                         element: <EditBlog />
                     },
                     {
+                        path: 'category-product', 
+                        element: <CategoryProductPageMN />
+                    },
+                    {
                         path: 'products', 
                         element: <ProductPageMN />
+                    },
+                    {
+                        path: 'addProduct', 
+                        element: <AddProduct />
                     },
                     {
                         path: 'orders', 

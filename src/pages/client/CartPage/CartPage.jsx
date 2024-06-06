@@ -61,6 +61,11 @@ const CartPage = () => {
       key: 'name',
     },
     {
+      title: 'Size',
+      dataIndex: 'size',
+      key: 'size',
+    },
+    {
       title: 'Đơn giá',
       dataIndex: 'price',
       key: 'price',
@@ -104,6 +109,7 @@ const CartPage = () => {
     product: product?._id,
     images: product?.images,
     name: product?.name,
+    size: product?.size,
     price: FormatNumber(product?.price - (product?.price * (product?.discount / 100))),
     amount: product?.quantity,
     totalPrice: FormatNumber((product?.price - (product?.price * (product?.discount / 100))) * product?.quantity)
@@ -143,6 +149,8 @@ const CartPage = () => {
     const selectedProducts = cartItems.filter(product => selectedRowKeys.includes(product._id));
     navigate('/checkout', { state: { selectedProducts } })
   };
+
+  console.log('data', data)
 
   return (
     <div className="container page__product--order">

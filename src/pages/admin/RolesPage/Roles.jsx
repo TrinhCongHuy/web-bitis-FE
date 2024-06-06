@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Form, Input, Space, Popconfirm, Card } from "antd";
-import { PlusSquareOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import TableComponent from "../../../components/TableComponent/TableComponent";
 import * as RoleService from '../../../services/RoleService';
 import { UseMutationHook } from "../../../hooks/useMutationHook";
@@ -31,8 +31,6 @@ const Roles = () => {
         </Space>
         )
     }
-
-
 
     const columns = [
         {

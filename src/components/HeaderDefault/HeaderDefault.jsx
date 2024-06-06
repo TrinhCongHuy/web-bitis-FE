@@ -19,7 +19,11 @@ const HeaderDefault = () => {
     const [isSticky, setIsSticky] = useState(false);
     const { cartItems } = useShoppingContext()
 
-    const totalProduct = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+    let totalProduct = 0
+    if (cartItems) {
+         totalProduct = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+    }
+    
     
     useEffect(() => {
         const handleScroll = () => {

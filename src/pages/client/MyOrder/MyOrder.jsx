@@ -7,6 +7,8 @@ import './MyOrder.scss'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import * as message from '../../../components/Message/Message'
+import FormatNumber from '../../../components/FormatNumber/FormatNumber';
+
 
 
 
@@ -51,6 +53,8 @@ const MyOrder = () => {
         }
     };
 
+    console.log('orders', orders)
+
     return (
         <div className="container page__my--order">
             <Row>
@@ -60,12 +64,12 @@ const MyOrder = () => {
                     {orders && (
                         orders.map((order, index) => {
                             return (
-                                <div className="order-card" key={index} style={{backgroundColor: '#F5F5F5'}}>
-                                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                <div className="order_card" key={index}>
+                                    <div className='order_card--head'>
                                         <h2>Đơn hàng #{index + 1}</h2>
-                                        <span>Đang giao</span>
+                                        <Button type="primary" danger>{order.status}</Button>
                                     </div>
-                                    <div className="order-details">
+                                    <div className="order_card--body">
                                         <div style={{display: 'flex', justifyContent: 'flex-end', borderBottom: '1px solid #D3D3D3', paddingBottom: '10px'}}>
                                             <Space size='middle'>
                                                 <Button type="dashed" danger onClick={() => handleDeleteOrder(order?._id)}>Huỷ đơn hàng</Button>
@@ -76,20 +80,23 @@ const MyOrder = () => {
                                         
                                         <div className="product-list" style={{ padding: '10px 0', borderBottom: '1px solid #D3D3D3' }}>
                                         {order.orderItems.map((item, index) => (
-                                            <div className="product-item" key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                                            <div className="product-item" key={index} style={{ display: 'flex', alignItems: 'center', padding: '10px', marginBottom: '10px'}}>
                                                 <img src={item.image} alt={item.name} style={{ width: '50px', marginRight: '10px' }} />
                                                 <div className="product-info" style={{ flex: '1'}}>
-                                                    <Space size='large'>
+                                                    <Space style={{gap: '50px'}}>
                                                         <div className="product-name" style={{ fontWeight: 'bold', width: '200px' }}>{item.name}</div>
                                                         <div className="product-price" style={{width: '100px'}}>{item.price} đ</div>
                                                         <div className="product-quantity" style={{width: '100px'}}>x{item.amount}</div>
-                                                        <div className="product-total">{item.totalPrice} đ</div>
+                                                        <div className="product-total">{FormatNumber(item.totalPrice)} đ</div>
                                                     </Space>
                                                 </div>
                                             </div>
                                         ))}
                                         </div>
-                                        <p className="total-price" style={{display: 'flex', marginTop: '20px', fontSize: '1.2em', justifyContent: 'flex-end'}}><span style={{color: '#CC3366'}}>Tổng tiền :</span>{order.totalPay} VNĐ</p>
+                                        <p className="total-price" style={{display: 'flex', gap: '10px', marginTop: '20px', fontSize: '1.2em', justifyContent: 'flex-end'}}>
+                                            <span>Tổng tiền:</span>
+                                            <span>{FormatNumber(order.totalPay)} VNĐ</span>
+                                        </p>
                                     </div>
                                 </div>
                             )

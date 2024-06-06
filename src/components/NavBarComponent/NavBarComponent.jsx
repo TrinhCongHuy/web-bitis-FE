@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import './NavBarComponent.scss'
 import { Checkbox } from "antd";
 import { Link } from "react-router-dom";
-import * as ProductService from '../../services/ProductService'
+import * as CategoryService from '../../services/CategoryService'
 import { useQuery } from '@tanstack/react-query'
 
 
@@ -14,7 +14,7 @@ const NavBarComponent = (props) => {
 
     // fetch types product
     const fetchTypesProduct = async () => {
-        const res = await ProductService.listTypes()
+        const res = await CategoryService.listCategory()
         return res.data
     }
 
@@ -38,7 +38,7 @@ const NavBarComponent = (props) => {
             case 'text':
                 return options.map((option, index) => {
                     return <div key={index} style={{padding: '10px 0'}}>
-                        <Link className={`text-link ${activeLink === option ? 'active' : ''}`} onClick={() => handleTypeProduct(option)}>{option}</Link>
+                        <Link className={`text-link ${activeLink === option?.slug ? 'active' : ''}`} onClick={() => handleTypeProduct(option?.slug)}>{option?.name}</Link>
                     </div>
                 })
             case 'checkbox':

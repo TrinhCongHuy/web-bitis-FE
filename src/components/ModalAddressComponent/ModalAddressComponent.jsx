@@ -64,6 +64,7 @@ const ModalAddressComponent = (props) => {
   const onFinish = async (values) => {
     try {
       const userId = user?.id;
+      console.log('userId', userId)
       const existingDefaultAddress = user.address.find(address => address.isDefault);
       
       const newAddress = {
@@ -74,7 +75,7 @@ const ModalAddressComponent = (props) => {
           isDefault: !existingDefaultAddress
       };
 
-      await UserService.updateUser({
+      await UserService.updateAddressUser({
         id: userId,
         access_token: user?.access_token,
         rests: {
