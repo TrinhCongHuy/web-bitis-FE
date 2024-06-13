@@ -49,7 +49,6 @@ export const refreshToken = async () => {
 
 export const updateUser = async ({id, access_token, rests}) => {
     try {
-        console.log('rests', rests)
         const res = await axiosJWT.patch(
             `${process.env.REACT_APP_API_URL}/update-user/${id}`,
             rests,

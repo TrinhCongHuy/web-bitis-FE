@@ -4,8 +4,10 @@ import AllRoute from "./components/AllRoute";
 import { isJsonString } from "./utils";
 import { jwtDecode } from "jwt-decode";
 import * as UserService from './services/UserService'
+import * as AccountService from './services/AccountService'
 import { useDispatch } from "react-redux";
 import { updateUser } from "./redux/slides/userSlide";
+import { updateAccount } from "./redux/slides/accountSlide";
 
 
 
@@ -17,6 +19,7 @@ function App() {
     const {decoded, storageData} = handleDecoded()
     if (decoded?.id) {
       handleGetDetailUser(decoded?.id, storageData)
+      handleGetDetailAccount(decoded?.id, storageData)
     }
   }, [])
 
@@ -48,6 +51,11 @@ function App() {
   const handleGetDetailUser = async (id, token) => {
     const res = await UserService.getDetailUser(id, token)
     dispatch(updateUser({...res?.data, access_token: token}))
+  }
+
+  const handleGetDetailAccount = async (id, token) => {
+    const res = await AccountService.getDetailAccount(id, token)
+    dispatch(updateAccount({...res?.data, access_token: token}))
   }
   
   return (

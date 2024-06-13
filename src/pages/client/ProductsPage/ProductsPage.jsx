@@ -13,7 +13,7 @@ import { useQuery } from '@tanstack/react-query'
 
 const ProductsPage = () => {
   const refSearch = useRef()
-  const [limit, setLimit] = useState(6)
+  const [limit, setLimit] = useState(8)
   const [selectedType, setSelectedType] = useState(null);
   const [pagination, setPagination] = useState({
     page: 0,

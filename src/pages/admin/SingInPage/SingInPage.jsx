@@ -19,15 +19,11 @@ const SingInPageAdmin = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-
   const mutation = UseMutationHook(
     data => AccountService.loginAccount(data)
   )
   
   const { data, isSuccess, isError } = mutation
-
-  
-
 
   useEffect(() => {
     if (data?.status === 'OK') {
@@ -71,7 +67,7 @@ const SingInPageAdmin = () => {
       <Row justify="center">
         <Col span={8}>
           <div className="form-login">
-            <h2>Wellcome to Admin</h2>
+            <h2>WELLCOME TO ADMIN</h2>
             <Form
               name="normal_login"
               className="login-form"

@@ -115,8 +115,6 @@ const AddProduct = () => {
         mutation.mutate({ ...stateProduct, sizes: values.sizes });
     };
 
-    console.log('stateProduct', stateProduct)
-
     return (
         <Card
             type="inner"

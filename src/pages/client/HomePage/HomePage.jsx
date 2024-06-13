@@ -14,7 +14,7 @@ import { CommentOutlined } from '@ant-design/icons'
 
 const HomePage = () => {
   const refSearch = useRef()
-  const [limit, setLimit] = useState(12)
+  const [limit, setLimit] = useState(10)
   const [posts, setPosts] = useState([]);
   
 

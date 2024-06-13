@@ -98,8 +98,3 @@ export const deleteManyProduct = async ({access_token, data}) => {
         })
     return res.data
 }
-
-export const listTypes = async () => {
-    const res = await axiosJWT.get(`${process.env.REACT_APP_API_URL}/products/type-product`)
-    return res.data
-}
