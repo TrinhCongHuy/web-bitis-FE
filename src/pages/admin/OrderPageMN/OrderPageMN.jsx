@@ -7,12 +7,17 @@ import * as OrderService from '../../../services/OrderService';
 import { Divider, Button, Input, Space } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import moment from 'moment';
+import { useSelector } from "react-redux";
+import * as message from "../../../components/Message/Message";
+
 
 const OrderPageMN = () => {
     const [ rowSelected, setRowSelected ] = useState('')
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
+    const account = useSelector((state) => state.account);
+
 
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
         confirm();
@@ -83,6 +88,15 @@ const OrderPageMN = () => {
         },
     });
 
+    const handleUpdate = async (id) => {
+        try {
+            await OrderService.updateOrder({id: id, access_token: account?.access_token})
+            message.success('Cập nhật trạng thái đơn hàng thành công!')
+        }catch(e) {
+            message.error('Lỗi: ' + e)
+        }
+    }
+
 
     const columns = [
         {
@@ -90,7 +104,7 @@ const OrderPageMN = () => {
             dataIndex: '_id'
         },
         {
-            title: 'Ngày tạo',
+            title: 'Ngày đặt hàng',
             dataIndex: 'paidAt',
             render: paidAt => moment(paidAt).format('DD-MM-YYYY HH:mm:ss')
         },
@@ -108,6 +122,17 @@ const OrderPageMN = () => {
             title: 'Phương thức thanh toán',
             dataIndex: 'paymentMethod'
         },
+        {
+            title: 'Trạng thái',
+            dataIndex: 'status',
+            render: (status, record) => {
+                return status === 'Chờ xác nhận' ? (
+                    <Button onClick={() => handleUpdate(record._id)} danger>{status}</Button>
+                ) : (
+                    <Button type="primary">{status}</Button>
+                );
+            }
+        },        
         {
             title: 'Giao hàng',
             dataIndex: 'isPaid',

@@ -1,0 +1,36 @@
+.page_dashBoard {
+    padding: 20px;
+  
+    .widget {
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  
+        .widget-content {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+  
+          .widget-icon {
+            font-size: 36px;
+            color: #1890ff;
+            margin-right: 20px;
+          }
+  
+          .widget-details {
+            .widget-title {
+              font-size: 15px;
+              font-weight: bold;
+              margin-bottom: 5px;
+            }
+  
+            .widget-value {
+              font-size: 24px;
+              font-weight: bold;
+            }
+          }
+        }
+    }
+  }
+  

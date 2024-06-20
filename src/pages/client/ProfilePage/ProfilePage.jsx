@@ -94,7 +94,7 @@ const ProfilePage = () => {
           <Row>
             <Col span={8} style={{ textAlign: "center" }}>
               <div className="profile__avatar">
-                <img className="profile__avatar--img" src={user.avatar} alt="avatar" />
+                <img className="profile__avatar--img" src={initialUser?.avatar} alt="avatar" />
               </div>
               <div className="profile__edit">
                 <Button onClick={showModal}>
@@ -142,19 +142,21 @@ const ProfilePage = () => {
                 </Modal>
               </div>
             </Col>
-            <Col span={15} style={{ marginLeft: "20px" }}>
-              <Form form={form} style={{ width: "500px" }} layout="vertical">
-                <Form.Item name="name" label="Họ và tên">
-                  <Input disabled defaultValue={initialUser.name} />
-                </Form.Item>
-                <Form.Item name="email" label="Email">
-                  <Input disabled defaultValue={initialUser.email} />
-                </Form.Item>
-                <Form.Item name="phone" label="Số điện thoại">
-                  <Input disabled defaultValue={initialUser.phone} />
-                </Form.Item>
-              </Form>
-            </Col>
+            {initialUser &&
+              <Col span={15} style={{ marginLeft: "20px" }}>
+                <Form form={form} style={{ width: "500px" }} layout="vertical">
+                  <Form.Item name="name" label="Họ và tên">
+                    <Input disabled defaultValue={initialUser.name} />
+                  </Form.Item>
+                  <Form.Item name="email" label="Email">
+                    <Input disabled defaultValue={initialUser.email} />
+                  </Form.Item>
+                  <Form.Item name="phone" label="Số điện thoại">
+                    <Input disabled defaultValue={initialUser.phone} />
+                  </Form.Item>
+                </Form>
+              </Col>
+            }
           </Row>
         </div>
       </div>

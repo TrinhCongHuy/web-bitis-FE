@@ -11,7 +11,6 @@ import FormatNumber from '../../../components/FormatNumber/FormatNumber';
 
 
 
-
 const MyOrder = () => {
     const user = useSelector((state) => state.user)
     const navigate = useNavigate()
@@ -45,15 +44,13 @@ const MyOrder = () => {
 
     const handleDeleteOrder = async (id) => {
         try {
-            await OrderService.deleteOrder(id);
+            await OrderService.deleteOrder({id: id, access_token: user?.access_token});
             message.success('Xóa đơn hàng thành công');
         } catch (error) {
             console.error('Lỗi khi xóa đơn hàng:', error);
             message.error('Đã xảy ra lỗi khi xóa đơn hàng. Vui lòng thử lại sau.');
         }
     };
-
-    console.log('orders', orders)
 
     return (
         <div className="container page__my--order">
@@ -72,7 +69,7 @@ const MyOrder = () => {
                                     <div className="order_card--body">
                                         <div style={{display: 'flex', justifyContent: 'flex-end', borderBottom: '1px solid #D3D3D3', paddingBottom: '10px'}}>
                                             <Space size='middle'>
-                                                <Button type="dashed" danger onClick={() => handleDeleteOrder(order?._id)}>Huỷ đơn hàng</Button>
+                                                <Button disabled={order.status === 'Đã xác nhận' ? true : false} type="dashed" danger onClick={() => handleDeleteOrder(order?._id)}>Huỷ đơn hàng</Button>
                                                 <Button type="primary" ghost onClick={() => handleOrderDetail(order?._id)}>Xem chi tiết</Button>
                                             </Space>
                                             

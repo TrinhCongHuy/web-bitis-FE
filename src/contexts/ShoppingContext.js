@@ -40,6 +40,7 @@ export const ShoppingContextProvider = ({ children }) => {
         try {
             const res = await CartService.listProductCart(userId);
             const dbCartItems = res.data;
+            console.log('res.data 111', res.data)
             setCartItems(Array.isArray(dbCartItems) ? dbCartItems : []);
         } catch (error) {
             console.error('Lỗi đồng bộ dữ liệu:', error);

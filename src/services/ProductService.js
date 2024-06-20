@@ -11,6 +11,11 @@ export const listProduct = async (search, limit) => {
     return res.data
 }
 
+export const totalProduct = async () => {
+    let res = await axios.get(`${process.env.REACT_APP_API_URL}/products/totalProduct`)
+    return res.data
+}
+
 export const listProductType = async ( limit, type, page ) => {
     let res = {}
     if (type) {
@@ -24,7 +29,6 @@ export const listProductType = async ( limit, type, page ) => {
 
 export const createProduct = async (formData) => {
     try {
-        console.log('formData', formData)
         const res = await axios.post(`${process.env.REACT_APP_API_URL}/products/create`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
@@ -40,6 +44,16 @@ export const getDetailProduct = async (id) => {
     const res = await axios.get(`${process.env.REACT_APP_API_URL}/products/detail/${id}`)
     return res.data
 }
+
+export const updateStatusProduct = async ({id, access_token}) => {
+    const res = await axios.put(`${process.env.REACT_APP_API_URL}/products/updateStatusProduct/${id}`,
+        {
+            headers: {
+                token: `Bearer ${access_token}`
+            }
+        });
+    return res.data;
+};
 
 export const updateProduct = async ({id, access_token, rests}) => {
     try {

@@ -30,7 +30,7 @@ const { TextArea } = Input;
 
 const ProductPageMN = () => {
   const [form] = Form.useForm();
-  const user = useSelector((state) => state.user);
+  const account = useSelector((state) => state.account);
   const [rowSelected, setRowSelected] = useState("");
   const [isOpenDraw, setIsOpenDraw] = useState(false);
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
@@ -136,6 +136,15 @@ const ProductPageMN = () => {
     },
   });
 
+  const handleUpdate = async (id) => {
+    try {
+        await ProductService.updateStatusProduct({id: id, access_token: account?.access_token})
+        message.success('Cập nhật trạng thái đơn hàng thành công!')
+    }catch(e) {
+        message.error('Lỗi: ' + e)
+    }
+}
+
   const columns = [
     {
       title: "Name",
@@ -213,6 +222,17 @@ const ProductPageMN = () => {
       title: "Type",
       dataIndex: "type",
       ...getColumnSearchProps("type"),
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      render: (status, record) => {
+        return status === true ? (
+            <Button onClick={() => handleUpdate(record._id)} type="primary">Hoạt động</Button>
+        ) : (
+            <Button onClick={() => handleUpdate(record._id)} danger>Dừng hoạt động</Button>
+        );
+    }
     },
     {
       title: "Action",
@@ -358,7 +378,7 @@ const ProductPageMN = () => {
 
   const onUpdateProduct = () => {
     mutationUpdate.mutate(
-      { id: rowSelected, token: user?.access_token, ...stateProductDetail },
+      { id: rowSelected, token: account?.access_token, ...stateProductDetail },
       {
         onSettled: () => {
           queryProducts.refetch();
@@ -391,7 +411,7 @@ const ProductPageMN = () => {
 
   const handleDelete = (key) => {
     mutationDeleted.mutate(
-      { id: key, token: user?.access_token },
+      { id: key, token: account?.access_token },
       {
         onSettled: () => {
           queryProducts.refetch();
@@ -427,7 +447,7 @@ const ProductPageMN = () => {
 
   const handleDeletedManyProduct = (ids) => {
     mutationDeletedMany.mutate(
-      { ids: ids, token: user?.access_token },
+      { ids: ids, token: account?.access_token },
       {
         onSettled: () => {
           queryProducts.refetch();

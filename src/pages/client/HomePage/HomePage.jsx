@@ -24,6 +24,7 @@ const HomePage = () => {
     const search = context?.queryKey && context?.queryKey[2]
 
     const res = await ProductService.listProduct(search, limit)
+    console.log(res)
     return res
 
   }
@@ -64,7 +65,9 @@ const HomePage = () => {
             <div className='products'>
               {products?.data.length > 0 ? 
                 <>
-                    {products?.data?.map((product, index) => (
+                    {products?.data
+                    .filter(product => product.status)
+                    .map((product, index) => (
                         <CardComponent key={index} product={product} id={product._id}/>
                     ))}
                 </> 
@@ -83,7 +86,9 @@ const HomePage = () => {
             <div className='products'>
               {products?.data.length > 0 ? 
                 <>
-                    {products?.data?.map((product, index) => (
+                    {products?.data
+                    .filter(product => product.status)
+                    .map((product, index) => (
                         <CardComponent key={index} product={product} id={product._id}/>
                     ))}
                 </> 
@@ -102,7 +107,9 @@ const HomePage = () => {
             <div className='products'>
               {products?.data.length > 0 ? 
                 <>
-                    {products?.data?.map((product, index) => (
+                    {products?.data
+                    .filter(product => product.status)
+                    .map((product, index) => (
                         <CardComponent key={index} product={product} id={product._id}/>
                     ))}
                 </> 

@@ -10,9 +10,12 @@ export const listPost = async (limit) => {
         const res = await axios.get(`${process.env.REACT_APP_API_URL}/posts`)
         return res.data
     }
-    
 }
 
+export const totalPost = async () => {
+    let res = await axios.get(`${process.env.REACT_APP_API_URL}/posts/totalPost`)
+    return res.data
+}
 
 export const createPost = async (formData) => {
     try {
