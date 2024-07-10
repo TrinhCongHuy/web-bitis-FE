@@ -1,15 +1,14 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from "react";
-import { Divider, Button, Modal, Form, Input, Space, Popconfirm, Upload } from "antd";
-import { PlusSquareOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import { Divider, Button, Modal, Form, Input, Space, Popconfirm } from "antd";
+import { EditOutlined, DeleteOutlined, SearchOutlined } from "@ant-design/icons";
 import TableComponent from "../../../components/TableComponent/TableComponent";
 import * as PostService from "../../../services/PostService";
 import { UseMutationHook } from "../../../hooks/useMutationHook";
 import * as message from '../../../components/Message/Message'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom';
-import DrawerComponent from "../../../components/DrawerComponent/DrawerComponent";
 import { useSelector } from 'react-redux';
 import Loading from "../../../components/LoadingComponent/Loading";
 
@@ -18,8 +17,6 @@ const PostPageMN = () => {
   const [form] = Form.useForm();
   const user = useSelector(state => state.user)
   const [ rowSelected, setRowSelected ] = useState('')
-  const [ isOpenDraw, setIsOpenDraw ] = useState(false)
-  const [isLoadingUpdate, setIsLoadingUpdate] = useState(false)
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef(null);
@@ -110,6 +107,13 @@ const PostPageMN = () => {
 
   const columns = [
     {
+      title: 'Hình ảnh',
+      dataIndex: 'image',
+      render: (image) => (
+        <img src={image} alt="Hình ảnh" style={{ width: 50, height: 50, borderRadius: 10 }} />
+      )
+    },
+    {
       title: 'Tên bài viết',
       dataIndex: 'title',
       render: (text) => <a>{text}</a>,
@@ -119,13 +123,6 @@ const PostPageMN = () => {
     {
       title: 'Chủ đề',
       dataIndex: 'topic'
-    },
-    {
-      title: 'Hình ảnh',
-      dataIndex: 'image',
-      render: (image) => (
-        <img src={image} alt="Hình ảnh" style={{ width: 60, height: 60 }} />
-      )
     },
     {
       title: 'Action',
@@ -178,11 +175,6 @@ const PostPageMN = () => {
     }
   }, [isSuccess, isError])
 
-  // modal
-  const showModal = () => {
-    setOpen(true);
-  };
-  
   const handleCancel = () => {
     setOpen(false);
     setStatePost({
@@ -201,18 +193,10 @@ const PostPageMN = () => {
     })
   };
 
-  const handleOnChange = (e) => {
-    setStatePost({
-      ...statePost,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-
   //================= EDIT POST ==================//
 
   const handleEditPost = (id) => {
-    navigate(`/system/admin/edit-blog/${id}`)
+    navigate(`/system/admin/edit-post/${id}`)
   }
 
   // ============== DELETE ============= //
@@ -272,7 +256,7 @@ const PostPageMN = () => {
 
   return (
     <>
-      <Divider>QUẢN LÝ BÀI VIẾT</Divider>
+      <Divider>DANH SÁCH BÀI VIẾT</Divider>
 
       <TableComponent handleDeletedMany={handleDeletedManyPost} columns={columns} isLoading={isLoadingPosts} data={dataTable} 
         pagination={{ pageSize: 5, position: ['bottomCenter'], }}

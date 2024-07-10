@@ -23,7 +23,6 @@ import OrderPageMN from "../pages/admin/OrderPageMN/OrderPageMN";
 import TopicPageMN from "../pages/admin/TopicPageMN/TopicPageMN";
 import BlogPage from "../pages/client/BlogPage/BlogPage";
 import BlogDetailPage from "../pages/client/BlogDetailPage/BlogDetailPage";
-import EditBlog from "../pages/admin/EditBlog/EditBlog";
 import RolePermission from "../pages/admin/RolePermissionPageMN/RolePermission";
 import Roles from "../pages/admin/RolesPage/Roles";
 import ForgotPassword from "../pages/client/SingInPage/ForgotPassword";
@@ -36,6 +35,7 @@ import AuthSuccess from "../components/AuthSuccess/AuthSuccess";
 import CategoryProductPageMN from "../pages/admin/CategoryProductPageMN/CategoryProductPageMN";
 import AddPost from "../pages/admin/PostPageMN/AddPost";
 import AddProduct from "../pages/admin/ProductPageMN/AddProduct";
+import EditPost from "../pages/admin/PostPageMN/EditPost";
 
 
 export const Routes = [
@@ -141,8 +141,8 @@ export const Routes = [
                         element: <AddPost />
                     },
                     {
-                        path: 'edit-blog/:id',
-                        element: <EditBlog />
+                        path: 'edit-post/:id',
+                        element: <EditPost />
                     },
                     {
                         path: 'category-product', 

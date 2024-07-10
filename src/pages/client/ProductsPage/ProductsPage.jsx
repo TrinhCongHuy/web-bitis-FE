@@ -10,7 +10,6 @@ import * as ProductService from '../../../services/ProductService'
 import { useQuery } from '@tanstack/react-query'
 
 
-
 const ProductsPage = () => {
   const refSearch = useRef()
   const [limit, setLimit] = useState(8)
@@ -21,14 +20,19 @@ const ProductsPage = () => {
     total: 1,
   })
 
+  const [sortValue, setSortValue] = useState(null);
+  const [sortKey, setSortKey] = useState(null);
+
   // fetch product type
   const fetchProductAll = async (context) => {
     const limit = context?.queryKey && context?.queryKey[1]
     const type = context?.queryKey && context?.queryKey[2]
     const page = context?.queryKey && context?.queryKey[3]
+    const sortKey = context?.queryKey && context?.queryKey[4];
+    const sortValue = context?.queryKey && context?.queryKey[5];
 
-
-    const res = await ProductService.listProductType(limit, type, page)
+    const res = await ProductService.listProductType(limit, type, page, sortKey, sortValue);
+    
     if (res?.status === 'OK') {
       setPagination({...pagination, total: res?.totalPage})
     }
@@ -36,7 +40,7 @@ const ProductsPage = () => {
   }
 
   const { data: products } = useQuery({
-    queryKey: ['products', limit, selectedType, pagination.page], 
+    queryKey: ['products', limit, selectedType, pagination.page, sortKey, sortValue],
     queryFn: fetchProductAll, 
     config: {
       retry: 3,
@@ -52,6 +56,11 @@ const ProductsPage = () => {
   const onChange = (current, pageSize) => {
     setPagination({...pagination, page: current - 1, limit: pageSize})
   }
+  
+  const handleChangeFilter = (type, value) => {
+    setSortValue(value)
+    setSortKey(type)
+  }
 
   return (
     <>
@@ -64,7 +73,7 @@ const ProductsPage = () => {
             </Col>
             <Col span={19}>
               <div className="filter">
-                <FilterProduct />
+                <FilterProduct onTypeChange={handleChangeFilter}/>
               </div>
               <div className='products'>
                 {products?.data.length > 0 ? 

@@ -1,19 +1,21 @@
 import { Card, Rate } from "antd"
 import { Link } from "react-router-dom"
-import { EyeOutlined, HeartOutlined, ShoppingCartOutlined } from '@ant-design/icons';
+import { EyeOutlined, HeartFilled, HeartOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import './CardComponent.scss'
-import { useNavigate } from 'react-router-dom'
 import { priceNew } from "../../utils";
 import FormatNumber from "../FormatNumber/FormatNumber";
+import { useState } from "react";
 
 
 const CardComponent = (props) => {
     const { product, id } = props
-    const navigate = useNavigate()
+    const [liked, setLiked] = useState(false);
 
-    const handleDetailProduct = (id) => {
-        navigate(`/product-detail/${id}`)
-    }
+    const handleLikeToggle = () => {
+        setLiked(!liked);
+    };
+
+    const soldQuantity = product.sizes.reduce((total, size) => total + size.sold, 0);
 
     return (
         <div className="product__item">
@@ -23,22 +25,21 @@ const CardComponent = (props) => {
                 width: 240,
                 }}
                 cover={<img alt="example" src={product.images[0]} />}
-                onClick={() => handleDetailProduct(id)}
             >
                 <div className="hoverable">
                     <ul>
                         <li className="active">
-                            <Link href="#" className=" flexcenter">
-                                <HeartOutlined />
+                            <Link to="#" className=" flexcenter" onClick={handleLikeToggle}>
+                                {liked ? <HeartFilled style={{ color: 'red'}}/> : <HeartOutlined />}
                             </Link> 
                         </li>
                         <li>
-                            <Link href="#" className=" flexcenter">
+                            <Link to={`/product-detail/${id}`} className=" flexcenter">
                                 <EyeOutlined />
                             </Link>
                         </li>
                         <li>
-                            <Link href="#" className=" flexcenter">
+                            <Link to={`/product-detail/${id}`} className="flexcenter">
                                 <ShoppingCartOutlined />
                             </Link>
                         </li>
@@ -50,7 +51,7 @@ const CardComponent = (props) => {
 
                 <div className="product__content">
                     <h3 className="product__content--title">
-                        <Link>{product.name}</Link>
+                        <Link to={`/product-detail/${id}`}>{product.name}</Link>
                     </h3>
                     <div className="product__content--rating">
                         <Rate allowHalf defaultValue={(product.rating)} />
@@ -62,7 +63,7 @@ const CardComponent = (props) => {
                         <span className="normal">{FormatNumber(product.price)} đ</span>
                     </div>
                     <div className="product__content--stock">
-                        <span>Sold: <strong className="qty-sold">{product.sold}</strong></span>
+                        <span>Sold: <strong className="qty-sold">{soldQuantity}</strong></span>
                     </div>
                 </div> 
             </Card>

@@ -513,7 +513,7 @@ const ProductPageMN = () => {
 
   return (
     <div className="page_product--mn">
-      <Divider>QUẢN LÝ SẢN PHẨM</Divider>
+      <Divider>DANH SÁCH SẢN PHẨM</Divider>
 
       <TableComponent
         handleDeletedMany={handleDeletedManyProduct}

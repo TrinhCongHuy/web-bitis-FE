@@ -24,7 +24,6 @@ const HeaderDefault = () => {
          totalProduct = cartItems.reduce((acc, item) => acc + item.quantity, 0);
     }
     
-    
     useEffect(() => {
         const handleScroll = () => {
             const scrollPosition = window.scrollY;
@@ -40,8 +39,6 @@ const HeaderDefault = () => {
             window.removeEventListener('scroll', handleScroll);
         };
     }, []);
-
-
 
     const fetchProductsCart = async () => {
         try {

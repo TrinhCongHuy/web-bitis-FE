@@ -1,14 +1,18 @@
-// td, th {
-//     text-align: center;
-// }
-// td.text-left {
-//     text-align: left;
-//     padding: 10px;
-// }
-.text-right {
+.page__role--permission {
+  th {
+    padding: 10px 0;
+  }
+  td {
+    padding: 3px 0;
+  }
+  td.td_input {
+    text-align: center;
+  }
+  .text-right {
     text-align: right;
     button {
-        padding: 5px;
-        cursor: pointer;
+      padding: 5px;
+      cursor: pointer;
     }
+  }
 }

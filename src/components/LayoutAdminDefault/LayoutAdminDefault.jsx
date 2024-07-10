@@ -8,14 +8,20 @@ import {
   WindowsOutlined,
   FormOutlined,
   ShoppingCartOutlined,
-  UsergroupAddOutlined
+  UsergroupAddOutlined,
+  CopyOutlined,
+  RestOutlined,
+  ScheduleOutlined,
+  ControlOutlined,
+  ContactsOutlined
+  
 } from '@ant-design/icons';
 import { Layout, Button, theme, Menu } from 'antd';
 import './LayoutAdminDefault.scss'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { resetAccount } from '../../redux/slides/accountSlide';
-import * as UserService from '../../services/UserService'
+import * as AccountService from '../../services/AccountService'
 
 const { Header, Sider, Content } = Layout;
 
@@ -29,7 +35,7 @@ const LayoutAdminDefault = () => {
 
     const handleLogout = async () => {
         localStorage.removeItem('access_token');
-        await UserService.logoutUser()
+        await AccountService.logoutAccount()
         dispatch(resetAccount())
         navigate('/admin')
     }
@@ -49,29 +55,28 @@ const LayoutAdminDefault = () => {
     const items = [
         getItem('Tổng quan', '1', <WindowsOutlined />, null, '/system/admin'),
         getItem('Quản lý chủ đề', '2', <FormOutlined />, null, '/system/admin/topics'),
-        getItem('Quản lý bài viết', 'sub1', <UserOutlined />, [
+        getItem('Quản lý bài viết', 'sub1', <CopyOutlined />, [
             getItem('Danh sách bài viết', '3', null, null, '/system/admin/posts'),
             getItem('Thêm mới bài viết', '4', null, null, '/system/admin/addPost'),
         ], null),
         getItem('Quản lý danh mục', '5', <MergeOutlined />, null, '/system/admin/category-product'),
-        getItem('Quản lý sản phẩm', 'sub2', <UserOutlined />, [
+        getItem('Quản lý sản phẩm', 'sub2', <RestOutlined />, [
             getItem('Danh sách sản phẩm', '7', null, null, '/system/admin/products'),
             getItem('Thêm mới sản phẩm', '8', null, null, '/system/admin/addProduct'),
         ], null),
         getItem('Quản lý đơn hàng', '9', <ShoppingCartOutlined />, null, '/system/admin/orders'),
-        getItem('Quản lý coupon', '10', <UserOutlined />, null, '/system/admin/coupons'),
+        getItem('Quản lý coupon', '10', <ScheduleOutlined />, null, '/system/admin/coupons'),
         getItem('Khách hàng', '11', <UsergroupAddOutlined />, null, '/system/admin/users'),
         getItem('Admin', '12', <UserOutlined />, null, '/system/admin/accounts'),
-        getItem('Nhóm quyền', '13', <UserOutlined />, null, '/system/admin/roles'),
-        getItem('Phân quyền', '14', <UserOutlined />, null, '/system/admin/roles/permission'),
-        
+        account.name === 'Quản trị viên' && getItem('Nhóm quyền', '13', <ContactsOutlined />, null, '/system/admin/roles'),
+        account.name === 'Quản trị viên' && getItem('Phân quyền', '14', <ControlOutlined />, null, '/system/admin/roles/permission'),
     ];
 
     return (
         <Layout>
             <Sider collapsible collapsed={collapsed} className={collapsed ? 'collapsed-sider' : 'expanded-sider'} onCollapse={(value) => setCollapsed(value)}>
                 <div className="demo-logo-vertical">
-                    <span>
+                    <span style={{ padding: '12px 0'}}>
                         {collapsed ? 'AD' : 'ADMIN'} 
                     </span>
                 </div>

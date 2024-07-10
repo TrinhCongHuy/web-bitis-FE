@@ -130,13 +130,6 @@ const QTVPageMN = () => {
       dataIndex: 'phone',
     },
     {
-      title: 'Avatar',
-      dataIndex: 'avatar',
-      render: (avatar) => (
-        <img src={avatar} alt="Hình ảnh" style={{ width: 60, height: 60 }} />
-      )
-    },
-    {
       title: 'Vai trò',
       dataIndex: 'role_id',
       render: (roleId) => getRoleTitleById(roleId),
@@ -153,7 +146,6 @@ const QTVPageMN = () => {
     name: "",
     email: "",
     password: "",
-    avatar: "",
     phone: "",
     role_id: "",
   });

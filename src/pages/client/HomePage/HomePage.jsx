@@ -11,12 +11,10 @@ import { Link } from 'react-router-dom'
 import moment from 'moment';
 import { CommentOutlined } from '@ant-design/icons'
 
-
 const HomePage = () => {
   const refSearch = useRef()
   const [limit, setLimit] = useState(10)
   const [posts, setPosts] = useState([]);
-  
 
   const fetchProductAll = async (context) => {
 
@@ -24,9 +22,7 @@ const HomePage = () => {
     const search = context?.queryKey && context?.queryKey[2]
 
     const res = await ProductService.listProduct(search, limit)
-    console.log(res)
     return res
-
   }
 
   const { data: products } = useQuery({

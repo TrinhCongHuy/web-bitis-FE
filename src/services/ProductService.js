@@ -11,20 +11,41 @@ export const listProduct = async (search, limit) => {
     return res.data
 }
 
+export const listProductType = async (limit, type, page, sortKey, sortValue) => {
+    let url = `${process.env.REACT_APP_API_URL}/products?`;
+
+    const params = [];
+
+    if (type) {
+        params.push(`filter=${type}`);
+    }
+    if (limit) {
+        params.push(`limit=${limit}`);
+    }
+    if (page) {
+        params.push(`page=${page}`);
+    }
+    if (sortKey && sortValue) {
+        params.push(`sortKey=${sortKey}&sortValue=${sortValue}`);
+    }
+
+    if (params.length > 0) {
+        url += params.join('&');
+    }
+
+    try {
+        const res = await axios.get(url);
+        return res.data;
+    } catch (error) {
+        console.error("Failed to fetch products", error);
+        throw error;
+    }
+};
+
+
 export const totalProduct = async () => {
     let res = await axios.get(`${process.env.REACT_APP_API_URL}/products/totalProduct`)
     return res.data
-}
-
-export const listProductType = async ( limit, type, page ) => {
-    let res = {}
-    if (type) {
-        res = await axios.get(`${process.env.REACT_APP_API_URL}/products?filter=type&filter=${type}&page=${page}`)
-    }else {
-        res = await axios.get(`${process.env.REACT_APP_API_URL}/products?limit=${limit}&page=${page}`)
-    }
-    return res.data
-    
 }
 
 export const createProduct = async (formData) => {
