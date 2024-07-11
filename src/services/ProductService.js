@@ -17,7 +17,7 @@ export const listProductType = async (limit, type, page, sortKey, sortValue) => 
     const params = [];
 
     if (type) {
-        params.push(`filter=${type}`);
+        params.push(`filter=type&filter=${type}`);
     }
     if (limit) {
         params.push(`limit=${limit}`);
