@@ -1,12 +1,13 @@
 
 import LayoutDefault from "../components/LayoutDefault/LayoutDefault";
 import HomePage from "../pages/client/HomePage/HomePage";
-import ProductDetailPage from "../pages/client/ProductDetailPage/ProductDetailPage";
+import ProductDetailPage from "../pages/client/ProductsPage/ProductDetailPage";
 import ProductsPage from "../pages/client/ProductsPage/ProductsPage";
 import ProfilePage from "../pages/client/ProfilePage/ProfilePage";
 import SingInPageClient from "../pages/client/SingInPage/SingInPage";
 import SingUpPage from "../pages/client/SingUpPage/SingUpPage";
-
+import BlogPage from "../pages/client/BlogPage/BlogPage"
+import BlogDetailPage from "../pages/client/BlogPage/BlogDetailPage";
 import SingInPageAdmin from "../pages/admin/SingInPage/SingInPage";
 import LayoutAdminDefault from "../components/LayoutAdminDefault/LayoutAdminDefault";
 import DashBoardPage from "../pages/admin/DashBoardPage/DashBoardPage";
@@ -17,12 +18,10 @@ import UserPageMN from "../pages/admin/UserPageMN/UsersPageMN";
 import QTVPageMN from "../pages/admin/QTVPageMN/QTVPageMN";
 import CheckOutPage from "../pages/client/CheckOutPage/CheckOutPage";
 import CartPage from "../pages/client/CartPage/CartPage";
-import MyOrder from "../pages/client/MyOrder/MyOrder";
-import MyOrderDetail from "../pages/client/MyOrderDetail/MyOrderDetail";
+import MyOrder from "../pages/client/OrderPage/MyOrder";
+import MyOrderDetail from "../pages/client/OrderPage/MyOrderDetail";
 import OrderPageMN from "../pages/admin/OrderPageMN/OrderPageMN";
 import TopicPageMN from "../pages/admin/TopicPageMN/TopicPageMN";
-import BlogPage from "../pages/client/BlogPage/BlogPage";
-import BlogDetailPage from "../pages/client/BlogDetailPage/BlogDetailPage";
 import RolePermission from "../pages/admin/RolePermissionPageMN/RolePermission";
 import Roles from "../pages/admin/RolesPage/Roles";
 import ForgotPassword from "../pages/client/SingInPage/ForgotPassword";

@@ -27,10 +27,6 @@ const CouponPage = () => {
   const [uploadImage, setUploadImage] = useState();
   const [uploadImageDetail, setUploadImageDetail] = useState();
 
-  console.log('account', account)
- 
-
-
   const renderAction = (record) => {
     return (
       <Space>
