@@ -122,7 +122,7 @@ const HeaderDefault = () => {
                                             <NavLink to='/products'>Cửa hàng</NavLink>
                                         </li>
                                         <li>
-                                            <NavLink to='/blogs'>Tin tức</NavLink>
+                                            <NavLink to='/posts'>Tin tức</NavLink>
                                         </li>
                                         <li>
                                             <NavLink to='/discounts'>Giảm giá</NavLink>

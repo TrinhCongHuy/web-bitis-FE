@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Divider, Space, Row, Col } from 'antd';
-import DOMPurify from 'dompurify';
 import * as PostService from '../../../services/PostService'; 
 import * as TopicService from '../../../services/TopicService'; 
 import moment from 'moment';
@@ -36,16 +35,6 @@ const BlogPage = () => {
     }
   };
 
-  // Function to convert HTML to text using DOMPurify
-  const HTMLToText = (html) => {
-    const sanitizedText = DOMPurify.sanitize(html, { ALLOWED_TAGS: [] });
-    return sanitizedText;
-  };
-
-  const handleDetailPost = () => {
-
-  }
-
   return (
     <div className="container page__blog">
       <Row>
@@ -56,7 +45,6 @@ const BlogPage = () => {
                 hoverable
                 style={{height: '100%'}}
                 cover={<img alt="example" src={post.image} style={{ maxHeight: '300px', objectFit: 'cover', position: 'relative' }} />}
-                onClick={() => handleDetailPost(post.id)}
               >
                 <div className="post__content">
                   <div className='create__at'>
@@ -64,7 +52,7 @@ const BlogPage = () => {
                     <div>Thg {moment(post.createdAt).format('MM')}</div> 
                   </div>
                   <h3 className="post__content--title" style={{lineHeight: '1.1em'}}>
-                      <Link to={`/blog-detail/${post._id}`} style={{color: '#000', fontSize: '1.2em', lineHeight: '1em'}}>{post.title}</Link>
+                      <Link to={`/blog-detail/${post._id}`} style={{color: '#000', fontSize: '2.2rem', lineHeight: '25px'}}>{post.title}</Link>
                   </h3>
                   <p>{post.description}</p>
                   <Divider />
@@ -92,17 +80,6 @@ const BlogPage = () => {
               </div>
               
             ))}
-          </Card>
-          <Card
-            title="Bài viết nổi bật"
-            bordered={false}
-            style={{
-              width: 300,
-              marginTop: '30px'
-            }}
-          >
-            <p>Card content</p>
-            
           </Card>
         </Col>
       </Row>

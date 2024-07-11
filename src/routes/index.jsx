@@ -51,7 +51,7 @@ export const Routes = [
                 element: <ProductsPage />
             },
             {
-                path: '/blogs',
+                path: '/posts',
                 element: <BlogPage />
             },
             {

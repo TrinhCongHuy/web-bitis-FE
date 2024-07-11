@@ -149,7 +149,7 @@ const AddPost = () => {
               { required: true, message: "Vui lòng nhập nội dung bài viết!" },
             ]}
           >
-            <MDEditor value={content} onChange={handleEditorChange} />
+            <MDEditor value={content} onChange={handleEditorChange} style={{ height: '800px' }}/>
           </Form.Item>
 
           <Form.Item

@@ -12,6 +12,13 @@ export const listPost = async (limit) => {
     }
 }
 
+export const listPostTopic = async (slug) => {
+    if (slug) {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/posts/${slug}`)
+        return res.data
+    }  
+}
+
 export const totalPost = async () => {
     let res = await axios.get(`${process.env.REACT_APP_API_URL}/posts/totalPost`)
     return res.data
