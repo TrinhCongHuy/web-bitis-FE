@@ -17,7 +17,7 @@ import moment from 'moment';
 const CouponPage = () => {
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
-  const user = useSelector(state => state.user)
+  const account = useSelector(state => state.account)
   const [ rowSelected, setRowSelected ] = useState('')
   const [ isOpenDraw, setIsOpenDraw ] = useState(false)
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false)
@@ -27,7 +27,7 @@ const CouponPage = () => {
   const [uploadImage, setUploadImage] = useState();
   const [uploadImageDetail, setUploadImageDetail] = useState();
 
-
+  console.log('account', account)
  
 
 
@@ -152,7 +152,6 @@ const CouponPage = () => {
     },
   ];
 
-
   const [ stateCoupon, setStateCoupon ] = useState({
     code: "",
     discount: "",
@@ -230,7 +229,6 @@ const CouponPage = () => {
       image: e.target.files[0],
     });
   };
-  
 
   //   form
   const onFinish = () => {
@@ -242,7 +240,6 @@ const CouponPage = () => {
   };
 
   //================= EDIT COUPON ==================//
-
   const [ stateCouponDetail, setStateCouponDetail ] = useState({
     code: "",
     discount: "",
@@ -251,8 +248,6 @@ const CouponPage = () => {
     description: "",
     expireAt: "",
   });
-
-
 
   const mutationUpdate = UseMutationHook((data) => {
     const { id, token, ...rests } = data;
@@ -284,10 +279,9 @@ const CouponPage = () => {
     form.resetFields()
   };
 
-
   const fetchGetDetailCoupon = async (id) => {
     try {
-      const res = await CouponService.getDetailCoupon(id);
+      const res = await CouponService.getDetailCoupon({id: id, access_token: account.access_token});
       if (res?.data) {
         setStateCouponDetail({
             code: res.data.code,
@@ -305,10 +299,9 @@ const CouponPage = () => {
     setIsLoadingUpdate(false)
   };
 
-  console.log('stateCouponDetail',stateCouponDetail)
-
   useEffect(() => {
     if (rowSelected && isOpenDraw) {
+      console.log('rowSelected', rowSelected)
       setIsLoadingUpdate(true)
       fetchGetDetailCoupon(rowSelected)
     }
@@ -317,7 +310,6 @@ const CouponPage = () => {
   const handleDetailUser = () => {
     setIsOpenDraw(true)
   }
-
 
   const handleOnChangeDetail = (e) => {
     setStateCouponDetail({
@@ -335,9 +327,8 @@ const CouponPage = () => {
     });
   }
 
-
   const onUpdateCoupon = () => {
-    mutationUpdate.mutate({id: rowSelected, token: user?.access_token, ...stateCouponDetail}, {
+    mutationUpdate.mutate({id: rowSelected, token: account?.access_token, ...stateCouponDetail}, {
       onSettled: () => {
         queryCoupons.refetch()
       }
@@ -345,7 +336,6 @@ const CouponPage = () => {
   }
 
   // ============== DELETE ============= //
-
   const mutationDeleted = UseMutationHook((data) => {
     const { id, token } = data;
     const res = CouponService.deleteCoupon({ id, token });
@@ -362,16 +352,13 @@ const CouponPage = () => {
     }
   }, [isSuccessDeleted, isErrorDeleted])
 
-
-
   const handleDelete = (key) => {
-    mutationDeleted.mutate({ id: key, token: user?.access_token }, {
+    mutationDeleted.mutate({ id: key, token: account?.access_token }, {
       onSettled: () => {
         queryCoupons.refetch()
       }
     })
   };
-
 
   return (
     <>
